@@ -1,219 +1,939 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>董监高管理 - 力合·人才智库 - 力合科创干部数智平台</title>
-  <link rel="stylesheet" href="../css/base.css?v=3">
-  <style>
-    .directors-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>董监高管理 - 力合·人才智库 - 力合科创干部数智平台</title>
+<link rel="stylesheet" href="../css/base-k3.css">
+<style>
+/* ===== 页面级样式（K3风格增量） ===== */
+.dgj-page {
+  padding: 20px 24px 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
 
-    .director-card {
-      background: var(--color-surface);
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: var(--shadow-md);
-      border-top: 4px solid var(--color-primary);
-      transition: all 0.2s;
-    }
+/* Stats Bar */
+.dgj-stats {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.dgj-stat-chip {
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #e8e5f0);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: var(--color-text-secondary, #5b6b82);
+  box-shadow: 0 1px 3px rgba(142,34,148,0.06);
+}
+.dgj-stat-chip b {
+  color: #8e2294;
+  font-size: 15px;
+  margin: 0 2px;
+}
 
-    .director-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(142, 34, 148, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
-    }
+/* Control Panel */
+.dgj-control {
+  background: var(--color-surface, #fff);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(142,34,148,0.06);
+  border: 1px solid var(--color-border, #e8e5f0);
+  margin-bottom: 16px;
+}
+.dgj-control-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.dgj-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 200px;
+  flex: 1;
+}
+.dgj-control-group label {
+  font-size: 12px;
+  color: var(--color-text-secondary, #5b6b82);
+  font-weight: 500;
+}
 
-    .director-card.warning {
-      border-top-color: var(--color-accent);
-    }
+/* Category Tabs */
+.dgj-cat-tabs {
+  display: flex;
+  gap: 4px;
+  background: #F8F7FC;
+  border-radius: 6px;
+  padding: 4px;
+  border: 1px solid var(--color-border, #e8e5f0);
+}
+.dgj-cat-tab {
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #5b6b82);
+  background: transparent;
+  border: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.dgj-cat-tab:hover { color: #8e2294; }
+.dgj-cat-tab.active {
+  background: #8e2294;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(142,34,148,0.25);
+}
 
-    .director-card.danger {
-      border-top-color: var(--color-danger);
-    }
+/* Searchable Select */
+.dgj-select-wrap {
+  position: relative;
+  flex: 2;
+  min-width: 280px;
+}
+.dgj-select-input {
+  width: 100%;
+  padding: 9px 36px 9px 12px;
+  border: 1px solid var(--color-border, #e8e5f0);
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+  background: var(--color-surface, #fff);
+  color: var(--color-text, #1f2b3d);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.dgj-select-input:focus {
+  border-color: #8e2294;
+  box-shadow: 0 0 0 3px rgba(142,34,148,0.08);
+}
+.dgj-select-arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-secondary, #5b6b82);
+  pointer-events: none;
+  font-size: 10px;
+}
+.dgj-select-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0; right: 0;
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #e8e5f0);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(142,34,148,0.12);
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: 50;
+  display: none;
+}
+.dgj-select-dropdown.show { display: block; }
+.dgj-select-search {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--color-border, #e8e5f0);
+  position: sticky;
+  top: 0;
+  background: var(--color-surface, #fff);
+}
+.dgj-select-search input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--color-border, #e8e5f0);
+  border-radius: 6px;
+  font-size: 13px;
+  outline: none;
+}
+.dgj-select-search input:focus { border-color: #8e2294; }
+.dgj-select-option {
+  padding: 9px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--color-text, #1f2b3d);
+  border-bottom: 1px solid rgba(0,0,0,0.03);
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dgj-select-option:hover {
+  background: #f3e5f5;
+  color: #6b1a70;
+}
+.dgj-select-option.selected {
+  background: #f3e5f5;
+  color: #8e2294;
+  font-weight: 600;
+}
+.dgj-select-option .opt-tag {
+  font-size: 11px;
+  color: var(--color-text-secondary, #5b6b82);
+  background: #F8F7FC;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+.dgj-select-empty {
+  padding: 20px;
+  text-align: center;
+  color: var(--color-text-secondary, #5b6b82);
+  font-size: 13px;
+}
 
-    .director-header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
+/* Company Info Card */
+.dgj-info-card {
+  background: linear-gradient(135deg, #faf8ff 0%, #f5f0ff 100%);
+  border: 1px solid #e8dff5;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-top: 16px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  transition: all 0.2s;
+}
+.dgj-info-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(142,34,148,0.08), 0 2px 4px rgba(0,0,0,0.04);
+}
+.dgj-info-left { flex: 1; min-width: 300px; }
+.dgj-info-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text, #1f2b3d);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dgj-info-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.dgj-info-tag {
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(142,34,148,0.08);
+  color: #8e2294;
+  border: 1px solid rgba(142,34,148,0.12);
+  font-weight: 500;
+}
+.dgj-info-tag.secondary {
+  background: #F8F7FC;
+  color: var(--color-text-secondary, #5b6b82);
+  border-color: var(--color-border, #e8e5f0);
+}
+.dgj-info-right { display: flex; align-items: center; gap: 8px; }
 
-    .director-avatar {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
+/* Buttons */
+.dgj-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.dgj-btn-primary {
+  background: #8e2294;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(142,34,148,0.25);
+}
+.dgj-btn-primary:hover {
+  background: #6b1a70;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(142,34,148,0.3);
+}
+.dgj-btn-ghost {
+  background: transparent;
+  color: #8e2294;
+  border: 1px solid #8e2294;
+}
+.dgj-btn-ghost:hover { background: #f3e5f5; }
 
-    .director-name {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--color-text);
-    }
+/* Tabs */
+.dgj-tabs-bar {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid var(--color-border, #e8e5f0);
+  padding-bottom: 0;
+}
+.dgj-tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #5b6b82);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+.dgj-tab:hover { color: #8e2294; }
+.dgj-tab.active {
+  color: #8e2294;
+  border-bottom-color: #8e2294;
+}
 
-    .director-position {
-      font-size: 14px;
-      color: var(--color-text-secondary);
-      margin-top: 2px;
-    }
+/* Table */
+.dgj-table-wrap {
+  background: var(--color-surface, #fff);
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(142,34,148,0.06);
+  border: 1px solid var(--color-border, #e8e5f0);
+  overflow: hidden;
+}
+.dgj-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.dgj-table th {
+  background: #F8F7FC;
+  color: var(--color-text-secondary, #5b6b82);
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border, #e8e5f0);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.dgj-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border, #e8e5f0);
+  color: var(--color-text, #1f2b3d);
+}
+.dgj-table tr:hover td { background: rgba(142,34,148,0.02); }
+.dgj-tr-empty td {
+  text-align: center;
+  color: var(--color-text-secondary, #5b6b82);
+  padding: 40px;
+}
 
-    .director-body {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      font-size: 14px;
-    }
+/* Status Badge */
+.dgj-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.dgj-badge-current {
+  background: #f3e5f5;
+  color: #8e2294;
+  border: 1px solid rgba(142,34,148,0.15);
+}
+.dgj-badge-former {
+  background: #f0f0f0;
+  color: #888;
+  border: 1px solid #e0e0e0;
+}
 
-    .director-row {
-      display: flex;
-      justify-content: space-between;
-    }
+/* Position Tag */
+.dgj-pos-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  background: #F8F7FC;
+  color: var(--color-text-secondary, #5b6b82);
+  border: 1px solid var(--color-border, #e8e5f0);
+}
+.dgj-pos-tag.legal { background: #fef3e8; color: #d9730d; border-color: #f2cf9e; }
+.dgj-pos-tag.chair { background: #e8f4f8; color: #0e9384; border-color: #9dd6e0; }
+.dgj-pos-tag.exec { background: #f0e8f8; color: #7a5af8; border-color: #d4c8f0; }
+.dgj-pos-tag.director { background: #e8f0ff; color: #1668dc; border-color: #b9d2f6; }
+.dgj-pos-tag.supervisor { background: #fff0f0; color: #c0392b; border-color: #f5c6c6; }
+.dgj-pos-tag.gm { background: #e8f8f0; color: #27ae60; border-color: #a8e0c0; }
+.dgj-pos-tag.cfo { background: #f8f0e8; color: #8a6d1f; border-color: #e0d4b8; }
+.dgj-pos-tag.leader { background: #f0f0f8; color: #5b6b82; border-color: #d8dee8; }
 
-    .director-label {
-      color: var(--color-text-secondary);
-    }
+/* Modal */
+.dgj-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(31,43,61,0.45);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.dgj-modal-overlay.show { display: flex; }
+.dgj-modal {
+  background: var(--color-surface, #fff);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(31,43,61,0.2);
+  width: 100%;
+  max-width: 900px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: dgjModalIn 0.25s ease;
+}
+@keyframes dgjModalIn {
+  from { opacity: 0; transform: scale(0.96) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.dgj-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--color-border, #e8e5f0);
+  background: linear-gradient(135deg, #faf8ff 0%, #f5f0ff 100%);
+}
+.dgj-modal-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text, #1f2b3d);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dgj-modal-close {
+  width: 32px; height: 32px;
+  border-radius: 50%; border: none;
+  background: #F8F7FC;
+  color: var(--color-text-secondary, #5b6b82);
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.dgj-modal-close:hover {
+  background: #f3e5f5;
+  color: #8e2294;
+}
+.dgj-modal-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+.dgj-modal-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--color-border, #e8e5f0);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  background: #F8F7FC;
+}
 
-    .director-value {
-      color: var(--color-text);
-      font-weight: 500;
-    }
+/* Tree in Modal */
+.dgj-tree-wrap { font-size: 13px; line-height: 1.7; }
+.dgj-tree-node { margin: 2px 0; }
+.dgj-tree-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid transparent;
+}
+.dgj-tree-row:hover { background: #f3e5f5; }
+.dgj-tree-row.highlight {
+  background: linear-gradient(135deg, #f3e5f5, #f0e0f5);
+  border-color: #8e2294;
+  box-shadow: 0 0 0 3px rgba(142,34,148,0.1);
+  font-weight: 600;
+  color: #6b1a70;
+}
+.dgj-tree-row.highlight .dgj-tree-name {
+  color: #6b1a70;
+  font-weight: 700;
+}
+.dgj-tree-toggle {
+  width: 16px; height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--color-text-secondary, #5b6b82);
+  flex-shrink: 0;
+}
+.dgj-tree-name { font-weight: 500; }
+.dgj-tree-pct {
+  font-size: 11px;
+  color: #8e2294;
+  background: rgba(142,34,148,0.08);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.dgj-tree-badge {
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+.dgj-tree-badge.jv { background: #fdf3e7; color: #d9730d; }
+.dgj-tree-badge.con { background: #eef4fe; color: #1668dc; }
+.dgj-tree-badge.buben { background: #f0f3f8; color: #8a93a6; }
+.dgj-tree-children {
+  margin-left: 20px;
+  padding-left: 14px;
+  border-left: 1px solid var(--color-border, #e8e5f0);
+}
+.dgj-tree-cap {
+  font-size: 11px;
+  color: var(--color-text-secondary, #5b6b82);
+  margin-left: 4px;
+}
+.dgj-tree-others {
+  font-size: 11px;
+  color: var(--color-text-secondary, #5b6b82);
+  margin: 2px 0 4px 26px;
+  padding: 4px 8px;
+  background: #F8F7FC;
+  border-radius: 6px;
+  display: inline-block;
+}
+.dgj-tree-remark {
+  font-size: 11px;
+  color: #8a6d1f;
+  background: #fffbe8;
+  border-left: 2px solid #e6c85c;
+  padding: 4px 8px;
+  margin: 2px 0 4px 26px;
+  border-radius: 0 6px 6px 0;
+}
+.dgj-tree-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border, #e8e5f0);
+}
+.dgj-tree-toolbar .dgj-btn {
+  padding: 5px 12px;
+  font-size: 12px;
+}
 
-    .director-value.warning {
-      color: #8a6d1f;
-      font-weight: 600;
-    }
+/* Animations */
+.dgj-fade-in { animation: dgjFadeIn 0.3s ease; }
+@keyframes dgjFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-    .term-progress {
-      margin-top: 14px;
-    }
+/* Scrollbar */
+.dgj-select-dropdown::-webkit-scrollbar,
+.dgj-modal-body::-webkit-scrollbar {
+  width: 6px; height: 6px;
+}
+.dgj-select-dropdown::-webkit-scrollbar-track,
+.dgj-modal-body::-webkit-scrollbar-track { background: transparent; }
+.dgj-select-dropdown::-webkit-scrollbar-thumb,
+.dgj-modal-body::-webkit-scrollbar-thumb {
+  background: #d0c8e0;
+  border-radius: 3px;
+}
 
-    .term-progress-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--color-text-secondary);
-      margin-bottom: 6px;
-    }
-
-    .term-progress-bar {
-      height: 8px;
-      background: var(--color-border);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .term-progress-fill {
-      height: 100%;
-      border-radius: 4px;
-      background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
-      transition: width 0.5s ease;
-    }
-
-    .term-progress-fill.warning {
-      background: linear-gradient(90deg, var(--color-accent), #f39c12);
-    }
-
-    .term-progress-fill.danger {
-      background: linear-gradient(90deg, var(--color-danger), #e74c3c);
-    }
-
-    @media (max-width: 1200px) {
-      .directors-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    @media (max-width: 768px) {
-      .directors-grid { grid-template-columns: 1fr; }
-    }
-  </style>
-<script src="../js/data.js"></script>
-<script src="../js/app.js"></script>
-<script src="../js/charts.js"></script>
+/* Responsive */
+@media (max-width: 768px) {
+  .dgj-control-row { flex-direction: column; }
+  .dgj-select-wrap { width: 100%; }
+  .dgj-info-card { flex-direction: column; }
+  .dgj-page { padding: 12px; }
+  .dgj-table th, .dgj-table td { padding: 10px 12px; }
+}
+</style>
+<base target="_blank">
 </head>
 <body>
-  <main class="app-main">
-    <div class="directors-grid" id="directorsGrid"></div>
-  </main>
 
-  <script>
+<div id="app-main" class="app-main">
+  <div class="dgj-page">
 
-    renderLayout('董监高管理', 'directors');
+    <!-- 统计栏 -->
+    <div class="dgj-stats">
+      <div class="dgj-stat-chip">直管子企业 <b>45</b> 家</div>
+      <div class="dgj-stat-chip">非直管子企业 <b>37</b> 家</div>
+      <div class="dgj-stat-chip">合计 <b>82</b> 家</div>
+      <div class="dgj-stat-chip">数据更新至 <b>2026-06-30</b></div>
+    </div>
 
-    async function init() {
-      const directors = await fetchData('directors');
-      const container = document.getElementById('directorsGrid');
-      const now = new Date();
-
-      directors.forEach(d => {
-        const start = new Date(d.termStart);
-        const end = new Date(d.termEnd);
-        const total = end - start;
-        const elapsed = now - start;
-        const pct = Math.min(100, Math.max(0, (elapsed / total) * 100));
-        const daysLeft = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
-
-        let cardClass = '';
-        let progressClass = '';
-        let valueClass = '';
-
-        if (daysLeft <= 90) {
-          cardClass = daysLeft <= 0 ? 'danger' : 'warning';
-          progressClass = daysLeft <= 0 ? 'danger' : 'warning';
-          valueClass = 'warning';
-        }
-
-        const card = document.createElement('div');
-        card.className = `director-card ${cardClass}`;
-        card.innerHTML = `
-          <div class="director-header">
-            <div class="director-avatar">${d.name.charAt(0)}</div>
-            <div>
-              <div class="director-name">${d.name}</div>
-              <div class="director-position">${d.position} · ${d.board}</div>
-            </div>
+    <!-- 控制面板 -->
+    <div class="dgj-control">
+      <div class="dgj-control-row">
+        <!-- 分类切换 -->
+        <div class="dgj-control-group" style="flex:0;">
+          <label>企业分类</label>
+          <div class="dgj-cat-tabs">
+            <button class="dgj-cat-tab active" data-cat="zg" onclick="switchCategory('zg')">直管子企业</button>
+            <button class="dgj-cat-tab" data-cat="fzg" onclick="switchCategory('fzg')">非直管子企业</button>
           </div>
-          <div class="director-body">
-            <div class="director-row">
-              <span class="director-label">类型</span>
-              <span class="director-value">${d.type}</span>
+        </div>
+
+        <!-- 企业选择器 -->
+        <div class="dgj-control-group dgj-select-wrap">
+          <label>选择企业</label>
+          <input type="text" class="dgj-select-input" id="companySelect" placeholder="请选择或搜索企业…" readonly onclick="toggleDropdown()">
+          <span class="dgj-select-arrow">▼</span>
+          <div class="dgj-select-dropdown" id="selectDropdown">
+            <div class="dgj-select-search">
+              <input type="text" id="searchInput" placeholder="搜索企业名称…" oninput="filterOptions()">
             </div>
-            <div class="director-row">
-              <span class="director-label">任期开始</span>
-              <span class="director-value">${formatDate(d.termStart)}</span>
-            </div>
-            <div class="director-row">
-              <span class="director-label">任期结束</span>
-              <span class="director-value ${valueClass}">${formatDate(d.termEnd)}</span>
-            </div>
-            <div class="director-row">
-              <span class="director-label">状态</span>
-              <span class="director-value ${valueClass}">${d.status}</span>
-            </div>
-            <div class="term-progress">
-              <div class="term-progress-label">
-                <span>任期进度</span>
-                <span class="${valueClass}">${daysLeft > 0 ? '剩余 ' + daysLeft + ' 天' : '已届满'}</span>
-              </div>
-              <div class="term-progress-bar">
-                <div class="term-progress-fill ${progressClass}" style="width: ${pct}%"></div>
-              </div>
-            </div>
+            <div id="optionsList"></div>
           </div>
-        `;
-        container.appendChild(card);
-      });
+        </div>
+
+        <!-- 股权树按钮 -->
+        <div class="dgj-control-group" style="flex:0; justify-content: flex-end; padding-top: 20px;">
+          <button class="dgj-btn dgj-btn-primary" onclick="openTreeModal()">
+            <span>🔗</span> 查看股权结构
+          </button>
+        </div>
+      </div>
+
+      <!-- 公司信息卡 -->
+      <div class="dgj-info-card" id="infoCard" style="display:none;">
+        <div class="dgj-info-left">
+          <div class="dgj-info-name" id="infoName">--</div>
+          <div class="dgj-info-tags" id="infoTags"></div>
+        </div>
+        <div class="dgj-info-right">
+          <span style="font-size:12px;color:var(--color-text-secondary,#5b6b82);">法人治理结构：</span>
+          <span id="infoGov" style="font-size:13px;font-weight:500;color:var(--color-text,#1f2b3d);">--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 董监高列表 -->
+    <div class="dgj-fade-in">
+      <div class="dgj-tabs-bar">
+        <button class="dgj-tab active" onclick="switchTab('current')">现任董监高</button>
+        <button class="dgj-tab" onclick="switchTab('former')">历任董监高</button>
+      </div>
+
+      <div class="dgj-table-wrap">
+        <table class="dgj-table" id="directorsTable">
+          <thead>
+            <tr>
+              <th style="width:60px">序号</th>
+              <th>姓名</th>
+              <th style="width:150px">职务</th>
+              <th style="width:130px">任职起始日</th>
+              <th style="width:130px">工商备案日</th>
+              <th style="width:100px">状态</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr class="dgj-tr-empty">
+              <td colspan="6">请选择企业以查看董监高信息</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 股权树弹窗 -->
+<div class="dgj-modal-overlay" id="treeModal" onclick="closeTreeModal(event)">
+  <div class="dgj-modal" onclick="event.stopPropagation()">
+    <div class="dgj-modal-header">
+      <div class="dgj-modal-title">
+        <span style="font-size:18px;">🌳</span>
+        <span>力合体系股权架构树</span>
+        <span id="modalHighlightName" style="font-size:12px;color:#8e2294;background:#f3e5f5;padding:2px 8px;border-radius:4px;margin-left:8px;display:none;"></span>
+      </div>
+      <button class="dgj-modal-close" onclick="closeTreeModal()">×</button>
+    </div>
+    <div class="dgj-modal-body">
+      <div class="dgj-tree-toolbar">
+        <button class="dgj-btn dgj-btn-ghost" onclick="treeExpandAll(true)">全部展开</button>
+        <button class="dgj-btn dgj-btn-ghost" onclick="treeExpandAll(false)">全部收起</button>
+        <button class="dgj-btn dgj-btn-ghost" onclick="treeExpandTo(3)">展开至三层</button>
+      </div>
+      <div class="dgj-tree-wrap" id="treeContainer"></div>
+    </div>
+    <div class="dgj-modal-footer">
+      <span style="font-size:12px;color:var(--color-text-secondary,#5b6b82);">数据口径：2026年6月30日 · 上级企业直接持股比例</span>
+      <button class="dgj-btn dgj-btn-primary" onclick="closeTreeModal()">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/app-k3.js"></script>
+<script>
+// ==================== 数据注入区（82家企业 + 股权树）====================
+
+const TREE_DATA = [{"id": 164, "name": "深圳市力合科创股份有限公司", "lvl": 3, "ratio": "34.43%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 165, "name": "深圳市力合科创股份有限公司本部", "lvl": 4, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 166, "name": "力合科创（北京）科技创新有限公司", "lvl": 4, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "1000万人民币"}, {"id": 167, "name": "深圳市通产丽星科技集团有限公司", "lvl": 4, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 168, "name": "深圳市通产丽星科技集团有限公司本部", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 169, "name": "广州丽盈塑料有限公司", "lvl": 5, "ratio": "97.5875%", "nature": "子公司", "status": "正常", "special": true, "remark": "子公司香港丽通分别持有广州丽盈和上海通产2.4125%、25%的股权", "type": "con", "children": [], "others": "香港丽通实业有限公司 2.4125%（体系内）", "cap": "3730.57万美元"}, {"id": 170, "name": "上海通产丽星包装材料有限公司", "lvl": 5, "ratio": "75%", "nature": "子公司", "status": "正常", "special": true, "remark": "子公司香港丽通分别持有广州丽盈和上海通产2.4125%、25%的股权", "type": "con", "children": [], "others": "香港丽通实业有限公司 25%（体系内）", "cap": "6520万人民币"}, {"id": 171, "name": "苏州通产丽星包装科技有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "21110.256863万人民币"}, {"id": 172, "name": "深圳市京信通科技有限公司", "lvl": 5, "ratio": "53.33%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 173, "name": "深圳市京信通科技有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 174, "name": "湖北京信通模塑科技有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "500万人民币"}], "others": "陈明 40%、深圳市达为博科技有限公司 6.6667%", "cap": "1500万人民币"}, {"id": 175, "name": "深圳兴丽彩塑料材料科技有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 176, "name": "深圳兴丽彩塑料材料科技有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 177, "name": "惠州兴丽彩科技有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "2200万人民币"}], "cap": "550万人民币"}, {"id": 178, "name": "深圳市丽琦科技有限公司", "lvl": 5, "ratio": "51%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 179, "name": "深圳市丽琦科技有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 180, "name": "广州丽琦科技有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "1000万人民币"}], "others": "唐林 49%", "cap": "1000万人民币"}, {"id": 181, "name": "广州市丽星材料科技有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "10000万人民币"}, {"id": 182, "name": "深圳市美弘信息技术有限公司", "lvl": 5, "ratio": "51%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "广州美祺智能印刷有限公司 49%", "cap": "3000万人民币"}, {"id": 183, "name": "惠州通产丽星新材料科技有限公司", "lvl": 5, "ratio": "61.0502%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "惠州市富庄塑胶包装有限公司 38.9497%", "cap": "4000万人民币"}, {"id": 184, "name": "香港丽通实业有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": true, "remark": "子公司香港丽通分别持有广州丽盈和上海通产2.4125%、25%的股权", "type": "con", "children": [{"id": 185, "name": "香港丽通实业有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 186, "name": "香港美盈实业有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}]}, {"id": 187, "name": "深圳市美本生物科技有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "500万人民币"}, {"id": 188, "name": "泰国丽星科技有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 10001, "name": "深圳市丽得富新能源材料科技有限公司", "ratio": "40%", "type": "jv", "remark": null, "children": []}], "cap": "36494.8956万人民币"}, {"id": 189, "name": "力合科创集团有限公司", "lvl": 4, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 190, "name": "力合科创集团有限公司本部", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 191, "name": "深圳市力合创业投资有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 192, "name": "深圳市力合创业投资有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 193, "name": "深圳力合数字电视有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 194, "name": "深圳力合数字电视有限公司本部", "lvl": 7, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 195, "name": "深圳力合数字电视技术有限公司", "lvl": 7, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "600万人民币"}, {"id": 196, "name": "深圳力合视达科技有限公司", "lvl": 7, "ratio": "76.19%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "深圳弘德文化发展有限公司 8.1905%、胡曾千 8%、徐小芳 4.7619%、高峰 0.9524%、王振宇 0.9524%、臧继运 0.9524%", "cap": "1050万人民币"}, {"id": 10031, "name": "长沙广电数字移动传媒有限公司", "ratio": "20%", "type": "jv", "remark": null, "children": []}, {"id": 10032, "name": "江西传媒移动电视有限公司", "ratio": "30%", "type": "jv", "remark": null, "children": []}, {"id": 10033, "name": "无锡广通数字移动电视有限公司", "ratio": "16%", "type": "jv", "remark": null, "children": []}], "cap": "12345万人民币"}, {"id": 197, "name": "深圳力合信息技术有限公司", "lvl": 6, "ratio": "79.05%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 198, "name": "深圳力合信息技术有限公司本部", "lvl": 7, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 199, "name": "无锡力合智通信息技术有限公司", "lvl": 7, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "500万人民币"}, {"id": 10060, "name": "重庆路泊通科技有限公司", "ratio": "55%", "type": "jv", "remark": "深圳力合信息技术有限公司持有重庆路泊通科技有限公司的55%的股权，但重庆路泊通公司章程第二十九条规定：股东会会议对所议事项作出决议，须经代表过三分之二以上表决权的股东通过（股东按照认缴出资比例行使表决权）。章程第三十六条规定：董事会会议应当有过半数的董事出席方可举行，董事会作出决议，必须经全体董事三分之二通过（力合信息委派3名，董事会成员共5名）。基于以上公司章程的约定，力合信息无法控制重庆路泊通科技有限公司的股东会和董事会，因此重庆路泊通科技有限公司作为权益法核算的合营企业，无法纳入力合信息的合并财务报表。", "children": []}], "others": "张超 17.5065%、陈颖达 3.4416%", "cap": "1540万人民币"}, {"id": 200, "name": "深圳力合华石科技投资合伙企业（有限合伙）", "lvl": 6, "ratio": "50%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "力合科创集团有限公司 49%（体系内）、深圳市力合科创创业投资有限公司 1%", "cap": "10000万人民币"}, {"id": 201, "name": "深圳市力合科创基金管理有限公司", "lvl": 6, "ratio": "51%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "深圳市诺爱和泰投资发展有限公司 23%、张东宝 18%、唐宏杰 8%", "cap": "500万人民币"}, {"id": 202, "name": "湖北长江力合科创有限公司", "lvl": 6, "ratio": "51%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "湖北科技创新投资有限公司 34%、深圳市源创力离岸创新中心 5%、武汉新能源与智能汽车创新中心 5%、深圳清辉科创集团有限公司 5%", "cap": "3000万人民币"}, {"id": 10015, "name": "深圳力合新能源创业投资基金有限公司", "ratio": "20%", "type": "jv", "remark": null, "children": []}, {"id": 10016, "name": "珠海紫荆泓鑫投资管理有限公司", "ratio": "30%", "type": "jv", "remark": null, "children": []}, {"id": 10017, "name": "广州中大医疗器械有限公司", "ratio": "8.3333%", "type": "jv", "remark": null, "children": []}, {"id": 10018, "name": "深圳力合厚浦科技有限公司", "ratio": "33.33%", "type": "jv", "remark": null, "children": []}, {"id": 10019, "name": "深圳力合清源创业投资管理有限公司", "ratio": "30%", "type": "jv", "remark": null, "children": []}, {"id": 10020, "name": "新译信息科技（深圳）有限公司", "ratio": "15.36%", "type": "jv", "remark": null, "children": []}, {"id": 10021, "name": "广州土圭垚信息科技有限公司", "ratio": "15.79%", "type": "jv", "remark": null, "children": []}, {"id": 10022, "name": "水木金谷环境科技有限公司", "ratio": "20.8485%", "type": "jv", "remark": null, "children": []}, {"id": 10023, "name": "深圳力合天使二期投资管理有限公司", "ratio": "35%", "type": "jv", "remark": null, "children": []}, {"id": 10024, "name": "深圳市微蜂创联科技有限公司", "ratio": "18.236%", "type": "jv", "remark": null, "children": []}, {"id": 10025, "name": "深圳力合精密装备科技有限公司", "ratio": "10.87%", "type": "jv", "remark": null, "children": []}, {"id": 10026, "name": "深圳市创赛一号创业投资股份有限公司", "ratio": "12%", "type": "jv", "remark": null, "children": []}, {"id": 10027, "name": "深圳力合天使创业投资管理有限公司", "ratio": "30%", "type": "jv", "remark": null, "children": []}, {"id": 10028, "name": "深圳市创赛二号创业投资有限责任公司", "ratio": "12%", "type": "jv", "remark": null, "children": []}, {"id": 10029, "name": "广州首感光电科技有限公司（弈目上海科技有限公司）", "ratio": "9.53%", "type": "jv", "remark": null, "children": []}, {"id": 10030, "name": "深圳市智听科技有限公司", "ratio": "13.794%", "type": "jv", "remark": null, "children": []}, {"id": 10064, "name": "深圳市清研兰亭科技有限公司", "ratio": "45.6825%", "type": "jv", "remark": null, "children": []}, {"id": 10065, "name": "厦门点石新材料有限公司", "ratio": "5.8626%", "type": "jv", "remark": null, "children": []}, {"id": 10066, "name": "广东辛顿科技有限公司", "ratio": "3.3201%", "type": "jv", "remark": null, "children": []}, {"id": 10067, "name": "元嘉生物科技（衢州）有限公司", "ratio": "6.667%", "type": "jv", "remark": null, "children": []}, {"id": 10071, "name": "振海智能科技（广州）有限公司", "ratio": "12.1904%", "type": "jv", "remark": null, "children": []}, {"id": 10072, "name": "深圳氢致能源有限公司", "ratio": "1.7988%", "type": "jv", "remark": null, "children": []}, {"id": 10073, "name": "深圳清研电子科技有限公司", "ratio": "3.7402%", "type": "jv", "remark": null, "children": []}, {"id": 10083, "name": "深圳市北科瑞声科技股份有限公司", "ratio": "6.74%", "type": "jv", "remark": "股份公司", "children": []}], "cap": "45000万人民币"}, {"id": 203, "name": "深圳清研创业投资有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 204, "name": "深圳清研创业投资有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 205, "name": "Carits,Inc.(加瑞思公司)", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 206, "name": "深圳市力合天使创业投资合伙企业（有限合伙）", "lvl": 6, "ratio": "48%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 10041, "name": "深圳拜尔洛克生物技术有限公司", "ratio": "12.2249%", "type": "jv", "remark": null, "children": []}, {"id": 10042, "name": "深圳至秦仪器有限公司", "ratio": "7.51%", "type": "jv", "remark": null, "children": []}], "others": "深圳市天使投资引导基金有限公司 40%、深圳力合泓鑫创业投资合伙企业（有限合伙） 11%、深圳市力合科创创业投资有限公司 1%", "cap": "30000万人民币"}, {"id": 207, "name": "深圳市力合云记新材料有限公司", "lvl": 6, "ratio": "47%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "深圳市希诺威光电科技有限公司 27.6544%、赵祖珍 4.1724%、安徽长朗三维科技有限公司 4.1724%、深圳市力合天使创业投资合伙企业（有限合伙） 4.1724%（体系内）、深圳清研技术转移有限公司 4.0641%、王臣 2.7207%、王松 2.4733%、深圳以竟事功科技投资有限责任公司 1.484%、深圳力合泓鑫创业投资合伙企业（有限合伙） 1.0431%、无锡清科惠创电子科技有限公司 1.0431%", "cap": "263.373498万人民币"}, {"id": 10034, "name": "深圳华英生物技术有限公司", "ratio": "10%", "type": "jv", "remark": null, "children": []}, {"id": 10035, "name": "无锡智科传感网技术股份有限公司", "ratio": "33.33%", "type": "jv", "remark": null, "children": []}, {"id": 10036, "name": "沃特尔新能源（深圳）有限公司", "ratio": "18.36%", "type": "jv", "remark": null, "children": []}, {"id": 10037, "name": "深圳瑞波光电子有限公司", "ratio": "9.1324%", "type": "jv", "remark": null, "children": []}, {"id": 10038, "name": "科威国际技术转移有限公司", "ratio": "26%", "type": "jv", "remark": null, "children": []}, {"id": 10039, "name": "深圳市清研环境科技有限公司", "ratio": "7.53%", "type": "jv", "remark": null, "children": []}, {"id": 10040, "name": "南京清研新材料研究院有限公司", "ratio": "28.2%", "type": "jv", "remark": null, "children": []}, {"id": 10063, "name": "山东深大光学科技有限公司", "ratio": "7.76%", "type": "jv", "remark": null, "children": []}, {"id": 10068, "name": "深圳市观湛生物科技有限公司", "ratio": "5.3667%", "type": "jv", "remark": null, "children": []}, {"id": 10070, "name": "模拟微电子（深圳）有限责任公司", "ratio": "10.5%", "type": "jv", "remark": null, "children": []}, {"id": 10075, "name": "广州拓诺稀科技有限公司", "ratio": "7%", "type": "jv", "remark": null, "children": []}, {"id": 10079, "name": "深圳市乐谱兰斯科技有限公司", "ratio": "9%", "type": "jv", "remark": null, "children": []}, {"id": 10080, "name": "西安冷电康科技有限公司", "ratio": "8.3427%", "type": "jv", "remark": null, "children": []}, {"id": 10081, "name": "深圳清寰能源有限公司", "ratio": "6.9994%", "type": "jv", "remark": null, "children": []}, {"id": 10082, "name": "深圳市熵际跃迁科技有限公司", "ratio": "6.4167%", "type": "jv", "remark": null, "children": []}, {"id": 10084, "name": "陕西御风翱翔科技有限责任公司", "ratio": "5.4%", "type": "jv", "remark": null, "children": []}, {"id": 10085, "name": "西安希玻智联科技有限公司", "ratio": "7%", "type": "jv", "remark": null, "children": []}, {"id": 10086, "name": "硅基记忆（深圳）科技有限公司", "ratio": "3.9902%", "type": "jv", "remark": null, "children": []}, {"id": 10087, "name": "深圳可立点科技有限公司", "ratio": "12.9448%", "type": "jv", "remark": null, "children": []}, {"id": 10088, "name": "广东固镁科技有限公司", "ratio": "5.4001%", "type": "jv", "remark": null, "children": []}, {"id": 10089, "name": "深圳视尔视觉科技有限公司", "ratio": "7%", "type": "jv", "remark": null, "children": []}, {"id": 10090, "name": "深圳市航达空天技术有限公司", "ratio": "6.9994%", "type": "jv", "remark": null, "children": []}], "cap": "42000万人民币"}, {"id": 208, "name": "清华力合创业投资国际有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 10061, "name": "Nirmidas", "ratio": "23.2%", "type": "jv", "remark": null, "children": []}]}, {"id": 209, "name": "深圳力合世通投资有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 210, "name": "深圳力合世通投资有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 211, "name": "力合世通（香港）有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 212, "name": "力合锐思创业投资（深圳）有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "1000万人民币"}], "cap": "1000万人民币"}, {"id": 213, "name": "深圳力合科技服务有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 214, "name": "深圳力合科技服务有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 215, "name": "南京力合长江创新中心有限公司", "lvl": 6, "ratio": "66.67%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "南京软件园科技发展有限公司 33.3333%", "cap": "1500万人民币"}, {"id": 216, "name": "深圳市力合产业研究有限公司", "lvl": 6, "ratio": "60%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "深圳市华创智研咨询有限公司 40%", "cap": "500万人民币"}, {"id": 217, "name": "深圳力合求是产业运营有限公司", "lvl": 6, "ratio": "51%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 218, "name": "深圳力合求是产业运营有限公司本部", "lvl": 7, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 219, "name": "深圳力合求是产业运营有限公司杭州分公司", "lvl": 7, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}], "others": "广州北清求是科技产业营运有限公司 49%", "cap": "1000万人民币"}, {"id": 220, "name": "深圳力合清创创业投资有限公司", "lvl": 6, "ratio": "51%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "深圳市力合创业投资有限公司 49%（体系内）", "cap": "1000万人民币"}], "cap": "10000万人民币"}, {"id": 221, "name": "深圳力合创新发展有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 222, "name": "深圳力合创新发展有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 223, "name": "力合创赢（深圳）发展有限公司", "lvl": 6, "ratio": "55%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "深圳前海清大创赢投资发展有限公司 45%", "cap": "1000万人民币"}, {"id": 224, "name": "力合中城创新发展（深圳）有限公司", "lvl": 6, "ratio": "51%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "中城新产业控股集团有限公司 49%", "cap": "5800万人民币"}, {"id": 225, "name": "优科数码科技（惠州）有限公司", "lvl": 6, "ratio": "51%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "刘军 49%", "cap": "5268.218434万人民币"}, {"id": 226, "name": "惠州力合云谷投资开发有限公司", "lvl": 6, "ratio": "70%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "深圳云谷智慧科技企业（有限合伙） 30%", "cap": "12000万人民币"}, {"id": 227, "name": "力合智城（深圳）发展有限公司", "lvl": 6, "ratio": "55%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "深圳市富景利科创有限公司 45%", "cap": "5000万人民币"}, {"id": 228, "name": "江苏力合智能制造产业园发展有限公司", "lvl": 6, "ratio": "50%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "力合中城创新发展（深圳）有限公司 20%（体系内）、江苏力合产融投资发展有限公司 20%、丹阳清拓投资发展有限公司 10%", "cap": "8000万人民币"}, {"id": 229, "name": "珠海清华科技园创业投资有限公司", "lvl": 6, "ratio": "51%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 230, "name": "珠海清华科技园创业投资有限公司本部", "lvl": 7, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 231, "name": "珠海力合高新创业投资有限公司", "lvl": 7, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "5000万人民币"}, {"id": 10045, "name": "珠海华冠电容器股份有限公司", "ratio": "20%", "type": "jv", "remark": null, "children": []}, {"id": 10046, "name": "珠海华冠科技股份有限公司", "ratio": "11.7944%", "type": "jv", "remark": null, "children": []}, {"id": 10047, "name": "珠海力合华清创业投资有限公司", "ratio": "12.5%", "type": "jv", "remark": null, "children": []}, {"id": 10048, "name": "珠海科瀚投资管理有限公司", "ratio": "26%", "type": "jv", "remark": null, "children": []}, {"id": 10049, "name": "珠海立潮新媒体科技有限公司", "ratio": "10%", "type": "jv", "remark": null, "children": []}, {"id": 10050, "name": "珠海隆华直升机科技有限公司", "ratio": "6%", "type": "jv", "remark": null, "children": []}, {"id": 10051, "name": "珠海市司迈科技有限公司", "ratio": "14.99%", "type": "jv", "remark": null, "children": []}], "others": "珠海华金资本股份有限公司 49%", "cap": "16600万人民币"}, {"id": 10043, "name": "江苏数字信息产业园发展有限公司", "ratio": "45%", "type": "jv", "remark": null, "children": []}, {"id": 10044, "name": "深圳市斯维尔科技股份有限公司", "ratio": "10.67%", "type": "jv", "remark": null, "children": []}], "cap": "28000万人民币"}, {"id": 232, "name": "广东力合双清科技创新有限公司", "lvl": 5, "ratio": "86.3058%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 233, "name": "广东力合双清科技创新有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 234, "name": "广东力合双清科技服务有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "1000万人民币"}], "others": "深圳力合创新发展有限公司 5.8482%（体系内）、广东清大创业投资有限公司 3.923%、东莞市合衡菁英咨询合伙企业（有限合伙） 3.923%", "cap": "11586.7026万人民币"}, {"id": 235, "name": "佛山力合创新中心有限公司", "lvl": 5, "ratio": "53.54%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 236, "name": "佛山力合创新中心有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 237, "name": "佛山力合创业投资有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "5000万人民币"}], "others": "广东南海高新技术产业投资控股有限公司 46.46%", "cap": "22860.91万人民币"}, {"id": 238, "name": "佛山南海国凯投资有限公司", "lvl": 5, "ratio": "13.22%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 239, "name": "佛山南海国凯投资有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 240, "name": "广东力合创智科技有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 10052, "name": "佛山云嘉创智科技有限公司", "ratio": "25%", "type": "jv", "remark": null, "children": []}], "cap": "1000万人民币"}], "others": "佛山力合创新中心有限公司 48.16%（体系内）、深圳力合数字电视有限公司 24%（体系内）、孙长虹 9.44%、佛山今茂私募股权投资基金管理有限公司 3.68%、广东兴美投资有限公司 1.5%", "cap": "3300万人民币"}, {"id": 241, "name": "广东力合智谷投资有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 10053, "name": "广东顺德力合智德科技园投资有限公司", "ratio": "29.4%", "type": "jv", "remark": null, "children": []}], "cap": "6100万人民币"}, {"id": 242, "name": "湖南力合长株潭创新中心有限公司", "lvl": 5, "ratio": "60%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 243, "name": "湖南力合长株潭创新中心有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 244, "name": "湖南力合创新发展有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "3000万人民币"}, {"id": 245, "name": "湖南力合星空孵化器管理有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "500万人民币"}, {"id": 246, "name": "长兴力沃投资管理中心（有限合伙）", "lvl": 6, "ratio": "58.83%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "深圳力合精选成长创业投资合伙企业（有限合伙） 31.8%、彭燕 9.17%、深圳力合载物创业投资有限公司 0.2%", "cap": "1000万人民币"}, {"id": 10054, "name": "湖南力合智能制造技术升级有限公司", "ratio": "24%", "type": "jv", "remark": null, "children": []}], "others": "湘潭高新集团有限公司 40%", "cap": "10000万人民币"}, {"id": 247, "name": "深圳力合星空投资孵化有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 248, "name": "深圳力合星空投资孵化有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 249, "name": "深圳力合星空文化创意服务有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "已注销", "special": false, "remark": null, "type": "con", "children": [], "cap": "100万人民币"}, {"id": 250, "name": "佛山南海力合星空孵化器管理有限公司", "lvl": 6, "ratio": "60%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 10055, "name": "佛山众维星空科技有限公司", "ratio": "20%", "type": "jv", "remark": null, "children": []}, {"id": 10056, "name": "佛山力合星空创业投资管理有限公司", "ratio": "45%", "type": "jv", "remark": null, "children": []}], "others": "刘峰 35%、佛山市海科知识产权交易有限公司 5%", "cap": "100万人民币"}, {"id": 251, "name": "青岛力合星空创业服务有限公司", "lvl": 6, "ratio": "51%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "浙江菜根信息科技有限公司 29%、青岛建投台东街区商业管理有限公司 10%、青岛千帆创业学院 10%", "cap": "200万人民币"}, {"id": 252, "name": "力合星空创业服务南京有限公司", "lvl": 6, "ratio": "51%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "南京力合长江创新中心有限公司 39%（体系内）、徐凯 10%", "cap": "100万人民币"}, {"id": 253, "name": "成都星空龙图孵化器管理有限公司", "lvl": 6, "ratio": "51%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "91440300326570214M（已责令关闭） 34%、李健 15%", "cap": "100万人民币"}, {"id": 254, "name": "深圳力合英诺孵化器有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "600万人民币"}, {"id": 255, "name": "深圳力合紫荆产业发展有限公司", "lvl": 6, "ratio": "51%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "深圳紫荆科创产业发展有限公司 49%", "cap": "500万人民币"}, {"id": 256, "name": "惠州力合星空创业服务有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "100万人民币"}], "cap": "3000万人民币"}, {"id": 257, "name": "深圳力合物业管理有限公司", "lvl": 5, "ratio": "66.6667%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 258, "name": "深圳力合物业管理有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 259, "name": "深圳力合物业管理有限公司东莞分公司", "lvl": 6, "ratio": "100%", "nature": "分公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 260, "name": "深圳力合物业管理有限公司佛山分公司", "lvl": 6, "ratio": "100%", "nature": "分公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 261, "name": "深圳力合物业管理有限公司惠州分公司", "lvl": 6, "ratio": "100%", "nature": "分公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 262, "name": "深圳力合物业管理有限公司珠海分公司", "lvl": 6, "ratio": "100%", "nature": "分公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 263, "name": "深圳力合物业管理有限公司湘潭分公司", "lvl": 6, "ratio": "100%", "nature": "分公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 264, "name": "深圳力合物业管理有限公司丹阳分公司", "lvl": 6, "ratio": "100%", "nature": "分公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 265, "name": "深圳力合物业管理有限公司广州分公司", "lvl": 6, "ratio": "100%", "nature": "分公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 266, "name": "深圳力合物业管理有限公司南山分公司", "lvl": 6, "ratio": "100%", "nature": "分公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 267, "name": "深圳力合物业管理有限公司苏州分公司", "lvl": 6, "ratio": "100%", "nature": "分公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 268, "name": "南京力合物业管理有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "300万人民币"}, {"id": 269, "name": "深圳润恒机电工程有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "200万人民币"}, {"id": 10057, "name": "深圳市紫园百味餐饮管理策划有限公司", "ratio": "26%", "type": "jv", "remark": null, "children": []}], "others": "珠海市润恒管理咨询有限公司 28.3333%、珠海清华科技园创业投资有限公司 5%（体系内）", "cap": "450万人民币"}, {"id": 270, "name": "惠州力合创新中心有限公司", "lvl": 5, "ratio": "94.23%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "惠州仲恺科技创新服务有限公司 5.7692%", "cap": "5200万人民币"}, {"id": 271, "name": "深圳市力合教育有限公司", "lvl": 5, "ratio": "51%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 272, "name": "深圳市力合教育有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 273, "name": "深圳市力合紫荆产业咨询有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "1000万人民币"}, {"id": 274, "name": "珠海清华科技园教育中心", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "138万人民币"}, {"id": 275, "name": "深圳市力合紫荆培训中心", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "30万人民币"}, {"id": 10058, "name": "佛山市南海区南商培训学院", "ratio": "33%", "type": "jv", "remark": null, "children": []}], "others": "深圳紫荆融智咨询合伙企业（有限合伙） 26%、深圳尚恒发展合伙企业（有限合伙） 23%", "cap": "1000万人民币"}, {"id": 276, "name": "深圳力合报业大数据中心有限公司", "lvl": 5, "ratio": "51%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "深圳报业集团 49%", "cap": "3000万人民币"}, {"id": 277, "name": "重庆力合科技创新中心有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 278, "name": "重庆力合科技创新中心有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 279, "name": "重庆力合私募股权投资基金管理有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "1000万人民币"}, {"id": 280, "name": "重庆力合智创一号创业投资基金合伙企业（有限合伙）", "lvl": 6, "ratio": "22.4098%", "nature": "子公司", "status": "正常", "special": true, "remark": null, "type": "con", "children": [], "others": "北京蓝德时代管理咨询服务中心（有限合伙） 65.6353%、重庆普基基因科技有限公司 11.7206%、重庆力合私募股权投资基金管理有限公司 0.2344%（体系内）", "cap": "4266万人民币"}], "cap": "5000万人民币"}, {"id": 281, "name": "南宁力合科技创新中心有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 282, "name": "南宁力合科技创新中心有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 283, "name": "南宁力合紫荆投资有限公司", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 10059, "name": "南宁力合联创投资基金合伙企业（有限合伙）", "ratio": "10%", "type": "jv", "remark": null, "children": []}], "cap": "1000万人民币"}], "cap": "5000万人民币"}, {"id": 284, "name": "力合科创集团（上海）有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "10000万人民币"}, {"id": 285, "name": "烟台力合国际先进技术创新中心有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "6000万人民币"}, {"id": 286, "name": "力合启东科创服务有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "5000万人民币"}, {"id": 287, "name": "数云科际（深圳）技术有限公司", "lvl": 5, "ratio": "46.4%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 288, "name": "数云科际（深圳）技术有限公司本部", "lvl": 6, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 289, "name": "数云科际（深圳）技术有限公司北京分公司", "lvl": 6, "ratio": "100%", "nature": "分公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}, {"id": 290, "name": "重庆数云科际信息技术有限公司", "lvl": 6, "ratio": "100%", "nature": "分公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": []}], "others": "水木慧信（深圳）科技有限合伙企业（有限合伙） 30.9333%、水木智信（深圳）科技有限合伙企业（有限合伙） 13.6471%、深圳市高新投创业投资有限公司 6.013%、深圳力合泓鑫创业投资合伙企业（有限合伙） 3.0065%", "cap": "3495.6875万人民币"}, {"id": 291, "name": "力合仁恒科创发展（苏州）有限公司", "lvl": 5, "ratio": "60%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "others": "太仓市仁琢置业有限公司 40%", "cap": "1000万人民币"}, {"id": 292, "name": "广州力合科创中心有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "30000万人民币"}, {"id": 293, "name": "深圳市力合光明科技创新创业投资企业（有限合伙）", "lvl": 5, "ratio": "48.5%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [{"id": 10062, "name": "浙江戴圣思医疗科技有限公司", "ratio": "6.9947%", "type": "jv", "remark": null, "children": []}, {"id": 10069, "name": "深圳普太科技有限公司", "ratio": "8.8235%", "type": "jv", "remark": null, "children": []}, {"id": 10074, "name": "深圳市微容电子元器件有限公司", "ratio": "5.6012%", "type": "jv", "remark": null, "children": []}, {"id": 10076, "name": "深圳清创元灵科技有限公司", "ratio": "8.2779%", "type": "jv", "remark": null, "children": []}, {"id": 10077, "name": "深圳市梦三维技术有限公司", "ratio": "13.6612%", "type": "jv", "remark": null, "children": []}, {"id": 10078, "name": "合肥览翌航空科技有限公司", "ratio": "4.3478%", "type": "jv", "remark": null, "children": []}], "others": "深圳市光明区引导基金投资管理有限公司 40%、深圳力合泓鑫创业投资合伙企业（有限合伙） 10.5%、深圳市力合创业投资有限公司 1%（体系内）", "cap": "20000万人民币"}, {"id": 294, "name": "珠海力合光电产业发展有限公司", "lvl": 5, "ratio": "100%", "nature": "子公司", "status": "正常", "special": false, "remark": null, "type": "con", "children": [], "cap": "20000万人民币"}, {"id": 295, "name": "深圳市光明力合科学城种子创业投资基金合伙企业（有限合伙）", "lvl": 5, "ratio": "19%", "nature": "子公司", "status": "正常", "special": true, "remark": "深圳市力合创业投资有限公司和力合科创集团有限公司分别持有该公司1%、19%的股权", "type": "con", "children": [], "others": "深圳市天使投资引导基金有限公司 50%、深圳市光明区引导基金投资管理有限公司 30%、深圳市力合创业投资有限公司 1%（体系内）", "cap": "20000万人民币"}, {"id": 10002, "name": "深圳市斯维尔科技股份有限公司", "ratio": "10.67%", "type": "jv", "remark": null, "children": []}, {"id": 10003, "name": "珠海华冠科技股份有限公司", "ratio": "11.88%", "type": "jv", "remark": null, "children": []}, {"id": 10004, "name": "珠海华金资本股份有限公司", "ratio": "9.16%", "type": "jv", "remark": null, "children": []}, {"id": 10005, "name": "深圳力合孵化器发展有限公司", "ratio": "37.5%", "type": "jv", "remark": null, "children": []}, {"id": 10006, "name": "深圳力合金融控股股份有限公司", "ratio": "30%", "type": "jv", "remark": null, "children": []}, {"id": 10007, "name": "珠海隆华直升机科技有限公司", "ratio": "6%", "type": "jv", "remark": null, "children": []}, {"id": 10008, "name": "佛山峰合精密喷射成形科技有限公司", "ratio": "21.45%", "type": "jv", "remark": null, "children": []}, {"id": 10009, "name": "深圳力合源投资发展有限公司", "ratio": "48%", "type": "jv", "remark": null, "children": []}, {"id": 10010, "name": "珠海力合华金投资管理有限公司", "ratio": "40%", "type": "jv", "remark": null, "children": []}, {"id": 10011, "name": "深圳市汇芯通信技术有限公司", "ratio": "10%", "type": "jv", "remark": null, "children": []}, {"id": 10012, "name": "太仓仁力新科技发展有限公司", "ratio": "40%", "type": "jv", "remark": null, "children": []}, {"id": 10013, "name": "力合资本投资管理有限公司", "ratio": "40%", "type": "jv", "remark": null, "children": []}, {"id": 10014, "name": "深圳市力合微电子股份有限公司", "ratio": "13%", "type": "jv", "remark": null, "children": []}], "cap": "49524.8515万人民币"}, {"id": 296, "name": "湖北省力合长江科技创新供应链投资基金合伙企业（有限合伙）", "lvl": 4, "ratio": "19%", "nature": "子公司", "status": "正常", "special": true, "remark": "股东构成：武汉光谷产业发展基金合伙企业（有限合伙）40%、长江创业投资基金有限公司20%、深圳市力合科创股份有限公司19%、湖北省投资引导基金有限公司19%、湖北长江力合科创有限公司1%、深圳市力合创业投资有限公司1%（力合体系内合计持股21%）", "type": "con", "children": [], "cap": "50000万人民币"}], "cap": "121060.4219万人民币"}];
+
+const COMPANIES_ZG = [{"id": 1, "name": "深圳市通产丽星科技集团有限公司", "level": "二级", "equity": "全资", "category": "战略性新兴产业类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "邓康诚", "position": "法人代表", "termStart": "2024-10-18", "termFiling": "2024-10-18", "status": "现任"}, {"name": "邓康诚", "position": "董事", "termStart": "2024-10-18", "termFiling": "2024-10-18", "status": "现任"}, {"name": "曾德云", "position": "总经理", "termStart": "2025-09-22", "termFiling": "2025-10-31", "status": "现任"}, {"name": "邓康诚", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 2, "name": "力合科创集团有限公司", "level": "二级", "equity": "全资", "category": "业务平台类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "屈东", "position": "法人代表", "termStart": "2025-09-17", "termFiling": "2025-09-17", "status": "现任"}, {"name": "屈东", "position": "执行公司事务的董事", "termStart": "2025-09-17", "termFiling": "2025-09-17", "status": "现任"}, {"name": "屈东", "position": "总经理", "termStart": "2025-09-17", "termFiling": "2025-09-17", "status": "现任"}, {"name": "任伟", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 3, "name": "深圳市力合创业投资有限公司", "level": "三级", "equity": "全资", "category": "业务平台类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "隋建锋", "position": "法人代表", "termStart": "2026-03-13", "termFiling": "2026-03-13", "status": "现任"}, {"name": "隋建锋", "position": "执行公司事务的董事", "termStart": "2026-03-13", "termFiling": "2026-03-13", "status": "现任"}, {"name": "隋建锋", "position": "总经理", "termStart": "2025-07-01", "termFiling": "2026-03-13", "status": "现任"}, {"name": "刘仁辰", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 4, "name": "深圳清研创业投资有限公司", "level": "三级", "equity": "全资", "category": "业务平台类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "隋建锋", "position": "法人代表", "termStart": "2025-11-07", "termFiling": "2025-11-07", "status": "现任"}, {"name": "隋建锋", "position": "执行公司事务的董事", "termStart": "2025-11-07", "termFiling": "2025-11-07", "status": "现任"}, {"name": "隋建锋", "position": "总经理", "termStart": "2025-11-07", "termFiling": "2025-11-07", "status": "现任"}, {"name": "刘仁辰", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 5, "name": "深圳力合创新发展有限公司", "level": "三级", "equity": "全资", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "屈东", "position": "法人代表", "termStart": "2024-12-09", "termFiling": "2024-12-09", "status": "现任"}, {"name": "屈东", "position": "执行公司事务的董事", "termStart": "2024-12-09", "termFiling": "2024-12-09", "status": "现任"}, {"name": "屈东", "position": "总经理", "termStart": "2025-03-07", "termFiling": "2025-03-07", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 6, "name": "深圳力合科技服务有限公司", "level": "三级", "equity": "全资", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "杨姝", "position": "法人代表", "termStart": "2025-11-13", "termFiling": "2025-11-13", "status": "现任"}, {"name": "杨姝", "position": "执行公司事务的董事", "termStart": "2025-11-13", "termFiling": "2025-11-13", "status": "现任"}, {"name": "杨姝", "position": "总经理", "termStart": "2025-11-13", "termFiling": "2025-11-13", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 7, "name": "清华力合创业投资国际有限公司", "level": "三级", "equity": "全资", "category": "业务平台类", "parent": "", "governance": "设董事会、无监事", "changeType": "委派", "directors": [{"name": "贺臻", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "别力子", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "冯杰", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 8, "name": "深圳力合星空投资孵化有限公司", "level": "三级", "equity": "全资", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "杨德智", "position": "法人代表", "termStart": "2025-11-27", "termFiling": "2025-11-27", "status": "现任"}, {"name": "杨德智", "position": "执行公司事务的董事", "termStart": "2025-11-27", "termFiling": "2025-11-27", "status": "现任"}, {"name": "杨德智", "position": "总经理", "termStart": "2025-11-27", "termFiling": "2025-11-27", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 9, "name": "深圳力合世通投资有限公司", "level": "三级", "equity": "全资", "category": "业务平台类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "关平", "position": "法人代表", "termStart": "2025-09-26", "termFiling": "2025-09-26", "status": "现任"}, {"name": "关平", "position": "执行公司事务的董事", "termStart": "2025-09-26", "termFiling": "2025-09-26", "status": "现任"}, {"name": "关平", "position": "总经理", "termStart": "2020-05-22", "termFiling": "2020-05-22", "status": "现任"}, {"name": "贺臻", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 10, "name": "深圳力合数字电视有限公司", "level": "四级", "equity": "全资", "category": "业务平台类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "罗宏健", "position": "法人代表", "termStart": "2025-09-17", "termFiling": "2025-09-17", "status": "现任"}, {"name": "罗宏健", "position": "执行公司事务的董事", "termStart": "2025-09-17", "termFiling": "2025-09-17", "status": "现任"}, {"name": "罗宏健", "position": "总经理", "termStart": "2023-09-22", "termFiling": "2023-09-22", "status": "现任"}, {"name": "罗宏健", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 11, "name": "力合科创（北京）科技创新有限公司", "level": "二级", "equity": "全资", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "隋建锋", "position": "法人代表", "termStart": "2025-06-06", "termFiling": "2025-06-06", "status": "现任"}, {"name": "隋建锋", "position": "执行公司事务的董事", "termStart": "2025-06-06", "termFiling": "2025-06-06", "status": "现任"}, {"name": "杨德智", "position": "总经理", "termStart": "2025-06-06", "termFiling": "2025-06-06", "status": "现任"}, {"name": "刘绍贺", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "徐安毕", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 12, "name": "广州力合科创中心有限公司", "level": "三级", "equity": "全资", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "屈东", "position": "法人代表", "termStart": "2023-10-21", "termFiling": "2023-10-21", "status": "现任"}, {"name": "屈东", "position": "执行公司事务的董事", "termStart": "2023-10-21", "termFiling": "2023-10-21", "status": "现任"}, {"name": "屈东", "position": "总经理", "termStart": "2024-10-24", "termFiling": "2024-10-24", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 13, "name": "佛山力合创新中心有限公司", "level": "三级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、监事会", "changeType": "委派", "directors": [{"name": "屈东", "position": "法人代表", "termStart": "2025-06-05", "termFiling": "2025-06-05", "status": "现任"}, {"name": "屈东", "position": "董事长", "termStart": "2025-06-05", "termFiling": "2025-06-05", "status": "现任"}, {"name": "屈东", "position": "执行公司事务的董事", "termStart": "2025-06-05", "termFiling": "2025-06-05", "status": "现任"}, {"name": "屈东", "position": "董事", "termStart": "2025-06-05", "termFiling": "2025-06-05", "status": "现任"}, {"name": "关平", "position": "董事", "termStart": "2025-06-05", "termFiling": "2025-06-05", "status": "现任"}, {"name": "汪姜维", "position": "董事", "termStart": "2025-06-05", "termFiling": "2025-06-05", "status": "现任"}, {"name": "王旭东", "position": "董事", "termStart": "2025-06-05", "termFiling": "2025-06-05", "status": "现任"}, {"name": "吴汉宁", "position": "董事", "termStart": "2025-06-05", "termFiling": "2025-06-05", "status": "现任"}, {"name": "贺亚荣", "position": "监事", "termStart": "2025-06-05", "termFiling": "2025-06-05", "status": "现任"}, {"name": "麦健文", "position": "监事", "termStart": "2025-06-05", "termFiling": "2025-06-05", "status": "现任"}, {"name": "邹苑", "position": "监事", "termStart": "2025-06-05", "termFiling": "2025-06-05", "status": "现任"}, {"name": "王旭东", "position": "总经理", "termStart": "2025-06-05", "termFiling": "2025-06-05", "status": "现任"}, {"name": "袁洪洋", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 14, "name": "佛山南海国凯投资有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "屈东", "position": "法人代表", "termStart": "2025-09-26", "termFiling": "2025-09-26", "status": "现任"}, {"name": "屈东", "position": "董事长", "termStart": "2025-09-26", "termFiling": "2025-09-26", "status": "现任"}, {"name": "屈东", "position": "执行公司事务的董事", "termStart": "2025-09-26", "termFiling": "2025-09-26", "status": "现任"}, {"name": "屈东", "position": "董事", "termStart": "2025-09-26", "termFiling": "2025-09-26", "status": "现任"}, {"name": "关平", "position": "董事", "termStart": "2025-09-26", "termFiling": "2025-09-26", "status": "现任"}, {"name": "王旭东", "position": "董事", "termStart": "2025-09-26", "termFiling": "2025-09-26", "status": "现任"}, {"name": "王旭东", "position": "总经理", "termStart": "2025-09-26", "termFiling": "2025-09-26", "status": "现任"}, {"name": "袁洪洋", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 15, "name": "惠州力合创新中心有限公司", "level": "三级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "屈东", "position": "法人代表", "termStart": "2024-09-29", "termFiling": "2024-09-29", "status": "现任"}, {"name": "屈东", "position": "董事长", "termStart": "2024-09-29", "termFiling": "2024-09-29", "status": "现任"}, {"name": "屈东", "position": "执行公司事务的董事", "termStart": "2024-09-29", "termFiling": "2024-09-29", "status": "现任"}, {"name": "屈东", "position": "董事", "termStart": "2024-09-29", "termFiling": "2024-09-29", "status": "现任"}, {"name": "梁方健", "position": "董事", "termStart": "2024-09-29", "termFiling": "2024-09-29", "status": "现任"}, {"name": "苗韦", "position": "董事", "termStart": "2024-09-29", "termFiling": "2024-09-29", "status": "现任"}, {"name": "湛成军", "position": "总经理", "termStart": "2024-09-29", "termFiling": "2024-09-29", "status": "现任"}, {"name": "刘峰", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 16, "name": "优科数码科技（惠州）有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、监事会", "changeType": "委派", "directors": [{"name": "屈东", "position": "法人代表", "termStart": "2024-09-20", "termFiling": "2024-09-20", "status": "现任"}, {"name": "刘军", "position": "董事长", "termStart": "2024-09-20", "termFiling": "2024-09-20", "status": "现任"}, {"name": "屈东", "position": "执行公司事务的董事", "termStart": "2024-09-20", "termFiling": "2024-09-20", "status": "现任"}, {"name": "屈东", "position": "董事", "termStart": "2024-09-20", "termFiling": "2024-09-20", "status": "现任"}, {"name": "刘军", "position": "董事", "termStart": "2024-09-20", "termFiling": "2024-09-20", "status": "现任"}, {"name": "雷学舟", "position": "董事", "termStart": "2024-09-20", "termFiling": "2024-09-20", "status": "现任"}, {"name": "湛成军", "position": "董事", "termStart": "2024-09-20", "termFiling": "2024-09-20", "status": "现任"}, {"name": "苗韦", "position": "董事", "termStart": "2024-09-20", "termFiling": "2024-09-20", "status": "现任"}, {"name": "张红", "position": "监事", "termStart": "2024-09-20", "termFiling": "2024-09-20", "status": "现任"}, {"name": "尹桥文", "position": "监事", "termStart": "2024-09-20", "termFiling": "2024-09-20", "status": "现任"}, {"name": "王添", "position": "监事", "termStart": "2024-09-20", "termFiling": "2024-09-20", "status": "现任"}, {"name": "湛成军", "position": "总经理", "termStart": "2024-09-20", "termFiling": "2024-09-20", "status": "现任"}, {"name": "范逢春", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 17, "name": "惠州力合云谷投资开发有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "屈东", "position": "法人代表", "termStart": "2024-09-18", "termFiling": "2024-09-18", "status": "现任"}, {"name": "屈东", "position": "董事长", "termStart": "2024-09-18", "termFiling": "2024-09-18", "status": "现任"}, {"name": "屈东", "position": "执行公司事务的董事", "termStart": "2024-09-18", "termFiling": "2024-09-18", "status": "现任"}, {"name": "屈东", "position": "董事", "termStart": "2024-09-18", "termFiling": "2024-09-18", "status": "现任"}, {"name": "刘石满", "position": "董事", "termStart": "2024-09-18", "termFiling": "2024-09-18", "status": "现任"}, {"name": "苗韦", "position": "董事", "termStart": "2024-09-18", "termFiling": "2024-09-18", "status": "现任"}, {"name": "湛成军", "position": "总经理", "termStart": "2024-09-18", "termFiling": "2024-09-18", "status": "现任"}, {"name": "刘峰", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 18, "name": "广东力合双清科技服务有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "蔡新丰", "position": "法人代表", "termStart": "2025-12-17", "termFiling": "2025-12-17", "status": "现任"}, {"name": "蔡新丰", "position": "执行公司事务的董事", "termStart": "2025-12-17", "termFiling": "2025-12-17", "status": "现任"}, {"name": "蔡新丰", "position": "总经理", "termStart": "2025-12-17", "termFiling": "2025-12-17", "status": "现任"}, {"name": "蔡新丰", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 19, "name": "珠海力合光电产业发展有限公司", "level": "三级", "equity": "全资", "category": "科技创新服务类", "parent": "力合科创集团有限公司", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "屈东", "position": "法人代表", "termStart": "2024-09-03", "termFiling": "2024-09-03", "status": "现任"}, {"name": "屈东", "position": "执行公司事务的董事", "termStart": "2024-09-03", "termFiling": "2024-09-03", "status": "现任"}, {"name": "伍文学", "position": "总经理", "termStart": "2024-09-03", "termFiling": "2024-09-03", "status": "现任"}, {"name": "吕思煜", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 20, "name": "珠海清华科技园创业投资有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "深圳力合创新发展有限公司", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "屈东", "position": "法人代表", "termStart": "2025-09-01", "termFiling": "2025-09-01", "status": "现任"}, {"name": "屈东", "position": "董事长", "termStart": "2025-09-01", "termFiling": "2025-09-01", "status": "现任"}, {"name": "屈东", "position": "董事", "termStart": "2025-09-01", "termFiling": "2025-09-01", "status": "现任"}, {"name": "谢耘", "position": "董事", "termStart": "2025-09-01", "termFiling": "2025-09-01", "status": "现任"}, {"name": "杨理安", "position": "董事", "termStart": "2025-09-01", "termFiling": "2025-09-01", "status": "现任"}, {"name": "许菁麟", "position": "董事", "termStart": "2025-09-01", "termFiling": "2025-09-01", "status": "现任"}, {"name": "伍文学", "position": "董事", "termStart": "2025-09-01", "termFiling": "2025-09-01", "status": "现任"}, {"name": "伍文学", "position": "总经理", "termStart": "2024-11-26", "termFiling": "2024-11-26", "status": "现任"}, {"name": "吕思煜", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 21, "name": "湖南力合长株潭创新中心有限公司", "level": "三级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "屈东", "position": "法人代表", "termStart": "2024-09-26", "termFiling": "2024-09-26", "status": "现任"}, {"name": "屈东", "position": "董事长", "termStart": "2024-09-26", "termFiling": "2024-09-26", "status": "现任"}, {"name": "屈东", "position": "董事", "termStart": "2024-09-26", "termFiling": "2024-09-26", "status": "现任"}, {"name": "罗宏健", "position": "董事", "termStart": "2024-09-26", "termFiling": "2024-09-26", "status": "现任"}, {"name": "王涛", "position": "董事", "termStart": "2024-09-26", "termFiling": "2024-09-26", "status": "现任"}, {"name": "赵熙微", "position": "董事", "termStart": "2024-09-26", "termFiling": "2024-09-26", "status": "现任"}, {"name": "蔡胜彬", "position": "董事", "termStart": "2024-09-26", "termFiling": "2024-09-26", "status": "现任"}, {"name": "王涛", "position": "总经理", "termStart": "2024-08-24", "termFiling": "2024-08-24", "status": "现任"}, {"name": "伍海燕", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 22, "name": "湖南力合创新发展有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "王涛", "position": "法人代表", "termStart": "2024-10-30", "termFiling": "2024-10-30", "status": "现任"}, {"name": "王涛", "position": "执行公司事务的董事", "termStart": "2024-10-30", "termFiling": "2024-10-30", "status": "现任"}, {"name": "王涛", "position": "总经理", "termStart": "2024-10-30", "termFiling": "2024-10-30", "status": "现任"}, {"name": "伍海燕", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 23, "name": "江苏力合智能制造产业园发展有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "屈东", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "李文聪", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "张健", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "马洪波", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "郭富彬", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "张健", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 24, "name": "力合仁恒科创发展（苏州）有限公司", "level": "三级", "equity": "控股", "category": "科技创新服务类", "parent": "力合科创集团有限公司", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "杨姝", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "章浩宁", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "罗宏健", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "包升杰", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "平士林", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "包升杰", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "朱智慧", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 25, "name": "力合启东科创服务有限公司", "level": "三级", "equity": "全资", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "杨姝", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "胡建波", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 26, "name": "南京力合长江创新中心有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "深圳力合科技服务有限公司", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "邓宁峰", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "邓宁峰", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "邢天", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "关平", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "李庆钊", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "邓宁峰", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 27, "name": "重庆力合科技创新中心有限公司", "level": "三级", "equity": "全资", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "杨姝", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "李淋", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 28, "name": "南宁力合科技创新中心有限公司", "level": "三级", "equity": "全资", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "阮晓波", "position": "法人代表", "termStart": "2024-11-05", "termFiling": "2024-11-05", "status": "现任"}, {"name": "阮晓波", "position": "执行公司事务的董事", "termStart": "2024-11-05", "termFiling": "2024-11-05", "status": "现任"}, {"name": "阮晓波", "position": "总经理", "termStart": "2024-11-05", "termFiling": "2024-11-05", "status": "现任"}, {"name": "刘绍贺", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 29, "name": "湖北长江力合科创有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "杨姝", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "陈宇", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "郑健力", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "郑健力", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨理安", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 30, "name": "力合科创集团（上海）有限公司", "level": "三级", "equity": "全资", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "包升杰", "position": "法人代表", "termStart": "2025-06-10", "termFiling": "2025-06-10", "status": "现任"}, {"name": "包升杰", "position": "执行公司事务的董事", "termStart": "2025-06-10", "termFiling": "2025-06-10", "status": "现任"}, {"name": "刘绍贺", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 31, "name": "烟台力合国际先进技术创新中心有限公司", "level": "三级", "equity": "全资", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "杨德智", "position": "法人代表", "termStart": "2023-09-13", "termFiling": "2023-09-13", "status": "现任"}, {"name": "杨德智", "position": "执行公司事务的董事", "termStart": "2023-09-13", "termFiling": "2023-09-13", "status": "现任"}, {"name": "杨德智", "position": "总经理", "termStart": "2023-09-13", "termFiling": "2023-09-13", "status": "现任"}, {"name": "徐安毕", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 32, "name": "深圳力合紫荆产业发展有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "罗宏健", "position": "法人代表", "termStart": "2024-03-13", "termFiling": "2024-03-13", "status": "现任"}, {"name": "罗宏健", "position": "董事长", "termStart": "2024-03-13", "termFiling": "2024-03-13", "status": "现任"}, {"name": "罗宏健", "position": "董事", "termStart": "2024-03-13", "termFiling": "2024-03-13", "status": "现任"}, {"name": "蔡建明", "position": "董事", "termStart": "2024-03-13", "termFiling": "2024-03-13", "status": "现任"}, {"name": "钟团娟", "position": "董事", "termStart": "2024-03-13", "termFiling": "2024-03-13", "status": "现任"}, {"name": "钟团娟", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "罗宏健", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 33, "name": "佛山南海力合星空孵化器管理有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "杨姝", "position": "法人代表", "termStart": "2025-10-15", "termFiling": "2025-10-15", "status": "现任"}, {"name": "杨姝", "position": "董事长", "termStart": "2025-10-15", "termFiling": "2025-10-15", "status": "现任"}, {"name": "杨姝", "position": "执行公司事务的董事", "termStart": "2025-10-15", "termFiling": "2025-10-15", "status": "现任"}, {"name": "杨姝", "position": "董事", "termStart": "2025-10-15", "termFiling": "2025-10-15", "status": "现任"}, {"name": "杨理安", "position": "董事", "termStart": "2025-10-15", "termFiling": "2025-10-15", "status": "现任"}, {"name": "刘峰", "position": "董事", "termStart": "2025-10-15", "termFiling": "2025-10-15", "status": "现任"}, {"name": "刘峰", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 34, "name": "深圳力合求是产业运营有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "隋建锋", "position": "法人代表", "termStart": "2024-10-24", "termFiling": "2024-10-24", "status": "现任"}, {"name": "隋建锋", "position": "董事长", "termStart": "2024-10-24", "termFiling": "2024-10-24", "status": "现任"}, {"name": "隋建锋", "position": "董事", "termStart": "2024-10-24", "termFiling": "2024-10-24", "status": "现任"}, {"name": "王添", "position": "董事", "termStart": "2024-10-24", "termFiling": "2024-10-24", "status": "现任"}, {"name": "许江建", "position": "董事", "termStart": "2024-10-24", "termFiling": "2024-10-24", "status": "现任"}, {"name": "许江建", "position": "总经理", "termStart": "2024-10-24", "termFiling": "2024-10-24", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 35, "name": "深圳市力合产业研究有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "隋建锋", "position": "法人代表", "termStart": "1970-01-01", "termFiling": "1970-01-01", "status": "现任"}, {"name": "隋建锋", "position": "董事长", "termStart": "1970-01-01", "termFiling": "1970-01-01", "status": "现任"}, {"name": "隋建锋", "position": "董事", "termStart": "1970-01-01", "termFiling": "1970-01-01", "status": "现任"}, {"name": "刘战国", "position": "董事", "termStart": "1970-01-01", "termFiling": "1970-01-01", "status": "现任"}, {"name": "关平", "position": "董事", "termStart": "1970-01-01", "termFiling": "1970-01-01", "status": "现任"}, {"name": "刘战国", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "徐安毕", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 36, "name": "力合智城（深圳）发展有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "戴谨慎", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "戴谨慎", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "戴谨慎", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "李文聪", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "罗宏健", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "戴谨慎", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 37, "name": "力合创赢（深圳）发展有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "戴谨慎", "position": "法人代表", "termStart": "2025-08-20", "termFiling": "2025-08-20", "status": "现任"}, {"name": "戴谨慎", "position": "董事长", "termStart": "2025-08-20", "termFiling": "2025-08-20", "status": "现任"}, {"name": "戴谨慎", "position": "董事", "termStart": "2025-08-20", "termFiling": "2025-08-20", "status": "现任"}, {"name": "李文聪", "position": "董事", "termStart": "2025-08-20", "termFiling": "2025-08-20", "status": "现任"}, {"name": "周霞", "position": "董事", "termStart": "2025-08-20", "termFiling": "2025-08-20", "status": "现任"}, {"name": "戴谨慎", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 38, "name": "力合中城创新发展（深圳）有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "李文聪", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "李文聪", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "李文聪", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "刘爱明", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "焦冀", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "孙鑫", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 39, "name": "深圳力合物业管理有限公司", "level": "三级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "战荫光", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "战荫光", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "陈东海", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "徐安毕", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 40, "name": "广东力合智谷投资有限公司", "level": "三级", "equity": "全资", "category": "业务平台类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "罗宏健", "position": "法人代表", "termStart": "2025-08-06", "termFiling": "2025-08-06", "status": "现任"}, {"name": "罗宏健", "position": "执行公司事务的董事", "termStart": "2025-08-06", "termFiling": "2025-08-06", "status": "现任"}, {"name": "罗宏健", "position": "总经理", "termStart": "2025-08-06", "termFiling": "2025-08-06", "status": "现任"}, {"name": "黄琴", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "贺臻", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 41, "name": "深圳市力合教育有限公司", "level": "三级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "隋建锋", "position": "法人代表", "termStart": "2024-11-25", "termFiling": "2024-11-25", "status": "现任"}, {"name": "隋建锋", "position": "董事长", "termStart": "2024-11-25", "termFiling": "2024-11-25", "status": "现任"}, {"name": "隋建锋", "position": "董事", "termStart": "2024-11-25", "termFiling": "2024-11-25", "status": "现任"}, {"name": "符蓉", "position": "董事", "termStart": "2024-11-25", "termFiling": "2024-11-25", "status": "现任"}, {"name": "关平", "position": "董事", "termStart": "2024-11-25", "termFiling": "2024-11-25", "status": "现任"}, {"name": "安家伟", "position": "董事", "termStart": "2024-11-25", "termFiling": "2024-11-25", "status": "现任"}, {"name": "童星桦", "position": "董事", "termStart": "2024-11-25", "termFiling": "2024-11-25", "status": "现任"}, {"name": "符蓉", "position": "总经理", "termStart": "2021-01-12", "termFiling": "2021-01-12", "status": "现任"}, {"name": "徐安毕", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 42, "name": "数云科际（深圳）技术有限公司", "level": "三级", "equity": "控股", "category": "战略性新兴产业类", "parent": "", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "屈东", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "汪姜维", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "潘伟源", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "宋岩", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "顾明", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "宋岩", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 43, "name": "深圳力合报业大数据中心有限公司", "level": "三级", "equity": "控股", "category": "战略性新兴产业类", "parent": "", "governance": "设董事会、监事会", "changeType": "委派", "directors": [{"name": "罗宏健", "position": "法人代表", "termStart": "2023-10-31", "termFiling": "2023-10-31", "status": "现任"}, {"name": "罗宏健", "position": "董事长", "termStart": "2023-10-31", "termFiling": "2023-10-31", "status": "现任"}, {"name": "罗宏健", "position": "董事", "termStart": "2023-10-31", "termFiling": "2023-10-31", "status": "现任"}, {"name": "杨杉", "position": "董事", "termStart": "2023-10-31", "termFiling": "2023-10-31", "status": "现任"}, {"name": "詹术雄", "position": "董事", "termStart": "2023-10-31", "termFiling": "2023-10-31", "status": "现任"}, {"name": "张永涛", "position": "董事", "termStart": "2023-10-31", "termFiling": "2023-10-31", "status": "现任"}, {"name": "贺亚荣", "position": "董事", "termStart": "2023-10-31", "termFiling": "2023-10-31", "status": "现任"}, {"name": "张永涛", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "罗宏健", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 44, "name": "深圳市力合云记新材料有限公司", "level": "四级", "equity": "控股", "category": "战略性新兴产业类", "parent": "", "governance": "设董事会、监事", "changeType": "委派", "directors": [{"name": "关平", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "关平", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "关平", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "秦文娜", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "曾德云", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "张首沫", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "赵祖珍", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨永超", "position": "监事", "termStart": "2024-04-23", "termFiling": "2024-04-23", "status": "现任"}, {"name": "张雯雯", "position": "监事", "termStart": "2024-04-23", "termFiling": "2024-04-23", "status": "现任"}, {"name": "曾德云", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "罗宏健", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 45, "name": "深圳力合信息技术有限公司", "level": "四级", "equity": "控股", "category": "战略性新兴产业类", "parent": "", "governance": "设董事会、不设监事", "changeType": "委派", "directors": [{"name": "罗宏健", "position": "法人代表", "termStart": "2019-08-28", "termFiling": "2019-08-28", "status": "现任"}, {"name": "罗宏健", "position": "董事长", "termStart": "2019-08-28", "termFiling": "2019-08-28", "status": "现任"}, {"name": "罗宏健", "position": "董事", "termStart": "2019-08-28", "termFiling": "2019-08-28", "status": "现任"}, {"name": "张超", "position": "董事", "termStart": "2019-08-28", "termFiling": "2019-08-28", "status": "现任"}, {"name": "蔡建明", "position": "董事", "termStart": "2019-08-28", "termFiling": "2019-08-28", "status": "现任"}, {"name": "张超", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}]}];
+
+const COMPANIES_FZG = [{"id": 1, "name": "深圳力合数字电视技术有限公司", "level": "五级", "equity": "全资", "category": "战略性新兴产业类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "推荐", "directors": [{"name": "罗宏健", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "罗宏健", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "罗宏健", "position": "总经理", "termStart": "2025-09-22", "termFiling": "2025-09-22", "status": "现任"}, {"name": "罗宏健", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 2, "name": "深圳力合清创创业投资有限公司", "level": "四级", "equity": "全资", "category": "科技创新服务类", "parent": "", "governance": "设董事会、不设监事", "changeType": "推荐", "directors": [{"name": "曾德云", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "贺臻", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "贺臻", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "曾德云", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "冯杰", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "马岚", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "武晓峰", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "曾德云", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "贺臻", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 3, "name": "深圳市力合科创基金管理有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、监事", "changeType": "推荐", "directors": [{"name": "汪姜维", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "汪姜维", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "汪姜维", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "康绳祖", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "许东", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王华春", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "冯杰", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "汪姜维", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "贺臻", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 4, "name": "力合锐思创业投资（合肥）有限公司", "level": "四级", "equity": "全资", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "推荐", "directors": [{"name": "汪姜维", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "汪姜维", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "汪姜维", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "刘绍贺", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "汪姜维", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 5, "name": "佛山力合创业投资有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、无监事", "changeType": "推荐", "directors": [{"name": "屈东", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "吴汉宁", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "汪姜维", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王旭东", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "关平", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王旭东", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "袁洪洋", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 6, "name": "深圳力合英诺孵化器有限公司", "level": "四级", "equity": "全资", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "推荐", "directors": [{"name": "杨德智", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨德智", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨德智", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 7, "name": "青岛力合星空创业服务有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "不设董事会，设执行董事、监事", "changeType": "推荐", "directors": [{"name": "别力子", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "别力子", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "于胜强", "position": "监事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "常晓磊", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 8, "name": "成都星空龙图孵化器管理有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "推荐", "directors": [{"name": "王晹", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "常晓磊", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "常晓磊", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "别力子", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王晹", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "李健", "position": "监事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王晹", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 9, "name": "重庆力合私募股权投资基金管理有限公司", "level": "四级", "equity": "全资", "category": "科技创新服务类", "parent": "", "governance": "无董事会，设执行董事、监事", "changeType": "推荐", "directors": [{"name": "李淋", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "李淋", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "李淋", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 10, "name": "深圳力合视达科技有限公司", "level": "五级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、监事", "changeType": "推荐", "directors": [{"name": "胡曾千", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "胡曾千", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "胡曾千", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "罗宏健", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王振宇", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "张东宝", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "吴春燕", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "臧湘琦", "position": "监事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "胡曾千", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "罗宏健", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 11, "name": "深圳市力合紫荆产业咨询有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "推荐", "directors": [{"name": "符蓉", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "符蓉", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "符蓉", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "贺臻", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 12, "name": "力合星空创业服务南京有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "深圳力合星空投资孵化有限公司\n（力合科创集团有限公司全资）", "governance": "不设董事会、监事，设董事", "changeType": "推荐", "directors": [{"name": "邓宁峰", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "邓宁峰", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "邓宁峰", "position": "总经理", "termStart": "2025-10-20", "termFiling": "2025-10-20", "status": "现任"}]}, {"id": 13, "name": "湖南力合星空孵化器管理有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "推荐", "directors": [{"name": "王涛", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王涛", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王涛", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "伍海燕", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 14, "name": "湖南力合创业投资有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "无董事会、监事，设董事", "changeType": "推荐", "directors": [{"name": "王涛", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王涛", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王涛", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 15, "name": "惠州力合星空创业服务有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、不设监事", "changeType": "推荐", "directors": [{"name": "湛成军", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "湛成军", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "湛成军", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "湛成军", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "海丹", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "苗伟", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "湛成军", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "刘峰", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 16, "name": "广东力合创智科技有限公司", "level": "五级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "推荐", "directors": [{"name": "王旭东", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王旭东", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王旭东", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "袁洪洋", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 17, "name": "南京力合物业管理有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "推荐", "directors": [{"name": "肖清华", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "肖清华", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "徐安毕", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 18, "name": "深圳润恒机电工程有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "推荐", "directors": [{"name": "别逢英", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "别逢英", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "别逢英", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 20, "name": "南宁力合紫荆投资有限公司", "level": "四级", "equity": "全资", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "推荐", "directors": [{"name": "阮晓波", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "阮晓波", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "阮晓波", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "刘绍贺", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 21, "name": "无锡力合智通信息技术有限公司", "level": "五级", "equity": "控股", "category": "战略性新兴产业类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "推荐", "directors": [{"name": "张超", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "张超", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王亚锋", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "罗宏健", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 22, "name": "珠海力合高新创业投资有限公司", "level": "五级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "屈东", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "伍文学", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 23, "name": "珠海清华科技园教育中心", "level": "四级", "equity": "控股", "category": "业务平台类", "parent": "", "governance": "无", "changeType": "推荐", "directors": [{"name": "符蓉", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "屈东", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 24, "name": "深圳市力合紫荆培训中心", "level": "四级", "equity": "控股", "category": "业务平台类", "parent": "", "governance": "无", "changeType": "其他", "directors": [{"name": "符蓉", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 25, "name": "重庆数云科际信息技术有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "推荐", "directors": [{"name": "李博", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "李博", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 26, "name": "深圳力合星空文化创意服务有限公司", "level": "四级", "equity": "全资", "category": "科技创新服务类", "parent": "", "governance": "不设董事会、监事，设董事", "changeType": "委派", "directors": [{"name": "杨姝", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "李凌云", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 27, "name": "东莞纽卡新材料科技有限公司", "level": "四级", "equity": "控股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、监事", "changeType": "委派", "directors": [{"name": "刘仁辰", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "刘仁辰", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "刘仁辰", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "贺臻", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "刘岩", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "吴韬", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "肖斌等", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "林发宏", "position": "监事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "吴韬", "position": "监事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "吴韬", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 28, "name": "深圳市清研兰亭科技有限公司", "level": "", "equity": "参股", "category": "科技创新服务类", "parent": "", "governance": "设董事会、监事", "changeType": "委派", "directors": [{"name": "杨姝", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "韩天雷", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王晖", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "崔维福", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "陈娟", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "程伯群", "position": "监事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王晖", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 29, "name": "北京清研兰亭科技有限公司", "level": "", "equity": "参股", "category": "科技创新服务类", "parent": "", "governance": "无董事会，设执行董事、监事", "changeType": "推荐", "directors": [{"name": "王晖", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王晖", "position": "执行公司事务的董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "韩天雷", "position": "监事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王晖", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "刘花蕾", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨姝", "position": "分管领导", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 30, "name": "华清农业开发有限公司", "level": "", "equity": "参股", "category": "", "parent": "", "governance": "设董事会、监事会", "changeType": "推荐", "directors": [{"name": "贺臻", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "贺臻", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "刘嘉", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "刘刚", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "杨云松", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "薛海龙", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "朱朝阳", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "汪姜维", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "严叔刚", "position": "监事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王蓓贝", "position": "监事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "李彦", "position": "监事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "刘嘉", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "唐成碧", "position": "财务负责人", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 31, "name": "深圳清研投资控股有限公司", "level": "", "equity": "参股", "category": "", "parent": "", "governance": "设董事会、不设监事", "changeType": "推荐", "directors": [{"name": "任仲泉", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "任仲泉", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "任仲泉", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "刘仁辰", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "郑为中", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "胡李焓", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "李小雄", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "郑为中", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 32, "name": "深圳力合新能源创业投资基金有限公司", "level": "", "equity": "参股", "category": "", "parent": "", "governance": "设董事会、监事会", "changeType": "推荐", "directors": [{"name": "冯杰", "position": "法人代表", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "冯杰", "position": "董事长", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "冯杰", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "申少军", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "严叔刚", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "贺臻", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "李向龙", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "许东", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "钟懋金", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "郭仙", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "赵威", "position": "董事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "赵威", "position": "监事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "李凌云", "position": "监事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "王必旺", "position": "监事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "赵亮", "position": "监事", "termStart": "", "termFiling": "", "status": "现任"}, {"name": "严叔刚", "position": "总经理", "termStart": "", "termFiling": "", "status": "现任"}]}, {"id": 33, "name": "力合世通（香港）有限公司", "level": "四级", "equity": "全资", "category": "", "parent": "", "governance": "", "changeType": "", "directors": []}, {"id": 34, "name": "深圳力合华石科技投资合伙企业（有限合伙）", "level": "四级", "equity": "控股", "category": "", "parent": "", "governance": "", "changeType": "", "directors": []}, {"id": 35, "name": "Carits,Inc.", "level": "四级", "equity": "全资", "category": "", "parent": "", "governance": "", "changeType": "", "directors": []}, {"id": 36, "name": "深圳市力合天使创业投资合伙企业（有限合伙）", "level": "四级", "equity": "控股", "category": "", "parent": "", "governance": "", "changeType": "", "directors": []}, {"id": 37, "name": "长兴力沃投资管理中心（有限合伙）", "level": "四级", "equity": "控股", "category": "", "parent": "", "governance": "", "changeType": "", "directors": []}, {"id": 38, "name": "深圳市力合光明科技创新创业投资企业（有限合伙）", "level": "三级", "equity": "控股", "category": "", "parent": "", "governance": "", "changeType": "", "directors": []}];
+
+// ==================== 状态管理 ====================
+let currentCat = 'zg';
+let currentCompany = null;
+let currentTab = 'current';
+let selectedCompanyId = null;
+let treeExpanded = new Set();
+let dropdownOpen = false;
+
+// ==================== 初始化 ====================
+function init() {
+  renderLayout('董监高管理', 'dgj');
+  renderOptions();
+  document.addEventListener('click', function(e) {
+    const wrapper = document.querySelector('.dgj-select-wrap');
+    if (wrapper && !wrapper.contains(e.target)) closeDropdown();
+  });
+}
+
+// ==================== 分类切换 ====================
+function switchCategory(cat) {
+  currentCat = cat;
+  currentCompany = null;
+  selectedCompanyId = null;
+  document.getElementById('companySelect').value = '';
+  document.getElementById('infoCard').style.display = 'none';
+  document.querySelectorAll('.dgj-cat-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === cat));
+  renderOptions();
+  renderTable();
+}
+
+function getCompanies() {
+  return currentCat === 'zg' ? COMPANIES_ZG : COMPANIES_FZG;
+}
+
+// ==================== 下拉选择器 ====================
+function toggleDropdown() {
+  dropdownOpen = !dropdownOpen;
+  document.getElementById('selectDropdown').classList.toggle('show', dropdownOpen);
+  if (dropdownOpen) {
+    document.getElementById('searchInput').value = '';
+    filterOptions();
+    setTimeout(() => document.getElementById('searchInput').focus(), 50);
+  }
+}
+
+function closeDropdown() {
+  dropdownOpen = false;
+  document.getElementById('selectDropdown').classList.remove('show');
+}
+
+function renderOptions(filter) {
+  const companies = getCompanies();
+  const list = document.getElementById('optionsList');
+  const filtered = filter ? companies.filter(c => c.name.includes(filter)) : companies;
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="dgj-select-empty">未找到匹配企业</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(c => {
+    const selected = c.id === selectedCompanyId ? 'selected' : '';
+    return '<div class="dgj-select-option ' + selected + '" onclick="selectCompany(' + c.id + ')">' +
+      '<span>' + escapeHtml(c.name) + '</span>' +
+      '<span class="opt-tag">' + c.level + ' · ' + c.equity + '</span>' +
+    '</div>';
+  }).join('');
+}
+
+function filterOptions() {
+  renderOptions(document.getElementById('searchInput').value.trim());
+}
+
+function selectCompany(id) {
+  const companies = getCompanies();
+  const company = companies.find(c => c.id === id);
+  if (!company) return;
+  selectedCompanyId = id;
+  currentCompany = company;
+  document.getElementById('companySelect').value = company.name;
+  closeDropdown();
+  document.getElementById('infoName').textContent = company.name;
+  document.getElementById('infoGov').textContent = company.governance || '--';
+  const tagsHtml = [
+    '<span class="dgj-info-tag">' + company.level + '</span>',
+    '<span class="dgj-info-tag">' + company.equity + '</span>',
+    company.category ? '<span class="dgj-info-tag secondary">' + company.category + '</span>' : '',
+    company.changeType ? '<span class="dgj-info-tag secondary">' + company.changeType + '</span>' : ''
+  ].filter(Boolean).join('');
+  document.getElementById('infoTags').innerHTML = tagsHtml;
+  document.getElementById('infoCard').style.display = 'flex';
+  renderTable();
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// ==================== Tab切换 ====================
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.dgj-tab').forEach(t => {
+    const isCurrent = (tab === 'current' && t.textContent.includes('现任')) ||
+                      (tab === 'former' && t.textContent.includes('历任'));
+    t.classList.toggle('active', isCurrent);
+  });
+  renderTable();
+}
+
+// ==================== 表格渲染 ====================
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  if (!currentCompany) {
+    tbody.innerHTML = '<tr class="dgj-tr-empty"><td colspan="6">请选择企业以查看董监高信息</td></tr>';
+    return;
+  }
+  let directors = currentCompany.directors || [];
+  if (currentTab === 'current') {
+    directors = directors.filter(d => d.status === '现任');
+  } else {
+    tbody.innerHTML = '<tr class="dgj-tr-empty"><td colspan="6">历任数据后续补录</td></tr>';
+    return;
+  }
+  if (directors.length === 0) {
+    tbody.innerHTML = '<tr class="dgj-tr-empty"><td colspan="6">暂无现任董监高记录</td></tr>';
+    return;
+  }
+  const posOrder = {'法人代表':1,'董事长':2,'执行公司事务的董事':3,'董事':4,'监事':5,'总经理':6,'财务负责人':7,'分管领导':8};
+  directors.sort((a,b) => (posOrder[a.position]||99) - (posOrder[b.position]||99));
+  const posClassMap = {
+    '法人代表':'legal','董事长':'chair','执行公司事务的董事':'exec','董事':'director',
+    '监事':'supervisor','总经理':'gm','财务负责人':'cfo','分管领导':'leader'
+  };
+  tbody.innerHTML = directors.map((d, i) => {
+    const cls = posClassMap[d.position] || '';
+    return '<tr>' +
+      '<td>' + (i+1) + '</td>' +
+      '<td style="font-weight:500;">' + escapeHtml(d.name) + '</td>' +
+      '<td><span class="dgj-pos-tag ' + cls + '">' + d.position + '</span></td>' +
+      '<td>' + (d.termStart || '--') + '</td>' +
+      '<td>' + (d.termFiling || '--') + '</td>' +
+      '<td><span class="dgj-badge dgj-badge-current">● 现任</span></td>' +
+    '</tr>';
+  }).join('');
+}
+
+// ==================== 股权树弹窗 ====================
+function openTreeModal() {
+  document.getElementById('treeModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  const highlightName = currentCompany ? currentCompany.name : null;
+  const el = document.getElementById('modalHighlightName');
+  if (highlightName) {
+    el.textContent = '当前：' + highlightName;
+    el.style.display = 'inline-block';
+  } else {
+    el.style.display = 'none';
+  }
+  treeExpanded = new Set();
+  if (highlightName) expandToNode(TREE_DATA, highlightName);
+  renderTree();
+}
+
+function closeTreeModal(e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById('treeModal').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+function expandToNode(nodes, targetName, path) {
+  path = path || [];
+  for (const node of nodes) {
+    if (node.name === targetName) {
+      path.forEach(id => treeExpanded.add(id));
+      return true;
     }
+    if (node.children && node.children.length > 0) {
+      const found = expandToNode(node.children, targetName, path.concat(node.id));
+      if (found) return true;
+    }
+  }
+  return false;
+}
 
-    init();
-  </script>
+function treeExpandAll(expand) {
+  treeExpanded = new Set();
+  if (expand) {
+    (function walk(ns) {
+      ns.forEach(n => { if (n.children && n.children.length) { treeExpanded.add(n.id); walk(n.children); } });
+    })(TREE_DATA);
+  }
+  renderTree();
+}
+
+function treeExpandTo(level) {
+  treeExpanded = new Set();
+  (function walk(ns, depth) {
+    ns.forEach(n => { if (depth < level && n.children && n.children.length) { treeExpanded.add(n.id); walk(n.children, depth+1); } });
+  })(TREE_DATA, 0);
+  renderTree();
+}
+
+function renderTree() {
+  const container = document.getElementById('treeContainer');
+  const highlightName = currentCompany ? currentCompany.name : null;
+  container.innerHTML = TREE_DATA.map(n => renderTreeNode(n, highlightName)).join('');
+}
+
+function renderTreeNode(node, highlightName) {
+  const isHighlight = node.name === highlightName;
+  const hasChildren = node.children && node.children.length > 0;
+  const isOpen = treeExpanded.has(node.id);
+  const badgeType = node.type === 'jv' ? 'jv' : (node.name.includes('本部') ? 'buben' : 'con');
+  const badgeText = node.type === 'jv' ? '联合营' : (node.name.includes('本部') ? '本部' : '并表');
+  let html = '<div class="dgj-tree-node">';
+  html += '<div class="dgj-tree-row ' + (isHighlight ? 'highlight' : '') + '" ' +
+    (hasChildren ? 'onclick="toggleTreeNode(' + node.id + ')"' : '') + '>';
+  html += '<span class="dgj-tree-toggle">' + (hasChildren ? (isOpen ? '▾' : '▸') : '·') + '</span>';
+  html += '<span class="dgj-tree-name">' + escapeHtml(node.name) + '</span>';
+  if (node.ratio) html += '<span class="dgj-tree-pct">持股 ' + node.ratio + '</span>';
+  html += '<span class="dgj-tree-badge ' + badgeType + '">' + badgeText + '</span>';
+  if (node.cap) html += '<span class="dgj-tree-cap">' + node.cap + '</span>';
+  html += '</div>';
+  if (node.others) html += '<div class="dgj-tree-others">其他股东：' + escapeHtml(node.others) + '</div>';
+  if (node.remark) html += '<div class="dgj-tree-remark">' + escapeHtml(node.remark) + '</div>';
+  if (hasChildren && isOpen) {
+    html += '<div class="dgj-tree-children">';
+    node.children.forEach(child => { html += renderTreeNode(child, highlightName); });
+    html += '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function toggleTreeNode(id) {
+  if (treeExpanded.has(id)) treeExpanded.delete(id);
+  else treeExpanded.add(id);
+  renderTree();
+}
+
+// ==================== 延迟启动 ====================
+setTimeout(function() {
+  init();
+}, 0);
+</script>
+
 </body>
 </html>
