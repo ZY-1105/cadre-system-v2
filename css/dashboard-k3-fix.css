@@ -1,0 +1,115 @@
+/* ============================================================
+   dashboard-k3-fix.css —— 驾驶舱截图问题修复
+   覆盖 dashboard-k3.css，只修问题不动架构
+   ============================================================ */
+
+/* ========== 修复5：卡片去边框彻底化 + 阴影强化 ========== */
+.stat-card,
+.chart-card,
+.insight-card,
+.insight-tab {
+  border: none !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08),
+              0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* ========== 修复6：在编统计 badge 加深 ========== */
+.chart-badge {
+  background: rgba(142, 34, 148, 0.12) !important;
+  color: #7a1d80 !important;
+  font-weight: 600 !important;
+  padding: 2px 8px !important;
+}
+
+/* ========== 修复7：图表卡内部再压缩 ========== */
+.chart-card {
+  padding: 10px !important;
+}
+
+.chart-card-title {
+  margin-bottom: 8px !important;
+}
+
+/* ========== 修复1：职级分布补全图例（CSS 强制撑开图例区） ========== */
+/* 如果 HTML 未加图例，用伪元素提示；如果已加，确保不折行 */
+.chart-card:first-child .chart-container {
+  /* 职级分布通常是第一个 chart-card，给图例预留空间 */
+  min-height: 150px !important;
+}
+
+/* 图例强制单行 + 溢出保护 */
+.chart-legend-item {
+  gap: 8px !important;
+  padding: 2px 0 !important;
+}
+
+.chart-legend-name {
+  max-width: 80px !important;
+}
+
+/* ========== 修复2：年龄分布标签防截断 ========== */
+.chart-container {
+  overflow: visible !important; /* 允许柱顶标签溢出 */
+}
+
+.age-bar-visual {
+  padding-right: 28px !important; /* 为右侧标签预留溢出空间 */
+  padding-top: 14px !important;   /* 从16px压到14px */
+}
+
+/* 靠近右边缘的标签，改为左对齐避免裁切 */
+.age-bar-value-top {
+  transform: translateX(-80%) !important; /* 默认偏左，减少右溢出 */
+}
+
+/* 最后一个年龄条标签强制右对齐 */
+.age-bar-row:last-child .age-bar-value-top {
+  transform: translateX(-20%) !important;
+}
+
+/* ========== 修复3：四标签与洞察卡明确分隔 ========== */
+.insight-tabs-row {
+  margin-bottom: 16px !important; /* 原来无mb或mb过小 */
+}
+
+/* ========== 修复4：进度条最小可见 + 底线指示 ========== */
+.mini-progress {
+  position: relative !important;
+  background: rgba(0, 0, 0, 0.06) !important; /* 轨道加深，对比度更高 */
+}
+
+.mini-progress-fill {
+  min-width: 4px !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* 极小值时加"底线"发光，确保不消失 */
+.mini-progress-fill::after {
+  content: '' !important;
+  position: absolute !important;
+  right: -2px !important;
+  top: -1px !important;
+  width: 4px !important;
+  height: 6px !important;
+  background: inherit !important;
+  border-radius: 50% !important;
+  opacity: 0.5 !important;
+  filter: blur(1px) !important;
+}
+
+/* 预警干部/任期届满 用危险色/橙色更醒目 */
+.insight-card:nth-child(1) .mini-progress-fill,
+.insight-card:nth-child(3) .mini-progress-fill {
+  box-shadow: 0 0 4px currentColor !important; /* 微发光 */
+}
+
+/* ========== 入场动画保留（强制继承，不被覆盖） ========== */
+.k3-anim {
+  animation: k3FadeInUp 0.35s var(--ease-out) forwards !important;
+}
+
+@keyframes k3FadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

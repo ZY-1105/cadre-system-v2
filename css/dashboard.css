@@ -1,0 +1,1078 @@
+/* ============================================================
+   dashboard.css - K3 视觉规范
+   品牌色：#8e2294（主紫）
+   ============================================================ */
+
+/* ---------- K3 变量 ---------- */
+:root {
+  --k3-bg-page: #f5f6f8;
+  --k3-bg-card: #ffffff;
+  --k3-text-title: #1f2937;
+  --k3-text-body: #4b5563;
+  --k3-text-secondary: #9ca3af;
+  --k3-border: #e8eaed;
+  --k3-primary: #8e2294;
+  --k3-primary-light: #f3e5f5;
+  --k3-primary-hover: #b85ebd;
+  --k3-success: #10b981;
+  --k3-danger: #ef4444;
+  --k3-radius: 12px;
+  --k3-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---------- 页面背景 ---------- */
+.app-main {
+  background: var(--k3-bg-page);
+}
+
+/* ---------- 加载动画 ---------- */
+@keyframes k3-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.k3-animate {
+  animation: k3-fade-up 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.k3-animate:nth-child(1) { animation-delay: 0.05s; }
+.k3-animate:nth-child(2) { animation-delay: 0.10s; }
+.k3-animate:nth-child(3) { animation-delay: 0.15s; }
+.k3-animate:nth-child(4) { animation-delay: 0.20s; }
+.k3-animate:nth-child(5) { animation-delay: 0.25s; }
+.k3-animate:nth-child(6) { animation-delay: 0.30s; }
+
+/* ---------- 页面头部 ---------- */
+.dash-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.dash-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--k3-text-title);
+  line-height: 1.3;
+}
+
+.dash-subtitle {
+  font-size: 13px;
+  color: var(--k3-text-secondary);
+  margin-top: 4px;
+}
+
+.dash-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ---------- 板块标题（K3 统一规范） ---------- */
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  position: relative;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+  padding-left: 12px;
+  letter-spacing: 0.3px;
+}
+
+.section-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 2px;
+  bottom: 2px;
+  width: 4px;
+  background: var(--k3-primary);
+  border-radius: 2px;
+}
+
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--k3-border) 20%, var(--k3-border) 80%, transparent);
+  margin: 32px 0;
+  position: relative;
+}
+
+.section-divider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -0.5px;
+  width: 40px;
+  height: 2px;
+  background: var(--k3-primary);
+  border-radius: 1px;
+}
+
+/* ---------- 统计卡片网格 ---------- */
+.stat-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.stat-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.stat-cards {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+/* ---------- 统计卡片 ---------- */
+.stat-card {
+  flex: 1;
+  min-width: 0;
+  background: var(--k3-bg-card);
+  border-radius: var(--k3-radius);
+  padding: 24px;
+  border: 1px solid var(--k3-border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+  text-align: center;
+  transition: var(--k3-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--k3-primary);
+  border-radius: var(--k3-radius) 0 0 var(--k3-radius);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(142, 34, 148, 0.08), 0 2px 4px rgba(0,0,0,0.04);
+}
+
+.stat-card.accent::before {
+  background: var(--k3-danger);
+}
+
+.stat-card-purple::before {
+  background: var(--k3-primary);
+}
+
+.stat-card-green::before {
+  background: var(--k3-success);
+}
+
+.stat-card-orange::before {
+  background: #f59e0b;
+}
+
+.stat-card-red::before {
+  background: #b91c1c;
+}
+
+.stat-card-blue::before {
+  background: #3b82f6;
+}
+
+.stat-grid-4 .stat-card {
+  padding: 16px 14px;
+}
+
+.stat-grid-4 .stat-card::before {
+  width: 3px;
+}
+
+.stat-grid-4 .stat-value {
+  font-size: 24px;
+}
+
+.stat-card .stat-meta {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-top: 8px;
+}
+
+.stat-card .stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.stat-card .stat-icon.purple {
+  background: rgba(142, 34, 148, 0.08);
+  color: var(--k3-primary);
+}
+
+.stat-card .stat-icon.green {
+  background: #d1fae5;
+  color: var(--k3-success);
+}
+
+.stat-card .stat-icon.gold {
+  background: rgba(248, 194, 76, 0.12);
+  color: #b08020;
+}
+
+.stat-card .stat-icon.red {
+  background: #fee2e2;
+  color: var(--k3-danger);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1.1;
+  font-family: 'DIN Alternate', 'Roboto', 'Helvetica Neue', sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.stat-value.accent {
+  color: var(--k3-danger);
+}
+
+.stat-value.loading {
+  color: var(--k3-text-secondary);
+  font-size: 28px;
+  line-height: 1.3;
+}
+
+/* 趋势标签 */
+.stat-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-top: 8px;
+}
+
+.stat-trend.up {
+  color: #fff;
+  background: var(--k3-success);
+}
+
+.stat-trend.down {
+  color: #fff;
+  background: var(--k3-danger);
+}
+
+/* 进度条 */
+.progress-bar {
+  width: 80%;
+  height: 5px;
+  background: var(--k3-border);
+  border-radius: 3px;
+  margin: 12px auto 0;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--k3-primary), var(--k3-primary-hover));
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+
+/* ---------- 图表行 ---------- */
+.charts-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+/* ---------- 图表卡片 ---------- */
+.chart-card {
+  background: var(--k3-bg-card);
+  border-radius: var(--k3-radius);
+  padding: 14px;
+  border: 1px solid var(--k3-border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+  transition: var(--k3-transition);
+}
+
+.chart-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(142, 34, 148, 0.08), 0 2px 4px rgba(0,0,0,0.04);
+}
+
+.chart-card.accent {
+  border-top: 3px solid var(--k3-danger);
+}
+
+.chart-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--k3-text-title);
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--k3-border);
+}
+
+.chart-card-title.accent {
+  color: var(--k3-danger);
+}
+
+.chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 260px;
+  overflow: visible;
+}
+
+.chart-container svg {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  overflow: visible;
+}
+
+/* ---------- 预警卡片 ---------- */
+.alert-bar-card {
+  margin-bottom: 24px;
+}
+
+.alert-summary {
+  text-align: center;
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--k3-border);
+}
+
+.alert-summary strong {
+  color: #8e2294;
+  font-weight: 700;
+}
+
+.insight-info-line {
+  text-align: center;
+  font-size: 13px;
+  color: #6b7280;
+  padding: 12px 0;
+  margin-top: 0;
+  border-top: 1px solid #e8eaed;
+}
+
+.insight-info-line strong {
+  color: #8e2294;
+  font-weight: 700;
+}
+
+/* ---------- 图表头部 ---------- */
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.chart-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--k3-text-title);
+}
+
+.chart-legend {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--k3-text-secondary);
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+/* ---------- 柱状图 ---------- */
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  height: 160px;
+  padding-top: 24px;
+}
+
+.bar-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.bar-track {
+  width: 100%;
+  height: 120px;
+  background: var(--k3-bg-page);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bar-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-radius: 4px;
+  transition: height 0.5s ease;
+}
+
+.bar-value {
+  font-size: 12px;
+  color: var(--k3-text-body);
+  font-weight: 500;
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.bar-label {
+  font-size: 12px;
+  color: var(--k3-text-secondary);
+}
+
+/* ---------- 折线图 ---------- */
+.line-chart {
+  height: 160px;
+  position: relative;
+}
+
+.line-chart svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- 快捷入口 ---------- */
+.quick-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.quick-action-item {
+  flex: 1;
+  background: var(--k3-bg-card);
+  border-radius: var(--k3-radius);
+  padding: 20px;
+  border: 1px solid var(--k3-border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: var(--k3-transition);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.quick-action-item:hover {
+  border-color: var(--k3-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(142, 34, 148, 0.08), 0 2px 4px rgba(0,0,0,0.04);
+}
+
+.quick-action-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(142, 34, 148, 0.08);
+  color: var(--k3-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.quick-action-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--k3-text-body);
+}
+
+.quick-action-desc {
+  font-size: 12px;
+  color: var(--k3-text-secondary);
+  margin-top: 2px;
+}
+
+/* dashboard.html 中使用的 .quick-entry 和 .quick-card */
+.quick-entry {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.quick-card {
+  flex: 1;
+  min-width: 0;
+  background: #fff;
+  border: 1px solid #e8eaed;
+  border-radius: 10px;
+  padding: 14px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--k3-transition);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.quick-card:hover {
+  border-color: var(--k3-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(142, 34, 148, 0.08), 0 2px 4px rgba(0,0,0,0.04);
+}
+
+.quick-card:hover .quick-icon {
+  color: #8e2294;
+}
+
+.quick-icon {
+  width: 20px;
+  height: 20px;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: color var(--k3-transition);
+}
+
+.quick-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.quick-label {
+  font-size: 13px;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+/* ---------- 年龄分布水平条形图 ---------- */
+#ageBarChart {
+  display: block;
+  padding: 8px 0;
+}
+
+.age-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.age-bar-label {
+  width: 70px;
+  font-size: 13px;
+  color: var(--k3-text-secondary);
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.age-bar-track {
+  flex: 1;
+  height: 10px;
+  background: var(--k3-bg-page);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.age-bar-fill {
+  height: 100%;
+  border-radius: 9px;
+  background: linear-gradient(90deg, var(--k3-primary-light), var(--k3-primary));
+  transition: width 0.5s ease;
+}
+
+.age-bar-value {
+  width: 40px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--k3-text-body);
+  flex-shrink: 0;
+}
+
+.age-bar-total {
+  text-align: center;
+  font-size: 12px;
+  color: var(--k3-text-secondary);
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--k3-border);
+}
+
+/* ---------- 表格升级 ---------- */
+.k3-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--k3-bg-card);
+  border-radius: var(--k3-radius);
+  border: 1px solid var(--k3-border);
+  overflow: hidden;
+}
+
+.k3-table thead th {
+  background: var(--k3-bg-page);
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--k3-border);
+}
+
+.k3-table tbody td {
+  padding: 14px 16px;
+  color: var(--k3-text-body);
+  font-size: 14px;
+  border-bottom: 1px solid var(--k3-border);
+}
+
+.k3-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.k3-table tbody tr:hover td {
+  background: rgba(142, 34, 148, 0.04);
+  transition: background 0.2s ease;
+}
+
+/* 状态标签 pill */
+.k3-pill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.k3-pill.success {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.k3-pill.warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.k3-pill.danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.k3-pill.info {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+/* ---------- K3 动画系统 v2 ---------- */
+@keyframes k3-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.k3-anim {
+  animation: k3-fade-in 0.5s ease-out forwards;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.k3-anim:nth-child(1) { animation-delay: 0.05s; }
+.k3-anim:nth-child(2) { animation-delay: 0.10s; }
+.k3-anim:nth-child(3) { animation-delay: 0.15s; }
+.k3-anim:nth-child(4) { animation-delay: 0.20s; }
+.k3-anim:nth-child(5) { animation-delay: 0.25s; }
+.k3-anim:nth-child(6) { animation-delay: 0.30s; }
+
+/* ---------- 图表加载动画 ---------- */
+@keyframes chart-draw-line {
+  from { stroke-dashoffset: 400; }
+  to   { stroke-dashoffset: 0; }
+}
+
+@keyframes chart-segment-draw {
+  from { stroke-dashoffset: 283; }
+  to   { stroke-dashoffset: 0; }
+}
+
+@keyframes chart-fade-in {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.chart-line-path {
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: chart-draw-line 1.2s ease-out forwards;
+}
+
+.chart-segment {
+  stroke-dasharray: 283;
+  stroke-dashoffset: 283;
+  animation: chart-segment-draw 0.8s ease-out forwards;
+}
+
+.chart-point {
+  opacity: 0;
+  animation: chart-fade-in 0.4s ease-out forwards;
+}
+
+.chart-point:nth-child(1) { animation-delay: 0.3s; }
+.chart-point:nth-child(2) { animation-delay: 0.4s; }
+.chart-point:nth-child(3) { animation-delay: 0.5s; }
+.chart-point:nth-child(4) { animation-delay: 0.6s; }
+.chart-point:nth-child(5) { animation-delay: 0.7s; }
+
+/* ---------- 图表头部 ---------- */
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.chart-header .chart-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--k3-text-title);
+}
+
+.chart-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(142, 34, 148, 0.12);
+  color: var(--k3-primary);
+}
+
+/* ---------- 折线图（干部流动趋势） ---------- */
+.line-chart {
+  height: 200px;
+  position: relative;
+}
+
+.line-chart svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.line-chart .grid-line {
+  stroke: var(--k3-border);
+  stroke-dasharray: 3, 3;
+  stroke-width: 1;
+}
+
+.line-chart .line-path {
+  fill: none;
+  stroke: var(--k3-primary);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.line-chart .area-fill {
+  fill: rgba(142, 34, 148, 0.08);
+  stroke: none;
+}
+
+.line-chart .data-point {
+  fill: var(--k3-primary);
+  stroke: #fff;
+  stroke-width: 2;
+  r: 4;
+}
+
+.line-chart .axis-label {
+  font-size: 11px;
+  fill: var(--k3-text-secondary);
+}
+
+/* ---------- 雷达图（综合能力评估） ---------- */
+.radar-chart {
+  height: 220px;
+  position: relative;
+}
+
+.radar-chart svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.radar-chart .grid-polygon {
+  fill: none;
+  stroke: var(--k3-border);
+  stroke-width: 0.5;
+}
+
+.radar-chart .axis-line {
+  stroke: var(--k3-border);
+  stroke-width: 0.5;
+}
+
+.radar-chart .data-area {
+  fill: rgba(142, 34, 148, 0.15);
+  stroke: var(--k3-primary);
+  stroke-width: 1.5;
+}
+
+.radar-chart .data-dot {
+  fill: var(--k3-primary);
+  stroke: #fff;
+  stroke-width: 1.5;
+  r: 3;
+}
+
+.radar-chart .dimension-label {
+  font-size: 12px;
+  fill: var(--k3-text-body);
+  font-weight: 500;
+  text-anchor: middle;
+}
+
+/* ---------- 洞察卡片升级 ---------- */
+.insight-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.insight-card {
+  background: var(--k3-bg-card);
+  border-radius: var(--k3-radius);
+  padding: 20px;
+  border: 1px solid var(--k3-border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+  transition: var(--k3-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.insight-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(142, 34, 148, 0.08), 0 2px 4px rgba(0,0,0,0.04);
+}
+
+/* hover 顶部渐变条 */
+.insight-card::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--k3-primary), var(--k3-primary-hover));
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.insight-card:hover::after {
+  opacity: 1;
+}
+
+/* 图标容器 */
+.insight-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.insight-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.insight-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.insight-sub {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+.insight-icon.warning {
+  background: rgba(142, 34, 148, 0.12);
+  color: var(--k3-primary);
+}
+
+.insight-icon.positive {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--k3-success);
+}
+
+.insight-icon.suggest {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.insight-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* 迷你进度条 */
+.mini-progress {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #f5f6f8;
+  overflow: hidden;
+  margin: 10px 0 0;
+}
+
+.mini-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--k3-primary), var(--k3-primary-hover));
+  width: 0%;
+  transition: width 1s ease-out;
+}
+
+/* 数据标签行 */
+.insight-data {
+  margin-top: 0;
+  margin-bottom: 4px;
+}
+
+.insight-data .value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--k3-text-title);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.insight-data .label {
+  font-size: 11px;
+  color: var(--k3-text-secondary);
+  font-weight: 500;
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 1200px) {
+  .stat-grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 1024px) {
+  .charts-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+  .insight-cards { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .stat-cards,
+  .stat-grid-4,
+  .stat-grid-3 {
+    flex-direction: column;
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card { padding: 18px 10px; }
+  .stat-value { font-size: 24px; }
+  .stat-label { font-size: 12px; }
+
+  .quick-entry {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .quick-card {
+    width: calc(50% - 6px);
+    min-width: 120px;
+  }
+
+  .quick-actions { flex-direction: column; }
+
+  .chart-container { min-height: 240px; }
+  .chart-card { padding: 20px; }
+
+  .dash-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .insight-cards { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .section-title { font-size: 16px; }
+  .stat-value { font-size: 22px; }
+  .quick-entry { gap: 10px; }
+  .quick-card { padding: 14px 8px; }
+  .quick-icon svg { width: 18px; height: 18px; }
+  .quick-label { font-size: 12px; }
+  .chart-container { min-height: 220px; }
+}
+

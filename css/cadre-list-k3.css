@@ -1,0 +1,387 @@
+/* ============================================================
+   cadre-list-k3.css — 干部列表页 K3 风格（人才画像白底卡片风格）
+   品牌色 #8e2294
+   ============================================================ */
+
+/* ========== 页面容器 ========== */
+.cl-container {
+  padding: 0 28px 40px;
+  max-width: none;
+}
+
+/* ========== 页面标题区 ========== */
+.cl-page-header {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.cl-page-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.cl-page-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 22px;
+  background: var(--color-primary);
+  border-radius: 2px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.cl-page-subtitle {
+  font-size: 14px;
+  color: var(--color-text-tertiary);
+  font-weight: 400;
+}
+
+.cl-page-subtitle strong {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* ========== 统计概览行 ========== */
+.cl-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.cl-stat-card {
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all var(--transition-base);
+  border: 1px solid var(--color-border-light);
+}
+
+.cl-stat-card:hover {
+  box-shadow: var(--shadow-brand);
+  transform: translateY(-2px);
+}
+
+.cl-stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.cl-stat-info { flex: 1; }
+.cl-stat-label {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  margin-bottom: 2px;
+}
+.cl-stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.2;
+}
+
+/* ========== 筛选栏 ========== */
+.cl-filter-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 14px 18px;
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border-light);
+}
+
+.cl-form-input,
+.cl-form-select {
+  height: 38px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-family: var(--font-family);
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  min-width: 130px;
+  flex: 1;
+}
+
+.cl-form-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.cl-form-input:focus,
+.cl-form-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+.cl-form-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+
+.cl-btn {
+  height: 38px;
+  padding: 0 18px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-family);
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all var(--transition-fast);
+  outline: none;
+  flex-shrink: 0;
+}
+
+.cl-btn-secondary {
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+.cl-btn-secondary:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: var(--color-primary-medium);
+}
+
+/* ========== 干部卡片网格 ========== */
+.cl-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+/* ========== 干部卡片（白底圆角 + 紫色左竖条） ========== */
+.cl-card {
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  gap: 0;
+  align-items: stretch;
+  transition: all 0.25s var(--ease-out);
+  cursor: pointer;
+  border: 1px solid var(--color-border-light);
+  position: relative;
+  overflow: hidden;
+}
+
+.cl-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 16px;
+  bottom: 16px;
+  width: 4px;
+  background: var(--color-primary);
+  border-radius: 0 3px 3px 0;
+  opacity: 0;
+  transition: opacity 0.25s var(--ease-out);
+}
+
+.cl-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-brand), 0 8px 24px rgba(142, 34, 148, 0.1);
+  border-color: rgba(142, 34, 148, 0.15);
+}
+
+.cl-card:hover::before {
+  opacity: 1;
+}
+
+
+
+.cl-card-body {
+  flex: 1;
+  padding: 14px 16px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cl-card-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.cl-card-unit {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  margin-bottom: 2px;
+  line-height: 1.4;
+}
+
+.cl-card-position {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.cl-card-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+
+/* ========== 标签 ========== */
+.cl-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 100px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.cl-tag--primary {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.cl-tag--success {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.cl-tag--warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.cl-tag--danger {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.cl-tag--accent {
+  background: rgba(248, 194, 76, 0.12);
+  color: #b45309;
+}
+
+/* ========== 分页器 ========== */
+.cl-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.cl-pagination button {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-family);
+  color: var(--color-text-secondary);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cl-pagination button:hover:not(:disabled) {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: var(--color-primary-medium);
+}
+
+.cl-pagination button.active {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 6px rgba(142, 34, 148, 0.2);
+}
+
+.cl-pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ========== 动画 ========== */
+.k3-anim {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: k3FadeInUp 0.35s var(--ease-out) forwards;
+}
+
+@keyframes k3FadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== 响应式 ========== */
+@media (max-width: 1200px) {
+  .cl-grid { grid-template-columns: repeat(2, 1fr); }
+  .cl-stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 992px) {
+  .cl-grid { grid-template-columns: repeat(2, 1fr); }
+  .cl-filter-bar { padding: 12px 14px; }
+  .cl-stats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+}
+
+@media (max-width: 640px) {
+  .cl-container { padding: 0 16px 32px; }
+  .cl-grid { grid-template-columns: 1fr; }
+  .cl-stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .cl-stat-card { padding: 12px 14px; }
+  .cl-stat-icon { width: 36px; height: 36px; font-size: 16px; }
+  .cl-stat-value { font-size: 18px; }
+  .cl-filter-bar { flex-direction: column; align-items: stretch; gap: 8px; padding: 12px; }
+  .cl-form-input, .cl-form-select, .cl-btn { width: 100%; min-width: auto; }
+  .cl-card { flex-direction: column; }
+  
+  .cl-pagination { gap: 4px; }
+  .cl-pagination button { min-width: 32px; height: 32px; font-size: 12px; }
+}

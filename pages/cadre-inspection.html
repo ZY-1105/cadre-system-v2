@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>干部考察 - 力合·人才智库</title>
+  <link rel="stylesheet" href="../css/base-k3.css">
+  <link rel="stylesheet" href="../css/pages-k4.2-extra.css">
+</head>
+<body>
+  <script src="../js/app-k3.js"></script>
+  <script>renderLayout('干部考察', 'cadre-inspection');</script>
+
+  <main class="app-main">
+    <div class="ci-container">
+
+      <!-- 标题栏 -->
+      <div class="ci-page-header">
+        <h1 class="ci-page-title">干部考察</h1>
+        <button class="ci-btn-primary" onclick="openCreateModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          新建考察任务
+        </button>
+      </div>
+
+      <!-- 统计卡片 -->
+      <div class="ci-stats" id="ci-stats"></div>
+
+      <!-- 筛选栏 -->
+      <div class="ci-filter-bar">
+        <div class="ci-filter-group">
+          <label>部门</label>
+          <select id="filter-dept"><option>全部</option></select>
+        </div>
+        <div class="ci-filter-group">
+          <label>考察类型</label>
+          <select id="filter-type"><option>全部</option><option>提拔任用</option><option>任期考核</option><option>转正定级</option></select>
+        </div>
+        <div class="ci-filter-group">
+          <label>状态</label>
+          <select id="filter-status"><option>全部</option><option>方案制定中</option><option>谈话测评中</option><option>报告撰写中</option><option>已完成</option></select>
+        </div>
+        <div class="ci-filter-search">
+          <input type="text" placeholder="搜索任务名称 / 考察对象" id="filter-keyword">
+          <button class="ci-btn-icon" onclick="applyFilter()">🔍</button>
+        </div>
+        <div class="ci-view-toggle">
+          <button class="active" onclick="switchView('list', this)">列表视图</button>
+          <button onclick="switchView('board', this)">看板视图</button>
+        </div>
+      </div>
+
+      <!-- 列表主体 -->
+      <div class="ci-table-wrap">
+        <table class="ci-table" id="ci-table">
+          <thead>
+            <tr>
+              <th>任务名称</th>
+              <th>考察对象</th>
+              <th>考察类型</th>
+              <th>当前环节</th>
+              <th>考察组长</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- 新建弹窗 -->
+  <div class="ci-modal-overlay" id="create-modal">
+    <div class="ci-modal">
+      <div class="ci-modal-header">
+        <h3>新建考察任务</h3>
+        <button class="ci-modal-close" onclick="closeCreateModal()">✕</button>
+      </div>
+      <div class="ci-modal-body">
+        <div class="ci-form-row">
+          <label class="ci-form-label"><span class="ci-required">*</span>任务名称</label>
+          <input type="text" class="ci-form-input" id="fm-name" placeholder="请输入任务名称">
+        </div>
+        <div class="ci-form-row">
+          <label class="ci-form-label"><span class="ci-required">*</span>考察对象</label>
+          <select class="ci-form-select" id="fm-cadre"></select>
+        </div>
+        <div class="ci-form-row">
+          <label class="ci-form-label"><span class="ci-required">*</span>考察类型</label>
+          <select class="ci-form-select" id="fm-type">
+            <option value="">请选择</option>
+            <option value="提拔任用">提拔任用</option>
+            <option value="任期考核">任期考核</option>
+            <option value="转正定级">转正定级</option>
+          </select>
+        </div>
+        <div class="ci-form-row">
+          <label class="ci-form-label"><span class="ci-required">*</span>考察组长</label>
+          <select class="ci-form-select" id="fm-leader"></select>
+        </div>
+        <div class="ci-form-row">
+          <label class="ci-form-label">考察组成员</label>
+          <div class="ci-form-checks" id="fm-members"></div>
+        </div>
+        <div class="ci-form-row">
+          <label class="ci-form-label"><span class="ci-required">*</span>考察时间范围</label>
+          <div class="ci-form-daterange">
+            <input type="date" class="ci-form-input" id="fm-start">
+            <span>~</span>
+            <input type="date" class="ci-form-input" id="fm-end">
+          </div>
+        </div>
+        <div class="ci-form-row">
+          <label class="ci-form-label"><span class="ci-required">*</span>考察方式</label>
+          <div class="ci-form-checks" id="fm-methods"></div>
+        </div>
+        <div class="ci-form-row">
+          <label class="ci-form-label">考察目的</label>
+          <textarea class="ci-form-textarea" id="fm-purpose" rows="3" placeholder="请输入考察目的（可选）"></textarea>
+        </div>
+      </div>
+      <div class="ci-modal-footer">
+        <button class="ci-btn-secondary" onclick="closeCreateModal()">取消</button>
+        <button class="ci-btn-primary" onclick="submitCreate()">确认创建</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 预览弹窗 -->
+  <div class="ci-modal-overlay" id="preview-modal">
+    <div class="ci-modal" style="width:600px;">
+      <div class="ci-modal-header">
+        <h3>考察报告预览</h3>
+        <button class="ci-modal-close" onclick="document.getElementById('preview-modal').classList.remove('active')">✕</button>
+      </div>
+      <div class="ci-modal-body" id="preview-body" style="font-size:13px;line-height:1.8;"></div>
+    </div>
+  </div>
+
+  <script>
+  const METHOD_OPTIONS = ['个别谈话','民主测评','实地考察','查阅资料'];
+  const CADRE_LIST = ['张某某','李某','赵某某','钱某','吴某某','郑某','陈某','冯某','褚某','卫某','蒋某','沈某','韩某'];
+  const DEPTS = ['全部','投资管理部','战略发展部','党群工作部','风险合规部','财务部','人力资源部'];
+
+  const TYPE_STYLES = {
+    '提拔任用': { class: 'ci-tag--red',    color: '#dc2626', bg: '#fef2f2' },
+    '任期考核': { class: 'ci-tag--blue',   color: '#2563eb', bg: '#eff6ff' },
+    '转正定级': { class: 'ci-tag--green',  color: '#059669', bg: '#ecfdf5' }
+  };
+
+  const STATUS_STYLES = {
+    '方案制定中':  { label: '方案制定中',  class: 'ci-status--pending' },
+    '谈话测评中':  { label: '谈话测评中',  class: 'ci-status--progress' },
+    '报告撰写中':  { label: '报告撰写中',  class: 'ci-status--progress' },
+    '已完成':      { label: '已完成',      class: 'ci-status--completed' }
+  };
+
+  let tasks = [
+    { id:'T001', name:'2026年度干部考察（第一批）', cadreName:'张某某', title:'财务部部长', type:'提拔任用', leaderName:'张薇总', memberNames:['李副总','王副总'], startDate:'2026-08-01', endDate:'2026-08-15', methods:['个别谈话','民主测评'], status:'谈话测评中', progress:80, purpose:'年度例行考察' },
+    { id:'T002', name:'2026年度干部考察（第二批）', cadreName:'李某',   title:'战略发展部部长', type:'任期考核', leaderName:'李副总', memberNames:['张薇总'], startDate:'2026-07-15', endDate:'2026-07-30', methods:['个别谈话','实地考察'], status:'已完成', progress:100, purpose:'晋升前考察' },
+    { id:'T003', name:'2026年度干部考察（第三批）', cadreName:'王某某', title:'人力资源部部长', type:'转正定级', leaderName:'张薇总', memberNames:[], startDate:'2026-08-10', endDate:'2026-08-20', methods:['民主测评','查阅资料'], status:'方案制定中', progress:30, purpose:'试用期转正考察' },
+    { id:'T004', name:'投资管理部副部长考察',       cadreName:'冯某',   title:'投资管理部副部长', type:'提拔任用', leaderName:'王副总', memberNames:['刘总助'], startDate:'2026-08-05', endDate:'2026-08-12', methods:['个别谈话','实地考察','民主测评'], status:'报告撰写中', progress:65, purpose:'岗位调整考察' },
+    { id:'T005', name:'党群工作部副部长考察',       cadreName:'郑某',   title:'党群工作部副部长', type:'任期考核', leaderName:'刘总助', memberNames:['李副总'], startDate:'2026-07-20', endDate:'2026-08-01', methods:['查阅资料','个别谈话'], status:'已完成', progress:100, purpose:'任期届满考察' }
+  ];
+
+  let currentView = 'list';
+
+  function renderStats() {
+    document.getElementById('ci-stats').innerHTML = `
+      <div class="ci-stat-card">
+        <div class="ci-stat-icon">📋</div>
+        <div class="ci-stat-info">
+          <div class="ci-stat-label">本月计划考察</div>
+          <div class="ci-stat-value">12<span>人</span></div>
+        </div>
+      </div>
+      <div class="ci-stat-card">
+        <div class="ci-stat-icon">💬</div>
+        <div class="ci-stat-info">
+          <div class="ci-stat-label">正在进行谈话</div>
+          <div class="ci-stat-value">3<span>场</span></div>
+        </div>
+      </div>
+      <div class="ci-stat-card">
+        <div class="ci-stat-icon">📝</div>
+        <div class="ci-stat-info">
+          <div class="ci-stat-label">待审核报告</div>
+          <div class="ci-stat-value">2<span>份</span></div>
+        </div>
+      </div>
+      <div class="ci-stat-card">
+        <div class="ci-stat-icon">✅</div>
+        <div class="ci-stat-info">
+          <div class="ci-stat-label">本月已完成</div>
+          <div class="ci-stat-value">5<span>人</span></div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderDeptFilter() {
+    const sel = document.getElementById('filter-dept');
+    sel.innerHTML = DEPTS.map(d => `<option>${d}</option>`).join('');
+  }
+
+  function renderTable() {
+    const tbody = document.querySelector('#ci-table tbody');
+    const filtered = applyFilterLogic();
+    tbody.innerHTML = filtered.map(t => {
+      const typeStyle = TYPE_STYLES[t.type] || TYPE_STYLES['提拔任用'];
+      const st = STATUS_STYLES[t.status] || STATUS_STYLES['方案制定中'];
+      return `
+        <tr>
+          <td><strong>${t.name}</strong></td>
+          <td>
+            <div class="ci-cadre-name">${t.cadreName}</div>
+            <div class="ci-cadre-title">${t.title}</div>
+          </td>
+          <td><span class="ci-tag ${typeStyle.class}">${t.type}</span></td>
+          <td>
+            <div class="ci-progress-wrap">
+              <div class="ci-progress-track"><div class="ci-progress-fill" style="width:${t.progress}%"></div></div>
+              <span class="ci-progress-text">${t.status}</span>
+            </div>
+          </td>
+          <td>${t.leaderName}</td>
+          <td>
+            <div class="ci-actions">
+              <a href="cadre-inspection-detail.html?id=${t.id}" class="ci-action">查看</a>
+              <button class="ci-action-preview" onclick="previewReport('${t.id}')">预览报告</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function applyFilterLogic() {
+    const dept = document.getElementById('filter-dept').value;
+    const type = document.getElementById('filter-type').value;
+    const status = document.getElementById('filter-status').value;
+    const kw = document.getElementById('filter-keyword').value.trim().toLowerCase();
+    return tasks.filter(t => {
+      if (dept !== '全部' && !t.title.includes(dept.replace('部',''))) return false;
+      if (type !== '全部' && t.type !== type) return false;
+      if (status !== '全部' && t.status !== status) return false;
+      if (kw && !t.name.includes(kw) && !t.cadreName.includes(kw)) return false;
+      return true;
+    });
+  }
+
+  function applyFilter() { renderTable(); }
+
+  function switchView(view, btn) {
+    currentView = view;
+    document.querySelectorAll('.ci-view-toggle button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    // 看板视图后续迭代，当前保持列表
+    renderTable();
+  }
+
+  function previewReport(id) {
+    const t = tasks.find(x => x.id === id);
+    if (!t) return;
+    document.getElementById('preview-body').innerHTML = `
+      <p><strong>考察任务：</strong>${t.name}</p>
+      <p><strong>考察对象：</strong>${t.cadreName}（${t.title}）</p>
+      <p><strong>考察类型：</strong>${t.type}</p>
+      <p><strong>考察组长：</strong>${t.leaderName}</p>
+      <p><strong>考察时间：</strong>${t.startDate} ~ ${t.endDate}</p>
+      <p><strong>考察方式：</strong>${t.methods.join('、')}</p>
+      <p><strong>考察目的：</strong>${t.purpose || '—'}</p>
+      <p><strong>当前进度：</strong>${t.progress}%（${t.status}）</p>
+      <hr style="border:none;border-top:1px solid rgba(0,0,0,0.06);margin:12px 0;">
+      <p style="color:var(--color-text-tertiary);">报告正文内容待对接后端生成...</p>
+    `;
+    document.getElementById('preview-modal').classList.add('active');
+  }
+
+  function openCreateModal() {
+    const makeOpts = arr => '<option value="">请选择</option>' + arr.map(n => `<option value="${n}">${n}</option>`).join('');
+    document.getElementById('fm-cadre').innerHTML = makeOpts(CADRE_LIST);
+    document.getElementById('fm-leader').innerHTML = makeOpts(CADRE_LIST);
+    document.getElementById('fm-members').innerHTML = CADRE_LIST.map(n => `
+      <label class="ci-check-label"><input type="checkbox" value="${n}"><span>${n}</span></label>
+    `).join('');
+    document.getElementById('fm-methods').innerHTML = METHOD_OPTIONS.map(m => `
+      <label class="ci-check-label"><input type="checkbox" value="${m}"><span>${m}</span></label>
+    `).join('');
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('fm-start').value = today;
+    document.getElementById('fm-end').value = new Date(Date.now()+14*864e5).toISOString().split('T')[0];
+    document.getElementById('create-modal').classList.add('active');
+  }
+
+  function closeCreateModal() {
+    document.getElementById('create-modal').classList.remove('active');
+  }
+
+  function submitCreate() {
+    const name = document.getElementById('fm-name').value.trim();
+    const cadre = document.getElementById('fm-cadre').value;
+    const type = document.getElementById('fm-type').value;
+    const leader = document.getElementById('fm-leader').value;
+    const start = document.getElementById('fm-start').value;
+    const end = document.getElementById('fm-end').value;
+    const methods = Array.from(document.querySelectorAll('#fm-methods input:checked')).map(c => c.value);
+    const purpose = document.getElementById('fm-purpose').value.trim();
+    if (!name || !cadre || !type || !leader || !start || !end || methods.length===0) {
+      alert('请填写必填项'); return;
+    }
+    const newId = 'T' + String(tasks.length+1).padStart(3,'0');
+    tasks.unshift({
+      id:newId, name, cadreName:cadre, title:CADRE_LIST.find(c=>c===cadre)||cadre,
+      type, leaderName:leader, memberNames:[],
+      startDate:start, endDate:end, methods, status:'方案制定中', progress:0, purpose
+    });
+    renderTable(); closeCreateModal();
+  }
+
+  function init() {
+    renderStats(); renderDeptFilter(); renderTable();
+    document.getElementById('filter-dept').onchange = renderTable;
+    document.getElementById('filter-type').onchange = renderTable;
+    document.getElementById('filter-status').onchange = renderTable;
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else { init(); }
+  </script>
+</body>
+</html>

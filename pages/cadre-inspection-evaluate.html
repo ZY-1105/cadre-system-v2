@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>考察评价 - 力合·人才智库</title>
+  <link rel="stylesheet" href="../css/base-k3.css">
+  <link rel="stylesheet" href="../css/pages-k4.2-extra.css">
+</head>
+<body>
+  <script src="../js/app-k3.js"></script>
+  <script>renderLayout('考察评价', 'cadre-inspection');</script>
+
+  <main class="app-main">
+    <div class="cie-container">
+      <a href="cadre-inspection-detail.html" class="cie-back" id="cie-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        返回任务详情
+      </a>
+
+      <div class="cie-header">
+        <h1 class="cie-title" id="cie-task-name">考察评价</h1>
+        <div class="cie-cadre" id="cie-cadre-name">考察对象：张某某</div>
+      </div>
+
+      <div class="cie-dimensions" id="cie-dimensions"></div>
+
+      <div class="cie-summary" id="cie-summary"></div>
+
+      <div class="cie-comment">
+        <label class="cie-label">综合评价意见</label>
+        <textarea class="cie-textarea" id="cie-comment" rows="3" placeholder="请输入综合评价意见..."></textarea>
+      </div>
+
+      <div class="cie-footer">
+        <button class="cie-btn-secondary" onclick="saveDraft()">保存草稿</button>
+        <button class="cie-btn-primary" onclick="submitEvaluation()">提交评价</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  const DIMENSIONS = [
+    {
+      key:'de', label:'德', weight:0.20,
+      desc:'政治素质、道德品质、职业操守',
+      items:[
+        { key:'political',  label:'政治素质',  basis:'政治立场坚定，执行党的路线方针政策' },
+        { key:'moral',      label:'道德品质',  basis:'品行端正，群众基础牢固，诚实守信' },
+        { key:'ethics',     label:'职业操守',  basis:'恪尽职守，廉洁自律，公私分明' }
+      ]
+    },
+    {
+      key:'neng', label:'能', weight:0.30,
+      desc:'专业能力、管理协调、学习创新',
+      items:[
+        { key:'professional', label:'专业能力', basis:'业务知识扎实，专业素养过硬' },
+        { key:'management',   label:'管理协调', basis:'组织协调能力，团队管理能力' },
+        { key:'innovation',     label:'学习创新', basis:'学习成长迅速，创新意识强' }
+      ]
+    },
+    {
+      key:'qin', label:'勤', weight:0.15,
+      desc:'工作态度、责任担当、工作投入',
+      items:[
+        { key:'attitude',   label:'工作态度', basis:'积极主动，认真负责，勤奋敬业' },
+        { key:'responsibility', label:'责任担当', basis:'勇于担当，敢于负责，主动作为' },
+        { key:'dedication', label:'工作投入', basis:'出勤情况，工作投入度，自驱力' }
+      ]
+    },
+    {
+      key:'ji', label:'绩', weight:0.20,
+      desc:'工作业绩、业绩贡献、危机应对',
+      items:[
+        { key:'performance', label:'工作业绩', basis:'年度/季度目标完成情况' },
+        { key:'contribution', label:'业绩贡献', basis:'推动公司高质量发展，突出贡献' },
+        { key:'crisis',       label:'危机应对', basis:'突发事件处理能力，攻坚克难' }
+      ]
+    },
+    {
+      key:'lian', label:'廉', weight:0.15,
+      desc:'廉洁自律、合规意识',
+      items:[
+        { key:'integrity',  label:'廉洁自律', basis:'遵守廉洁从业规定，谨慎用权' },
+        { key:'compliance', label:'合规意识', basis:'遵守公司规章制度，依法经营' }
+      ]
+    }
+  ];
+
+  let scores = {};
+
+  function getTaskId() { return new URLSearchParams(location.search).get('task') || 'T001'; }
+
+  function initScores() {
+    scores = {};
+    DIMENSIONS.forEach(dim => {
+      scores[dim.key] = {};
+      dim.items.forEach(item => { scores[dim.key][item.key] = { score:5.0, note:'' }; });
+    });
+  }
+
+  function calcDimScore(dimKey) {
+    const vals = Object.values(scores[dimKey]).map(v => v.score);
+    return parseFloat((vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1));
+  }
+
+  function calcOverallScore() {
+    let total = 0;
+    DIMENSIONS.forEach(dim => { total += calcDimScore(dim.key) * dim.weight; });
+    return parseFloat(total.toFixed(1));
+  }
+
+  function renderDimensions() {
+    const container = document.getElementById('cie-dimensions');
+    container.innerHTML = DIMENSIONS.map(dim => {
+      const dimScore = calcDimScore(dim.key);
+      return `
+        <div class="cie-dim-card">
+          <div class="cie-dim-header">
+            <div class="cie-dim-title">
+              <span class="cie-dim-badge">${dim.label}</span>
+              <span class="cie-dim-name">${dim.desc}</span>
+              <span class="cie-dim-weight">权重 ${(dim.weight*100).toFixed(0)}%</span>
+            </div>
+            <div class="cie-dim-score" id="score-${dim.key}">${dimScore}</div>
+          </div>
+          <div class="cie-dim-items">
+            ${dim.items.map(item => `
+              <div class="cie-item">
+                <div class="cie-item-top">
+                  <span class="cie-item-label">${item.label}</span>
+                  <span class="cie-item-value" id="val-${dim.key}-${item.key}">5.0</span>
+                </div>
+                <input type="range" class="cie-slider" min="1" max="10" step="0.5" value="5"
+                  oninput="onScoreChange('${dim.key}','${item.key}',this.value)">
+                <div class="cie-item-basis">
+                  <input type="text" class="cie-basis-input" placeholder="评分依据：${item.basis}"
+                    id="note-${dim.key}-${item.key}" onchange="onNoteChange('${dim.key}','${item.key}',this.value)">
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderSummary() {
+    const overall = calcOverallScore();
+    document.getElementById('cie-summary').innerHTML = `
+      <div class="cie-summary-card">
+        <div class="cie-summary-item cie-summary-item--overall">
+          <span>综合得分</span>
+          <strong id="cie-overall">${overall}</strong>
+        </div>
+        ${DIMENSIONS.map(dim => `
+          <div class="cie-summary-item">
+            <span>${dim.label}（${(dim.weight*100).toFixed(0)}%）</span>
+            <strong id="sum-${dim.key}">${calcDimScore(dim.key)}</strong>
+          </div>
+        `).join('')}
+      </div>
+      <div class="cie-summary-formula">综合得分 = Σ（维度平均分 × 维度权重），保留1位小数</div>
+    `;
+  }
+
+  function onScoreChange(dimKey, itemKey, value) {
+    scores[dimKey][itemKey].score = parseFloat(value);
+    document.getElementById(`val-${dimKey}-${itemKey}`).textContent = parseFloat(value).toFixed(1);
+    document.getElementById(`score-${dimKey}`).textContent = calcDimScore(dimKey);
+    document.getElementById('cie-overall').textContent = calcOverallScore();
+    DIMENSIONS.forEach(dim => {
+      document.getElementById(`sum-${dim.key}`).textContent = calcDimScore(dim.key);
+    });
+  }
+
+  function onNoteChange(dimKey, itemKey, value) {
+    scores[dimKey][itemKey].note = value.trim();
+  }
+
+  function saveDraft() {
+    const taskId = getTaskId();
+    localStorage.setItem('inspection_draft_' + taskId, JSON.stringify({
+      scores, comment: document.getElementById('cie-comment').value
+    }));
+    alert('草稿已保存');
+  }
+
+  function submitEvaluation() {
+    const comment = document.getElementById('cie-comment').value.trim();
+    const taskId = getTaskId();
+    const result = {
+      taskId, scores: JSON.parse(JSON.stringify(scores)),
+      dimensions: DIMENSIONS.map(dim => ({
+        key:dim.key, label:dim.label, score:calcDimScore(dim.key), weight:dim.weight
+      })),
+      overallScore: calcOverallScore(), comment
+    };
+    localStorage.setItem('inspection_eval_' + taskId, JSON.stringify(result));
+    localStorage.removeItem('inspection_draft_' + taskId);
+    alert('评价已提交！综合得分：' + result.overallScore);
+    location.href = 'cadre-inspection-detail.html?id=' + taskId;
+  }
+
+  function loadDraft() {
+    const taskId = getTaskId();
+    const draft = localStorage.getItem('inspection_draft_' + taskId);
+    if (!draft) return;
+    const data = JSON.parse(draft);
+    if (data.scores) {
+      Object.keys(data.scores).forEach(dimKey => {
+        Object.keys(data.scores[dimKey]).forEach(itemKey => {
+          const v = data.scores[dimKey][itemKey];
+          scores[dimKey][itemKey] = { score: v.score || 5, note: v.note || '' };
+          const slider = document.querySelector(`input[oninput*="'${dimKey}','${itemKey}'"]`);
+          const noteInput = document.getElementById(`note-${dimKey}-${itemKey}`);
+          if (slider) { slider.value = v.score || 5; slider.dispatchEvent(new Event('input')); }
+          if (noteInput) noteInput.value = v.note || '';
+        });
+      });
+    }
+    if (data.comment) document.getElementById('cie-comment').value = data.comment;
+  }
+
+  function init() {
+    initScores(); renderDimensions(); renderSummary();
+    const taskId = getTaskId();
+    const taskMap = { T001:'2026年度干部考察（第一批）', T002:'2026年度干部考察（第二批）', T003:'2026年度干部考察（第三批）', T004:'投资管理部副部长考察', T005:'党群工作部副部长考察' };
+    const cadreMap = { T001:'张某某', T002:'李某', T003:'王某某', T004:'冯某', T005:'郑某' };
+    document.getElementById('cie-task-name').textContent = taskMap[taskId] || '考察评价';
+    document.getElementById('cie-cadre-name').textContent = '考察对象：' + (cadreMap[taskId] || '—');
+    document.getElementById('cie-back').href = 'cadre-inspection-detail.html?id=' + taskId;
+    setTimeout(loadDraft, 0);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else { init(); }
+  </script>
+</body>
+</html>

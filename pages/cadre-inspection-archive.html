@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>考察档案 - 力合·人才智库</title>
+  <link rel="stylesheet" href="../css/base-k3.css">
+  <link rel="stylesheet" href="../css/pages-k4.2-extra.css">
+</head>
+<body>
+  <script src="../js/app-k3.js"></script>
+  <script>renderLayout('考察档案', 'cadre-inspection');</script>
+
+  <main class="app-main">
+    <div class="cia-container">
+      <a href="cadre-inspection-detail.html" class="cia-back" id="cia-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        返回任务详情
+      </a>
+
+      <div class="cia-header">
+        <h1 class="cia-title">干部考察档案登记表</h1>
+      </div>
+
+      <div class="cia-section">
+        <div class="cia-section-title">一、基本信息</div>
+        <div class="cia-info-grid" id="cia-basic"></div>
+      </div>
+
+      <div class="cia-section">
+        <div class="cia-section-title">二、考察信息</div>
+        <div class="cia-info-grid" id="cia-inspection"></div>
+      </div>
+
+      <div class="cia-section">
+        <div class="cia-section-title">三、评价结果</div>
+        <div class="cia-eval-result" id="cia-eval"></div>
+      </div>
+
+      <div class="cia-section">
+        <div class="cia-section-title">四、考察结论</div>
+        <div class="cia-conclusion">
+          <div class="cia-form-row">
+            <label class="cia-label">考察结论</label>
+            <select class="cia-select" id="cia-grade">
+              <option value="">请选择</option>
+              <option value="优秀">优秀</option>
+              <option value="称职">称职</option>
+              <option value="基本称职">基本称职</option>
+              <option value="不称职">不称职</option>
+            </select>
+          </div>
+          <div class="cia-form-row">
+            <label class="cia-label">是否建议提拔使用</label>
+            <div class="cia-radios">
+              <label class="cia-radio"><input type="radio" name="promote" value="1"><span>是</span></label>
+              <label class="cia-radio"><input type="radio" name="promote" value="0" checked><span>否</span></label>
+            </div>
+          </div>
+          <div class="cia-form-row">
+            <label class="cia-label">考察组意见</label>
+            <textarea class="cia-textarea" id="cia-opinion" rows="4" placeholder="请输入考察组综合意见..."></textarea>
+          </div>
+          <div class="cia-form-row cia-sign-row">
+            <label class="cia-label">考察组组长签字</label>
+            <input type="text" class="cia-input-sign" id="cia-sign" placeholder="请输入组长姓名">
+            <label class="cia-label" style="margin-left:24px;">日期</label>
+            <input type="date" class="cia-input-sign" id="cia-sign-date">
+          </div>
+        </div>
+      </div>
+
+      <div class="cia-footer">
+        <button class="cia-btn-secondary" onclick="history.back()">取消</button>
+        <button class="cia-btn-primary" onclick="submitArchive()">生成档案</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  const tasks = [
+    { id:'T001', name:'2026年度干部考察（第一批）', cadreName:'张某某', title:'财务部部长', type:'提拔任用', leaderName:'张薇总', memberNames:['李副总','王副总'], startDate:'2026-08-01', endDate:'2026-08-15', methods:['个别谈话','民主测评'], status:'谈话测评中', progress:80, purpose:'年度例行考察' },
+    { id:'T002', name:'2026年度干部考察（第二批）', cadreName:'李某',   title:'战略发展部部长', type:'任期考核', leaderName:'李副总', memberNames:['张薇总'], startDate:'2026-07-15', endDate:'2026-07-30', methods:['个别谈话','实地考察'], status:'已完成', progress:100, purpose:'晋升前考察' },
+    { id:'T003', name:'2026年度干部考察（第三批）', cadreName:'王某某', title:'人力资源部部长', type:'转正定级', leaderName:'张薇总', memberNames:[], startDate:'2026-08-10', endDate:'2026-08-20', methods:['民主测评','查阅资料'], status:'方案制定中', progress:30, purpose:'试用期转正考察' },
+    { id:'T004', name:'投资管理部副部长考察',       cadreName:'冯某',   title:'投资管理部副部长', type:'提拔任用', leaderName:'王副总', memberNames:['刘总助'], startDate:'2026-08-05', endDate:'2026-08-12', methods:['个别谈话','实地考察','民主测评'], status:'报告撰写中', progress:65, purpose:'岗位调整考察' },
+    { id:'T005', name:'党群工作部副部长考察',       cadreName:'郑某',   title:'党群工作部副部长', type:'任期考核', leaderName:'刘总助', memberNames:['李副总'], startDate:'2026-07-20', endDate:'2026-08-01', methods:['查阅资料','个别谈话'], status:'已完成', progress:100, purpose:'任期届满考察' }
+  ];
+
+  const cadreInfo = {
+    '张某某': { gender:'男', birth:'1985-06', nation:'汉族', native:'广东深圳', party:'中共党员', partyDate:'2006-07', education:'硕士研究生', school:'XX大学', dept:'投资管理部', entryDate:'2015-03', age:42 },
+    '李某':   { gender:'女', birth:'1988-03', nation:'汉族', native:'广东广州', party:'中共党员', partyDate:'2009-05', education:'大学本科', school:'XX大学', dept:'投资管理部', entryDate:'2018-06', age:38 },
+    '赵某某': { gender:'男', birth:'1981-09', nation:'汉族', native:'湖南长沙', party:'中共党员', partyDate:'2003-12', education:'博士研究生', school:'XX大学', dept:'战略发展部', entryDate:'2012-09', age:45 },
+    '王某某': { gender:'男', birth:'1990-01', nation:'汉族', native:'广东深圳', party:'中共党员', partyDate:'2012-06', education:'硕士研究生', school:'XX大学', dept:'人力资源部', entryDate:'2020-01', age:36 },
+    '冯某':   { gender:'女', birth:'1993-05', nation:'汉族', native:'广东佛山', party:'预备党员', partyDate:'2024-01', education:'硕士研究生', school:'XX大学', dept:'投资管理部', entryDate:'2020-02', age:33 },
+    '郑某':   { gender:'男', birth:'1985-11', nation:'汉族', native:'广东汕头', party:'中共党员', partyDate:'2008-09', education:'大学本科', school:'XX大学', dept:'党群工作部', entryDate:'2017-11', age:41 }
+  };
+
+  function getTaskId() { return new URLSearchParams(location.search).get('task') || 'T001'; }
+
+  function renderBasic(task) {
+    const info = cadreInfo[task.cadreName] || {};
+    document.getElementById('cia-basic').innerHTML = `
+      <div class="cia-info-item"><span>姓名</span><strong>${task.cadreName}</strong></div>
+      <div class="cia-info-item"><span>性别</span><strong>${info.gender||'—'}</strong></div>
+      <div class="cia-info-item"><span>出生年月</span><strong>${info.birth||'—'}</strong></div>
+      <div class="cia-info-item"><span>民族</span><strong>${info.nation||'—'}</strong></div>
+      <div class="cia-info-item"><span>籍贯</span><strong>${info.native||'—'}</strong></div>
+      <div class="cia-info-item"><span>政治面貌</span><strong>${info.party||'—'}</strong></div>
+      <div class="cia-info-item"><span>入党时间</span><strong>${info.partyDate||'—'}</strong></div>
+      <div class="cia-info-item"><span>学历</span><strong>${info.education||'—'}</strong></div>
+      <div class="cia-info-item"><span>毕业院校</span><strong>${info.school||'—'}</strong></div>
+      <div class="cia-info-item"><span>现任职务</span><strong>${task.title}</strong></div>
+      <div class="cia-info-item"><span>任职时间</span><strong>${info.entryDate||'—'}</strong></div>
+      <div class="cia-info-item"><span>所在部门</span><strong>${info.dept||'—'}</strong></div>
+    `;
+  }
+
+  function renderInspection(task) {
+    document.getElementById('cia-inspection').innerHTML = `
+      <div class="cia-info-item"><span>考察任务</span><strong>${task.name}</strong></div>
+      <div class="cia-info-item"><span>考察时间</span><strong>${task.startDate} ~ ${task.endDate}</strong></div>
+      <div class="cia-info-item"><span>考察方式</span><strong>${task.methods.map(m=>'☑'+m).join(' ')}</strong></div>
+      <div class="cia-info-item"><span>考察组长</span><strong>${task.leaderName}</strong></div>
+      <div class="cia-info-item"><span>考察组成员</span><strong>${task.memberNames.join('、')||'—'}</strong></div>
+      <div class="cia-info-item"><span>考察目的</span><strong>${task.purpose||'—'}</strong></div>
+    `;
+  }
+
+  function renderEval(taskId) {
+    const key = 'inspection_eval_' + taskId;
+    const saved = localStorage.getItem(key);
+    const el = document.getElementById('cia-eval');
+    if (!saved) { el.innerHTML = '<div class="cia-empty">暂无评价数据，请先完成考察评价</div>'; return; }
+    const data = JSON.parse(saved);
+    el.innerHTML = `
+      <div class="cia-eval-summary">
+        <div class="cia-eval-overall"><span>综合得分</span><strong>${data.overallScore}</strong></div>
+        <div class="cia-eval-dims">
+          ${data.dimensions.map(d => `
+            <div class="cia-eval-dim"><span>${d.label}（${(d.weight*100).toFixed(0)}%）</span><strong>${d.score}</strong></div>
+          `).join('')}
+        </div>
+      </div>
+      ${data.comment ? `<div class="cia-eval-comment"><strong>综合评价：</strong>${data.comment}</div>` : ''}
+      <div class="cia-eval-suggest">
+        <strong>发展建议：</strong>
+        <ol>
+          <li>加强团队构建与人才梯队培养</li>
+          <li>拓展跨部门综合视野与复合经验</li>
+          <li>完成从"部门负责人"到"系统领导者"的思维转变</li>
+        </ol>
+      </div>
+    `;
+  }
+
+  function submitArchive() {
+    const grade = document.getElementById('cia-grade').value;
+    const promote = document.querySelector('input[name="promote"]:checked').value;
+    const opinion = document.getElementById('cia-opinion').value.trim();
+    const sign = document.getElementById('cia-sign').value.trim();
+    const signDate = document.getElementById('cia-sign-date').value;
+    if (!grade) { alert('请选择考察结论'); return; }
+    if (!opinion) { alert('请输入考察组意见'); return; }
+    if (!sign) { alert('请输入考察组组长签字'); return; }
+    const taskId = getTaskId();
+    const archive = { taskId, grade, promote: promote==='1', opinion, sign, signDate, createdAt: new Date().toISOString() };
+    localStorage.setItem('inspection_archive_' + taskId, JSON.stringify(archive));
+    alert('考察档案已生成！'); location.href = 'cadre-inspection-detail.html?id=' + taskId;
+  }
+
+  function init() {
+    const taskId = getTaskId();
+    const task = tasks.find(t => t.id === taskId) || tasks[0];
+    renderBasic(task); renderInspection(task); renderEval(taskId);
+    document.getElementById('cia-back').href = 'cadre-inspection-detail.html?id=' + taskId;
+    document.getElementById('cia-sign-date').value = new Date().toISOString().split('T')[0];
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else { init(); }
+  </script>
+</body>
+</html>

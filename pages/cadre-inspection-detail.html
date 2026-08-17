@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>考察详情 - 力合·人才智库</title>
+  <link rel="stylesheet" href="../css/base-k3.css">
+  <link rel="stylesheet" href="../css/pages-k4.2-extra.css">
+</head>
+<body>
+  <script src="../js/app-k3.js"></script>
+  <script>renderLayout('考察详情', 'cadre-inspection');</script>
+
+  <main class="app-main">
+    <div class="cid-container">
+      <a href="cadre-inspection.html" class="cid-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        返回列表
+      </a>
+
+      <div class="cid-header" id="cid-header"></div>
+
+      <div class="cid-progress" id="cid-progress"></div>
+    </div>
+  </main>
+
+  <script>
+  const STATUS_MAP = {
+    '方案制定中':  { label:'方案制定中', color:'#6b7280', bg:'#f3f4f6' },
+    '谈话测评中':  { label:'谈话测评中', color:'#8e2294', bg:'rgba(142,34,148,0.08)' },
+    '报告撰写中':  { label:'报告撰写中', color:'#d97706', bg:'#fef3c7' },
+    '已完成':      { label:'已完成',     color:'#059669', bg:'#ecfdf5' }
+  };
+
+  const tasks = [
+    { id:'T001', name:'2026年度干部考察（第一批）', cadreName:'张某某', title:'财务部部长', type:'提拔任用', leaderName:'张薇总', memberNames:['李副总','王副总'], startDate:'2026-08-01', endDate:'2026-08-15', methods:['个别谈话','民主测评'], status:'谈话测评中', progress:80, purpose:'年度例行考察' },
+    { id:'T002', name:'2026年度干部考察（第二批）', cadreName:'李某',   title:'战略发展部部长', type:'任期考核', leaderName:'李副总', memberNames:['张薇总'], startDate:'2026-07-15', endDate:'2026-07-30', methods:['个别谈话','实地考察'], status:'已完成', progress:100, purpose:'晋升前考察' },
+    { id:'T003', name:'2026年度干部考察（第三批）', cadreName:'王某某', title:'人力资源部部长', type:'转正定级', leaderName:'张薇总', memberNames:[], startDate:'2026-08-10', endDate:'2026-08-20', methods:['民主测评','查阅资料'], status:'方案制定中', progress:30, purpose:'试用期转正考察' },
+    { id:'T004', name:'投资管理部副部长考察',       cadreName:'冯某',   title:'投资管理部副部长', type:'提拔任用', leaderName:'王副总', memberNames:['刘总助'], startDate:'2026-08-05', endDate:'2026-08-12', methods:['个别谈话','实地考察','民主测评'], status:'报告撰写中', progress:65, purpose:'岗位调整考察' },
+    { id:'T005', name:'党群工作部副部长考察',       cadreName:'郑某',   title:'党群工作部副部长', type:'任期考核', leaderName:'刘总助', memberNames:['李副总'], startDate:'2026-07-20', endDate:'2026-08-01', methods:['查阅资料','个别谈话'], status:'已完成', progress:100, purpose:'任期届满考察' }
+  ];
+
+  const evalStatus = {
+    T001: { evaluated:false, archived:false },
+    T002: { evaluated:true,  archived:true },
+    T003: { evaluated:false, archived:false },
+    T004: { evaluated:true,  archived:false },
+    T005: { evaluated:true,  archived:true }
+  };
+
+  function getTaskId() { return new URLSearchParams(location.search).get('id') || 'T001'; }
+
+  function renderHeader(task) {
+    const st = STATUS_MAP[task.status];
+    document.getElementById('cid-header').innerHTML = `
+      <div class="cid-title-row">
+        <h1 class="cid-title">${task.name}</h1>
+        <span class="cid-status" style="color:${st.color};background:${st.bg}">${st.label}</span>
+        <button class="cid-btn-text" onclick="alert('编辑功能开发中')">编辑</button>
+      </div>
+      <div class="cid-meta">
+        <span><strong>考察对象：</strong>${task.cadreName}（${task.title}）</span>
+        <span><strong>考察组长：</strong>${task.leaderName}</span>
+        <span><strong>考察方式：</strong>${task.methods.join('+')}</span>
+        <span><strong>时间：</strong>${task.startDate} ~ ${task.endDate}</span>
+      </div>
+    `;
+  }
+
+  function renderProgress(taskId) {
+    const ev = evalStatus[taskId] || { evaluated:false, archived:false };
+    document.getElementById('cid-progress').innerHTML = `
+      <div class="cid-progress-card">
+        <div class="cid-progress-item">
+          <div class="cid-progress-icon">📋</div>
+          <div class="cid-progress-info">
+            <div class="cid-progress-name">考察评价</div>
+            <div class="cid-progress-status ${ev.evaluated?'done':'todo'}">${ev.evaluated?'✓ 已完成':'□ 未完成'}</div>
+          </div>
+          <a href="cadre-inspection-evaluate.html?task=${taskId}" class="cid-progress-btn ${ev.evaluated?'disabled':''}">${ev.evaluated?'查看':'去评价 →'}</a>
+        </div>
+        <div class="cid-progress-divider"></div>
+        <div class="cid-progress-item">
+          <div class="cid-progress-icon">📁</div>
+          <div class="cid-progress-info">
+            <div class="cid-progress-name">考察档案</div>
+            <div class="cid-progress-status ${ev.archived?'done':'todo'}">${ev.archived?'✓ 已生成':'□ 未生成'}</div>
+          </div>
+          <a href="cadre-inspection-archive.html?task=${taskId}" class="cid-progress-btn ${!ev.evaluated?'disabled':''}">${ev.archived?'查看':'去归档 →'}</a>
+        </div>
+      </div>
+    `;
+  }
+
+  function init() {
+    const taskId = getTaskId();
+    const task = tasks.find(t => t.id === taskId) || tasks[0];
+    renderHeader(task); renderProgress(taskId);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else { init(); }
+  </script>
+</body>
+</html>

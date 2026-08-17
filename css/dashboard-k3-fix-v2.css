@@ -1,0 +1,154 @@
+/* ============================================================
+   dashboard-k3-fix-v2.css —— 驾驶舱截图问题修复
+   覆盖 dashboard-k3.css
+   ============================================================ */
+
+/* ========== 在编统计 badge 再加深 ========== */
+.chart-badge {
+  background: rgba(142, 34, 148, 0.15) !important;
+  color: #6b1a70 !important;
+  font-weight: 600 !important;
+  padding: 2px 8px !important;
+  font-size: 11px !important;
+}
+
+/* ========== 图表卡片高度自适应，消灭内部留白 ========== */
+.chart-card {
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 10px !important;
+}
+
+.chart-container {
+  flex: 1 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.chart-with-legend {
+  align-items: stretch !important;
+}
+
+.chart-with-legend .chart-container {
+  min-height: 0 !important;
+}
+
+/* ========== 年龄分布防截断 ========== */
+.age-bar-visual {
+  padding-right: 32px !important;
+  padding-top: 14px !important;
+}
+
+.age-bar-value-top {
+  transform: translateX(-70%) !important;
+}
+
+.age-bar-row:nth-last-child(2) .age-bar-value-top,
+.age-bar-row:last-child .age-bar-value-top {
+  transform: translateX(-30%) !important;
+}
+
+/* 若年龄分布为横向标签云，改为弹性换行防溢出 */
+.chart-card:last-child .chart-container {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-content: center !important;
+  gap: 8px 12px !important;
+}
+
+/* ========== 洞察卡图标去色块，纯图标语义色 ========== */
+.insight-icon {
+  width: 20px !important;
+  height: 20px !important;
+  background: none !important;
+  border-radius: 0 !important;
+}
+
+.insight-icon svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.insight-icon.warning  { color: var(--color-danger) !important; }
+.insight-icon.positive { color: var(--color-success) !important; }
+.insight-icon.suggest  { color: var(--color-warning) !important; }
+
+.insight-header {
+  margin-bottom: 8px !important;
+  gap: 6px !important;
+}
+
+/* ========== 进度条极小值兜底 + 加粗 ========== */
+.mini-progress {
+  height: 5px !important;
+  background: rgba(0, 0, 0, 0.08) !important;
+  border-radius: 3px !important;
+}
+
+.mini-progress-fill {
+  min-width: 6px !important;
+  height: 100% !important;
+  position: relative !important;
+}
+
+.mini-progress-fill::after {
+  content: '' !important;
+  position: absolute !important;
+  right: -3px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 5px !important;
+  height: 5px !important;
+  background: inherit !important;
+  border-radius: 50% !important;
+  opacity: 0.6 !important;
+}
+
+/* ========== 四标签内部再压缩 ========== */
+.insight-tab {
+  padding: 8px 6px !important;
+  gap: 2px !important;
+}
+
+.insight-tab-label {
+  font-size: 11px !important;
+}
+
+.insight-tab-value {
+  font-size: var(--font-size-lg) !important;
+}
+
+/* ========== 环形图中心文字优化 ========== */
+.chart-center-text {
+  font-size: var(--font-size-xs) !important;
+  color: var(--color-text-muted) !important;
+  line-height: 1.3 !important;
+  text-align: center !important;
+}
+
+.chart-center-text strong {
+  font-size: var(--font-size-2xl) !important;
+  color: var(--color-primary) !important;
+  font-weight: 700 !important;
+  display: block !important;
+}
+
+/* ========== 全局卡片边框彻底清零 ========== */
+.stat-card,
+.chart-card,
+.insight-card,
+.insight-tab {
+  border: none !important;
+  outline: none !important;
+}
+
+/* ========== 入场动画保留 ========== */
+.k3-anim {
+  animation: k3FadeInUp 0.35s var(--ease-out) forwards !important;
+}
+
+@keyframes k3FadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>人才盘点 - 力合·人才智库</title>
+  <link rel="stylesheet" href="../css/base-k3.css">
+  <script src="../js/app-k3.js"></script>
+  <style>
+  :root {
+    --color-primary: #8e2294;
+    --color-primary-light: rgba(142, 34, 148, 0.06);
+    --color-primary-medium: rgba(142, 34, 148, 0.12);
+    --color-text: #1a1a2e;
+    --color-text-secondary: rgba(0,0,0,0.55);
+    --color-text-tertiary: rgba(0,0,0,0.35);
+    --color-bg: #F8F7FC;
+    --color-surface: #ffffff;
+    --color-border: rgba(0,0,0,0.06);
+    --color-border-light: rgba(0,0,0,0.04);
+    --color-success: #059669;
+    --color-warning: #d97706;
+    --color-danger: #dc2626;
+    --color-info: #6a8fa8;
+    --font-size-xs: 12px;
+    --font-size-sm: 13px;
+    --font-size-base: 14px;
+    --font-size-lg: 15px;
+    --font-size-xl: 17px;
+    --font-size-2xl: 22px;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    font-size: var(--font-size-base);
+  }
+  a { text-decoration: none; color: inherit; }
+
+  /* ========== 统一卡片层级阴影 ========== */
+  .tr-card, .tr-overview-item, .tr-stat-card, .tr-dept-card {
+    background: var(--color-surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border-light);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .tr-card {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.02);
+    padding: var(--space-5);
+    margin-bottom: var(--space-5);
+  }
+  .tr-card:hover {
+    box-shadow: 0 4px 20px rgba(142, 34, 148, 0.08);
+    transform: translateY(-1px);
+    border-color: rgba(142, 34, 148, 0.1);
+  }
+  .tr-overview-item {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    padding: var(--space-4) var(--space-5);
+    text-align: center;
+  }
+  .tr-overview-item:hover {
+    box-shadow: 0 6px 24px rgba(142, 34, 148, 0.10);
+    transform: translateY(-2px);
+  }
+  .tr-stat-card {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    padding: var(--space-4);
+  }
+  .tr-stat-card:hover {
+    box-shadow: 0 4px 16px rgba(142, 34, 148, 0.08);
+  }
+  .tr-dept-card {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    padding: var(--space-4);
+    cursor: default;
+  }
+  .tr-dept-card:hover {
+    box-shadow: 0 4px 16px rgba(142, 34, 148, 0.10);
+    transform: translateY(-2px);
+    border-color: rgba(142, 34, 148, 0.12);
+  }
+
+  .app-main { padding: var(--space-5) var(--space-6); }
+  .tr-container { max-width: 1200px; margin: 0 auto; }
+
+  /* ========== 页面标题 ========== */
+  .tr-page-header {
+    margin-bottom: var(--space-5);
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+  }
+  .tr-page-title {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--color-text);
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .tr-page-title::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 24px;
+    background: var(--color-primary);
+    border-radius: 2px;
+  }
+  .tr-page-subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+    font-weight: 400;
+  }
+
+  /* ========== Tab 优化：badge 协调 ========== */
+  .tr-tabs {
+    display: flex;
+    gap: var(--space-1);
+    margin-bottom: var(--space-5);
+    border-bottom: 1.5px solid var(--color-border);
+    padding-bottom: 0;
+  }
+  .tr-tab {
+    padding: 10px 20px;
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    background: none;
+    border: none;
+    border-bottom: 2.5px solid transparent;
+    margin-bottom: -1.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: inherit;
+    position: relative;
+  }
+  .tr-tab:hover { color: var(--color-primary); }
+  .tr-tab.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+  }
+  .tr-tab-panel { display: none; }
+  .tr-tab-panel.active { display: block; }
+
+  /* ========== 区块标题 ========== */
+  .tr-section-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .tr-section-hint {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+    font-weight: 400;
+  }
+
+  /* ========== Overview 概览 ========== */
+  .tr-overview {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-5);
+  }
+  .tr-overview-item {
+    flex: 1;
+    min-width: 130px;
+  }
+  .tr-overview-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+    margin-bottom: var(--space-2);
+    font-weight: 500;
+  }
+  .tr-overview-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .tr-overview-value.primary { color: var(--color-primary); }
+  .tr-overview-value.success { color: var(--color-success); }
+  .tr-overview-value.danger { color: var(--color-danger); }
+  .tr-overview-value.warning { color: var(--color-warning); }
+  .tr-overview-trend {
+    font-size: 11px;
+    margin-top: var(--space-2);
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+  }
+
+  /* ========== 筛选药丸：白底边框式 ========== */
+  .tr-pills {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+  .tr-pill {
+    padding: 5px 14px;
+    border-radius: 100px;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    font-weight: 500;
+  }
+  .tr-pill:hover {
+    background: var(--color-primary-light);
+    border-color: rgba(142, 34, 148, 0.25);
+    color: var(--color-primary);
+  }
+  .tr-pill.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(142, 34, 148, 0.2);
+  }
+
+  /* ========== 布局 ========== */
+  .tr-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: var(--space-5);
+    margin-bottom: var(--space-5);
+  }
+
+  /* ========== 九宫格：呼吸感 ========== */
+  .tr-nine-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: rgba(0,0,0,0.015);
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border-light);
+  }
+  .tr-grid-cell {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: var(--space-4);
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .tr-grid-cell:hover {
+    box-shadow: 0 6px 24px rgba(142, 34, 148, 0.12);
+    transform: translateY(-2px);
+    border-color: rgba(142, 34, 148, 0.2);
+    z-index: 1;
+  }
+  /* 高潜区淡紫底 */
+  .tr-grid-cell[data-index="0"],
+  .tr-grid-cell[data-index="1"] {
+    background: rgba(142, 34, 148, 0.025);
+  }
+  .tr-grid-cell--core {
+    border: 2px solid var(--color-primary);
+    background: rgba(142, 34, 148, 0.04);
+  }
+  .tr-grid-cell--problem {
+    border: 2px solid var(--color-danger);
+    background: #fef2f2;
+  }
+  /* 差距员工淡红底 */
+  .tr-grid-cell[data-index="3"] {
+    background: #fef2f2;
+    border-color: rgba(220, 38, 38, 0.12);
+  }
+  .tr-grid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-3);
+    padding-right: 36px;
+  }
+  .tr-grid-label {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  .tr-grid-axis {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+  }
+  .tr-grid-names {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: var(--space-1) 0;
+  }
+  .tr-grid-name-link {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 6px;
+    border-radius: 4px;
+    transition: all 0.15s;
+  }
+  .tr-grid-name-link:hover {
+    color: var(--color-primary);
+    background: rgba(142,34,148,0.05);
+  }
+  .tr-grid-name-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    flex-shrink: 0;
+  }
+  .tr-grid-empty {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+    font-style: italic;
+    opacity: 0.5;
+  }
+  /* 人数角标：实心紫底白字徽章 */
+  .tr-grid-count {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--color-primary);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.4;
+    box-shadow: 0 2px 6px rgba(142, 34, 148, 0.2);
+  }
+
+  /* ========== 右侧卡片层次 ========== */
+  .tr-sidebar-section { display: flex; flex-direction: column; gap: var(--space-4); }
+  .tr-stat-card-title {
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1.5px solid var(--color-primary-light);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tr-stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--color-border-light);
+    font-size: var(--font-size-sm);
+  }
+  .tr-stat-row:last-child { border-bottom: none; }
+  .tr-stat-row-label { color: var(--color-text-secondary); font-weight: 500; }
+  .tr-stat-row-value { font-weight: 700; color: var(--color-primary); font-size: var(--font-size-base); }
+  .tr-stat-bar {
+    width: 72px;
+    height: 6px;
+    background: #f0eef2;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-left: auto;
+    margin-right: var(--space-3);
+    flex-shrink: 0;
+  }
+  .tr-stat-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .tr-stat-bar-fill.high-potential { background: var(--color-primary); }
+  .tr-stat-bar-fill.mid-potential { background: var(--color-warning); }
+  .tr-stat-bar-fill.low-potential { background: var(--color-danger); }
+  .tr-stat-bar-fill.success { background: var(--color-success); }
+  .tr-stat-bar-fill.warning { background: var(--color-warning); }
+  .tr-stat-bar-fill.danger { background: var(--color-danger); }
+
+  /* 核心人才列表 */
+  .tr-talent-item-inline {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--color-border-light);
+    transition: all 0.15s;
+    border-radius: 8px;
+    margin: 2px -4px;
+  }
+  .tr-talent-item-inline:hover {
+    background: var(--color-primary-light);
+  }
+  .tr-talent-item-inline:last-child { border-bottom: none; }
+  .tr-talent-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .tr-talent-info-mini { flex: 1; min-width: 0; }
+  .tr-talent-name-mini {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  .tr-talent-dept-mini {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    margin-top: 1px;
+  }
+  .tr-talent-score {
+    font-size: var(--font-size-base);
+    color: var(--color-primary);
+    font-weight: 700;
+    min-width: 32px;
+    text-align: right;
+  }
+
+  /* ========== 部门卡片 ========== */
+  .tr-dept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: var(--space-4);
+  }
+  .tr-dept-name {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+  }
+  .tr-dept-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: var(--space-3);
+  }
+  .tr-dept-tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .tr-dept-tag--good { background: #ecfdf5; color: #065f46; }
+  .tr-dept-tag--warn { background: #fef3c7; color: #92400e; }
+  .tr-dept-tag--danger { background: #fef2f2; color: #991b1b; }
+  .tr-dept-tag--info { background: #eef2ff; color: #3730a3; }
+  .tr-dept-meta {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+  }
+
+  /* ========== 评价 Tab ========== */
+  .tr-eval-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-5);
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  .tr-eval-rater-pills {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+  .tr-eval-rater-pill {
+    padding: 5px 14px;
+    border-radius: 100px;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+  }
+  .tr-eval-rater-pill:hover {
+    background: var(--color-primary-light);
+    border-color: rgba(142, 34, 148, 0.25);
+    color: var(--color-primary);
+  }
+  .tr-eval-rater-pill.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(142, 34, 148, 0.2);
+  }
+  .tr-eval-rater-pill .rate-badge {
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 100px;
+    background: rgba(142, 34, 148, 0.08);
+    color: inherit;
+    font-weight: 600;
+  }
+  .tr-eval-rater-pill.active .rate-badge {
+    background: rgba(255,255,255,0.25);
+    color: inherit;
+  }
+
+  .tr-table-wrap { overflow-x: auto; border-radius: var(--radius-sm); }
+  .tr-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+    background: var(--color-surface);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  .tr-table th {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    font-weight: 600;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 2px solid var(--color-primary);
+    white-space: nowrap;
+    font-size: var(--font-size-xs);
+  }
+  .tr-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--color-border-light);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .tr-table tbody tr { transition: background 0.15s; }
+  .tr-table tbody tr:hover td { background: rgba(142, 34, 148, 0.04); }
+  .tr-table tr:last-child td { border-bottom: none; }
+  .tr-status-tag {
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .tr-status-tag--pending { color: var(--color-warning); }
+  .tr-status-tag--done { color: var(--color-success); }
+  .tr-action-btn {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-primary);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+    padding: 0;
+  }
+  .tr-action-btn:hover { text-decoration: underline; }
+  .tr-action-btn--disabled {
+    color: var(--color-text-tertiary);
+    cursor: default;
+  }
+  .tr-action-btn--disabled:hover { text-decoration: none; }
+
+  .tr-progress-board {
+    background: var(--color-surface);
+    border-radius: var(--radius);
+    padding: var(--space-5);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.02);
+    margin-top: var(--space-5);
+    border: 1px solid var(--color-border-light);
+  }
+  .tr-progress-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--space-4);
+  }
+  .tr-progress-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+  }
+  .tr-progress-name {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    min-width: 64px;
+    color: var(--color-text);
+  }
+  .tr-progress-track {
+    flex: 1;
+    height: 8px;
+    background: #f0eef2;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .tr-progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .tr-progress-fill--high { background: var(--color-success); }
+  .tr-progress-fill--mid { background: var(--color-warning); }
+  .tr-progress-fill--low { background: var(--color-danger); }
+  .tr-progress-count {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    min-width: 40px;
+    text-align: right;
+    font-weight: 600;
+  }
+  .tr-progress-summary {
+    margin-top: var(--space-4);
+    padding: var(--space-4);
+    background: var(--color-primary-light);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    border: 1px solid rgba(142, 34, 148, 0.08);
+  }
+  .tr-progress-summary strong { color: var(--color-primary); }
+  .tr-remind-btn {
+    margin-left: auto;
+    padding: 6px 16px;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 2px 8px rgba(142, 34, 148, 0.25);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .tr-remind-btn:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(142, 34, 148, 0.35);
+  }
+  .tr-remind-btn:active { transform: translateY(0); }
+
+  /* ========== 弹窗 ========== */
+  .tr-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: var(--space-5);
+    backdrop-filter: blur(3px);
+  }
+  .tr-modal-overlay.active { display: flex; }
+  .tr-modal {
+    background: var(--color-surface);
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.18);
+    animation: tr-modal-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 1px solid var(--color-border-light);
+  }
+  @keyframes tr-modal-in {
+    from { opacity: 0; transform: translateY(20px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .tr-modal-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+  .tr-modal-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .tr-modal-info-title {
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  .tr-modal-info-sub {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+    margin-top: 2px;
+  }
+  .tr-modal-body { padding: var(--space-5); }
+  .tr-score-group { margin-bottom: var(--space-5); }
+  .tr-score-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-3);
+  }
+  .tr-score-label {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  .tr-score-weight {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    font-weight: 400;
+  }
+  .tr-score-value {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    min-width: 28px;
+    text-align: right;
+  }
+  .tr-slider-track {
+    height: 10px;
+    background: #f0eef2;
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+    padding: 5px 0;
+    background-clip: content-box;
+  }
+  .tr-slider-fill {
+    height: 100%;
+    border-radius: 5px;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: width 0.2s ease;
+  }
+  .tr-slider-fill.professional { background: var(--color-primary); }
+  .tr-slider-fill.management { background: var(--color-warning); }
+  .tr-slider-fill.potential { background: var(--color-success); }
+  .tr-slider-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid var(--color-primary);
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    transition: left 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    z-index: 2;
+  }
+  .tr-slider-thumb:hover {
+    transform: translate(-50%, -50%) scale(1.2);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  }
+  .tr-slider-thumb.management { border-color: var(--color-warning); }
+  .tr-slider-thumb.potential { border-color: var(--color-success); }
+  .tr-slider-hints {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+  .tr-score-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--space-3);
+    padding: 0 4px;
+  }
+  .tr-score-step {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #f0eef2;
+    color: var(--color-text-secondary);
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 600;
+    border: 2px solid transparent;
+  }
+  .tr-score-step:hover {
+    background: var(--color-primary-light);
+    transform: scale(1.1);
+  }
+  .tr-score-step.active {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+    box-shadow: 0 3px 10px rgba(142, 34, 148, 0.3);
+    transform: scale(1.18);
+  }
+  .tr-score-step.active.management {
+    background: var(--color-warning);
+    border-color: var(--color-warning);
+    box-shadow: 0 3px 10px rgba(217, 119, 6, 0.3);
+  }
+  .tr-score-step.active.potential {
+    background: var(--color-success);
+    border-color: var(--color-success);
+    box-shadow: 0 3px 10px rgba(5, 150, 105, 0.3);
+  }
+  .tr-textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    font-family: inherit;
+    resize: vertical;
+    color: var(--color-text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .tr-textarea:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(142, 34, 148, 0.08);
+  }
+  .tr-textarea::placeholder { color: var(--color-text-tertiary); }
+  .tr-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    border-top: 1px solid var(--color-border-light);
+  }
+  .tr-btn {
+    padding: 8px 20px;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    border: none;
+    transition: all 0.2s;
+  }
+  .tr-btn--secondary {
+    background: #f0eef2;
+    color: var(--color-text-secondary);
+  }
+  .tr-btn--secondary:hover { background: #e5e1e8; }
+  .tr-btn--primary {
+    background: var(--color-primary);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(142, 34, 148, 0.2);
+  }
+  .tr-btn--primary:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(142, 34, 148, 0.3);
+  }
+
+  /* 九宫格详情弹窗列表 */
+  .tr-grid-detail-list { margin-top: var(--space-2); }
+  .tr-grid-detail-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 10px 0;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+  .tr-grid-detail-item:last-child { border-bottom: none; }
+  .tr-grid-detail-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .tr-grid-detail-info { flex: 1; }
+  .tr-grid-detail-name {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  .tr-grid-detail-dept {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    margin-top: 2px;
+  }
+  .tr-grid-detail-scores {
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    text-align: right;
+    font-weight: 500;
+  }
+  .tr-grid-detail-scores span { display: block; line-height: 1.6; }
+
+  @media (max-width: 960px) {
+    .tr-layout { grid-template-columns: 1fr; }
+    .tr-sidebar-section { flex-direction: row; flex-wrap: wrap; }
+    .tr-stat-card { flex: 1; min-width: 240px; }
+  }
+  @media (max-width: 640px) {
+    .app-main { padding: var(--space-4); }
+    .tr-page-header { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+    .tr-overview-item { min-width: calc(50% - 6px); }
+    .tr-nine-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 6px; }
+    .tr-grid-cell { padding: 10px; min-height: 100px; }
+    .tr-grid-count { top: 6px; right: 6px; font-size: 10px; padding: 1px 6px; }
+    .tr-dept-grid { grid-template-columns: 1fr; }
+    .tr-table th, .tr-table td { padding: 8px 10px; font-size: 12px; }
+    .tr-modal { max-width: 100%; margin: var(--space-3); }
+  }
+  </style>
+</head>
+<body>
+
+<main id="app-main" class="app-main">
+  <div class="tr-container">
+
+    <div class="tr-page-header">
+      <h1 class="tr-page-title">人才盘点</h1>
+      <span class="tr-page-subtitle">干部队伍九宫格定位 · 核心人才识别</span>
+    </div>
+
+    <div class="tr-tabs">
+      <button class="tr-tab active" data-tab="board" onclick="switchTab('board')">
+        干部队伍看板
+      </button>
+      <button class="tr-tab" data-tab="evaluate" onclick="switchTab('evaluate')">
+        领导在线评价
+      </button>
+    </div>
+
+    <div class="tr-tab-panel active" id="tab-board">
+      <div class="tr-overview" id="overviewBar"></div>
+      <div class="tr-card">
+        <div class="tr-section-title"><span>筛选条件</span></div>
+        <div style="margin-bottom:8px;font-size:12px;color:var(--color-text-tertiary);font-weight:600;">部门</div>
+        <div class="tr-pills" id="deptPills"></div>
+        <div style="margin-bottom:8px;font-size:12px;color:var(--color-text-tertiary);margin-top:14px;font-weight:600;">评估状态</div>
+        <div class="tr-pills" id="statusPills"></div>
+      </div>
+      <div class="tr-layout">
+        <div class="tr-grid-section">
+          <div class="tr-section-title">
+            <span>人才九宫格</span>
+            <span class="tr-section-hint">点击干部姓名查看画像 · 点击格子查看详情</span>
+          </div>
+          <div class="tr-nine-grid" id="trNineGrid"></div>
+        </div>
+        <div class="tr-sidebar-section" id="trSidebar"></div>
+      </div>
+      <div class="tr-card">
+        <div class="tr-section-title">
+          <span>部门配置状态一览</span>
+          <span class="tr-section-hint">基于盘点文件部门现状分析</span>
+        </div>
+        <div class="tr-dept-grid" id="deptStatusGrid"></div>
+      </div>
+    </div>
+
+    <div class="tr-tab-panel" id="tab-evaluate">
+      <div class="tr-eval-header">
+        <div>
+          <div class="tr-section-title" style="margin-bottom:10px;">
+            <span>选择评价人</span>
+            <span class="tr-section-hint">各领导分别评价分管干部</span>
+          </div>
+          <div class="tr-eval-rater-pills" id="raterPills"></div>
+        </div>
+      </div>
+      <div class="tr-card" style="padding:0;overflow:hidden;">
+        <div class="tr-section-title" style="padding:18px 18px 0 18px;">
+          <span>待评名单</span>
+          <span class="tr-section-hint" id="evalListHint"></span>
+        </div>
+        <div class="tr-table-wrap">
+          <table class="tr-table" id="evalTable">
+            <thead>
+              <tr><th>姓名</th><th>部门</th><th>职务</th><th>评价状态</th><th>操作</th></tr>
+            </thead>
+            <tbody id="evalTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="tr-progress-board">
+        <div class="tr-progress-title">📊 评价进度看板（HR视角）</div>
+        <div id="progressBoard"></div>
+        <div class="tr-progress-summary" id="progressSummary"></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+<script>renderLayout('人才盘点', 'talent-review')</script>
+
+<div class="tr-modal-overlay" id="scoreModal">
+  <div class="tr-modal">
+    <div class="tr-modal-header">
+      <div class="tr-modal-avatar" id="modalAvatar">张</div>
+      <div>
+        <div class="tr-modal-info-title" id="modalName">张某某</div>
+        <div class="tr-modal-info-sub" id="modalDept">投资管理部 · 部长</div>
+      </div>
+    </div>
+    <div class="tr-modal-body">
+      <div class="tr-score-group">
+        <div class="tr-score-label-row">
+          <span class="tr-score-label">专业能力 <span class="tr-score-weight">（权重40%，1-10分）</span></span>
+          <span class="tr-score-value" id="valProfessional">8</span>
+        </div>
+        <div class="tr-slider-track" data-dim="professional" onclick="onSliderClick(event, 'professional')">
+          <div class="tr-slider-fill professional" id="fillProfessional" style="width:80%"></div>
+          <div class="tr-slider-thumb professional" id="thumbProfessional" style="left:80%"></div>
+        </div>
+        <div class="tr-slider-hints"><span>业务精湛</span><span>有待提升</span></div>
+        <div class="tr-score-steps" id="stepsProfessional"></div>
+      </div>
+      <div class="tr-score-group">
+        <div class="tr-score-label-row">
+          <span class="tr-score-label">管理能力 <span class="tr-score-weight">（权重30%，1-10分）</span></span>
+          <span class="tr-score-value" id="valManagement">7</span>
+        </div>
+        <div class="tr-slider-track" data-dim="management" onclick="onSliderClick(event, 'management')">
+          <div class="tr-slider-fill management" id="fillManagement" style="width:70%"></div>
+          <div class="tr-slider-thumb management" id="thumbManagement" style="left:70%"></div>
+        </div>
+        <div class="tr-slider-hints"><span>卓越领导</span><span>需加强</span></div>
+        <div class="tr-score-steps" id="stepsManagement"></div>
+      </div>
+      <div class="tr-score-group">
+        <div class="tr-score-label-row">
+          <span class="tr-score-label">发展潜力 <span class="tr-score-weight">（权重30%，1-10分）</span></span>
+          <span class="tr-score-value" id="valPotential">9</span>
+        </div>
+        <div class="tr-slider-track" data-dim="potential" onclick="onSliderClick(event, 'potential')">
+          <div class="tr-slider-fill potential" id="fillPotential" style="width:90%"></div>
+          <div class="tr-slider-thumb potential" id="thumbPotential" style="left:90%"></div>
+        </div>
+        <div class="tr-slider-hints"><span>极具潜力</span><span>空间有限</span></div>
+        <div class="tr-score-steps" id="stepsPotential"></div>
+      </div>
+      <div class="tr-score-group" style="margin-bottom:0;">
+        <div class="tr-score-label" style="margin-bottom:8px;">综合评语 <span class="tr-score-weight">（可选）</span></div>
+        <textarea class="tr-textarea" id="modalComment" placeholder="请输入对该干部的综合评价与培养建议..."></textarea>
+      </div>
+    </div>
+    <div class="tr-modal-footer">
+      <button class="tr-btn tr-btn--secondary" onclick="closeModal()">取消</button>
+      <button class="tr-btn tr-btn--primary" onclick="submitScore()">提交评价</button>
+    </div>
+  </div>
+</div>
+
+<div class="tr-modal-overlay" id="gridModal">
+  <div class="tr-modal" style="max-width:440px;">
+    <div class="tr-modal-header">
+      <div>
+        <div class="tr-modal-info-title" id="gridModalTitle">核心人才</div>
+        <div class="tr-modal-info-sub" id="gridModalSubtitle">高潜 · 高绩</div>
+      </div>
+    </div>
+    <div class="tr-modal-body">
+      <div class="tr-grid-detail-list" id="gridModalList"></div>
+    </div>
+    <div class="tr-modal-footer">
+      <button class="tr-btn tr-btn--secondary" onclick="closeGridModal()">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const GRID_LABELS = [
+  '潜力新星', '中坚力量', '核心人才',
+  '差距员工', '稳定贡献', '熟练员工',
+  '潜力待挖', '待观察者', '问题员工'
+];
+
+const DEFAULT_THRESHOLDS = {
+  performance: { high: 8.0, medium: 4.0 },
+  potential:   { high: 8.0, medium: 4.0 }
+};
+
+const CADRES = [
+  { id: 1,  name: '张某某', dept: '投资管理部',   title: '部长',       level: '中层正职', entryDate: '2015-03', age: 42, evaluated: true,  scores: { professional: 8.0, management: 7.0, potential: 9.0, impression: 8.5 }, bizTags: ['达轮岗年限'] },
+  { id: 2,  name: '李某',   dept: '投资管理部',   title: '副部长',     level: '中层副职', entryDate: '2018-06', age: 38, evaluated: true,  scores: { professional: 7.0, management: 6.0, potential: 8.0, impression: 7.0 }, bizTags: ['副职储备'] },
+  { id: 3,  name: '赵某某', dept: '战略发展部',   title: '部长',       level: '中层正职', entryDate: '2012-09', age: 45, evaluated: true,  scores: { professional: 9.0, management: 9.0, potential: 8.0, impression: 9.0 }, bizTags: ['领导班子后备'] },
+  { id: 4,  name: '钱某',   dept: '战略发展部',   title: '副部长',     level: '中层副职', entryDate: '2019-01', age: 35, evaluated: true,  scores: { professional: 6.0, management: 5.0, potential: 6.0, impression: 5.5 }, bizTags: [] },
+  { id: 5,  name: '吴某某', dept: '党群工作部',   title: '部长（兼）', level: '领导班子', entryDate: '2010-05', age: 48, evaluated: true,  scores: { professional: 9.0, management: 8.0, potential: 9.0, impression: 9.0 }, bizTags: ['兼职兼任'] },
+  { id: 6,  name: '郑某',   dept: '党群工作部',   title: '副部长',     level: '中层副职', entryDate: '2017-11', age: 41, evaluated: true,  scores: { professional: 5.0, management: 4.0, potential: 7.0, impression: 5.0 }, bizTags: [] },
+  { id: 7,  name: '陈某',   dept: '财务部',       title: '部长',       level: '中层正职', entryDate: '2014-08', age: 44, evaluated: true,  scores: { professional: 4.0, management: 3.0, potential: 5.0, impression: 4.0 }, bizTags: [] },
+  { id: 8,  name: '冯某',   dept: '财务部',       title: '副部长',     level: '中层副职', entryDate: '2020-02', age: 33, evaluated: true,  scores: { professional: 6.0, management: 6.0, potential: 5.0, impression: 6.0 }, bizTags: [] },
+  { id: 9,  name: '褚某',   dept: '风险合规部',   title: '部长',       level: '中层正职', entryDate: '2016-07', age: 40, evaluated: true,  scores: { professional: 6.0, management: 5.0, potential: 5.0, impression: 5.5 }, bizTags: [] },
+  { id: 10, name: '卫某',   dept: '风险合规部',   title: '副部长',     level: '中层副职', entryDate: '2021-04', age: 30, evaluated: true,  scores: { professional: 5.0, management: 5.0, potential: 4.0, impression: 4.5 }, bizTags: [] },
+  { id: 11, name: '蒋某',   dept: '投资管理部',   title: '高级经理',   level: '基层干部', entryDate: '2019-09', age: 29, evaluated: true,  scores: { professional: 7.0, management: 7.0, potential: 6.0, impression: 7.0 }, bizTags: [] },
+  { id: 12, name: '沈某',   dept: '战略发展部',   title: '高级经理',   level: '基层干部', entryDate: '2020-01', age: 31, evaluated: true,  scores: { professional: 6.0, management: 6.0, potential: 5.0, impression: 6.0 }, bizTags: [] },
+  { id: 13, name: '韩某',   dept: '财务部',       title: '高级经理',   level: '基层干部', entryDate: '2018-03', age: 36, evaluated: true,  scores: { professional: 3.0, management: 2.0, potential: 3.0, impression: 2.5 }, bizTags: ['待观察'] },
+  { id: 14, name: '杨某',   dept: '风险合规部',   title: '高级经理',   level: '基层干部', entryDate: '2022-06', age: 27, evaluated: false, scores: null, bizTags: [] },
+  { id: 15, name: '朱某',   dept: '投资管理部',   title: '经理',       level: '基层干部', entryDate: '2023-01', age: 26, evaluated: false, scores: null, bizTags: [] },
+  { id: 16, name: '秦某',   dept: '战略发展部',   title: '经理',       level: '基层干部', entryDate: '2023-08', age: 25, evaluated: false, scores: null, bizTags: [] }
+];
+
+const RATERS = [
+  { id: 'r1', name: '张薇总',   role: '总经理',     color: 'primary' },
+  { id: 'r2', name: '李副总',   role: '副总经理',   color: 'warning' },
+  { id: 'r3', name: '王副总',   role: '副总经理',   color: 'success' },
+  { id: 'r4', name: '刘总助',   role: '总经理助理', color: 'danger'  }
+];
+
+const RATER_ASSIGNMENTS = {
+  r1: [1, 2, 3, 4, 5, 6, 7, 8],
+  r2: [1, 2, 11, 15],
+  r3: [3, 4, 12, 16],
+  r4: [5, 6, 9, 10, 13, 14]
+};
+
+let evaluations = {};
+let currentRater = 'r1';
+let currentEvalCadreId = null;
+let currentScores = { professional: 8, management: 7, potential: 9 };
+let activeDept = '全部';
+let activeStatus = '全部';
+
+function computeGridState(cadre) {
+  if (!cadre.evaluated || cadre.scores == null) {
+    return { state: 'PENDING', label: '待评估' };
+  }
+  const scores = cadre.scores;
+  const performance = parseFloat(((scores.professional * 0.4 + scores.management * 0.3) / 0.7).toFixed(1));
+  const potential   = parseFloat(scores.potential.toFixed(1));
+  const getLevel = (score, th) => {
+    if (score >= th.high)    return 'high';
+    if (score >= th.medium)  return 'medium';
+    return 'low';
+  };
+  const xLevel = getLevel(performance, DEFAULT_THRESHOLDS.performance);
+  const yLevel = getLevel(potential,   DEFAULT_THRESHOLDS.potential);
+  const yMap = { high: 0, medium: 1, low: 2 };
+  const xMap = { low: 0, medium: 1, high: 2 };
+  const index = yMap[yLevel] * 3 + xMap[xLevel];
+  return { state: 'NORMAL', index, label: GRID_LABELS[index], performance, potential };
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tr-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tr-tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector('.tr-tab[data-tab="' + tab + '"]').classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'board') renderBoard();
+  if (tab === 'evaluate') renderEvaluate();
+}
+
+function getFilteredCadres() {
+  return CADRES.filter(function(c) {
+    const deptMatch = activeDept === '全部' || c.dept === activeDept;
+    const statusMatch = activeStatus === '全部'
+      || (activeStatus === '已评估' && c.evaluated)
+      || (activeStatus === '待评估' && !c.evaluated);
+    return deptMatch && statusMatch;
+  });
+}
+
+function renderBoard() {
+  var filtered = getFilteredCadres();
+  var allStates = CADRES.map(function(c) { return Object.assign({}, c, { gridState: computeGridState(c) }); });
+  var filteredStates = filtered.map(function(c) { return Object.assign({}, c, { gridState: computeGridState(c) }); });
+  renderOverview(filteredStates, allStates);
+  renderPills();
+  renderNineGrid(filteredStates);
+  renderSidebar(filteredStates, allStates);
+  renderDeptStatus(allStates);
+}
+
+function renderOverview(states, allStates) {
+  var total = states.length;
+  var evaluated = states.filter(function(c) { return c.evaluated; }).length;
+  var pending = total - evaluated;
+  var highPotential = states.filter(function(c) {
+    return c.gridState.state === 'NORMAL' &&
+      (c.gridState.label === '核心人才' || c.gridState.label === '中坚力量');
+  }).length;
+  var highPotentialPct = total > 0 ? Math.round(highPotential / total * 100) : 0;
+
+  var totalTasks = 0, doneTasks = 0;
+  Object.entries(RATER_ASSIGNMENTS).forEach(function(entry) {
+    var rid = entry[0], ids = entry[1];
+    totalTasks += ids.length;
+    ids.forEach(function(cid) {
+      if (evaluations[rid + '_' + cid]) doneTasks++;
+    });
+  });
+  var completionRate = totalTasks > 0 ? Math.round(doneTasks / totalTasks * 100) : 0;
+
+  var items = [
+    { label: '总人数', value: total, color: '' },
+    { label: '已评估', value: evaluated, color: 'success' },
+    { label: '待评估', value: pending, color: 'danger' },
+    { label: '高潜占比', value: highPotentialPct + '%', color: 'primary' },
+    { label: '评价完成率', value: completionRate + '%', color: 'primary' }
+  ];
+  document.getElementById('overviewBar').innerHTML = items.map(function(it) {
+    return '<div class="tr-overview-item">' +
+      '<div class="tr-overview-label">' + it.label + '</div>' +
+      '<div class="tr-overview-value ' + it.color + '">' + it.value + '</div>' +
+      (it.label === '高潜占比' ? '<div class="tr-overview-trend">↑ 较上期+3%</div>' : '') +
+      '</div>';
+  }).join('');
+}
+
+function renderPills() {
+  var depts = ['全部'].concat(Array.from(new Set(CADRES.map(function(c) { return c.dept; }))));
+  var statuses = ['全部', '已评估', '待评估'];
+  document.getElementById('deptPills').innerHTML = depts.map(function(d) {
+    return '<button class="tr-pill ' + (activeDept === d ? 'active' : '') + '" onclick="setDeptFilter(\'' + d + '\')">' + d + '</button>';
+  }).join('');
+  document.getElementById('statusPills').innerHTML = statuses.map(function(s) {
+    return '<button class="tr-pill ' + (activeStatus === s ? 'active' : '') + '" onclick="setStatusFilter(\'' + s + '\')">' + s + '</button>';
+  }).join('');
+}
+
+function setDeptFilter(d) { activeDept = d; renderBoard(); }
+function setStatusFilter(s) { activeStatus = s; renderBoard(); }
+
+function renderNineGrid(cadreStates) {
+  var el = document.getElementById('trNineGrid');
+  var gridGroups = Array.from({ length: 9 }, function() { return []; });
+  cadreStates.forEach(function(c) {
+    if (c.gridState.state === 'NORMAL') {
+      gridGroups[c.gridState.index].push(c);
+    }
+  });
+  el.innerHTML = GRID_LABELS.map(function(label, idx) {
+    var group = gridGroups[idx];
+    var row = Math.floor(idx / 3);
+    var col = idx % 3;
+    var yLabel = row === 0 ? '高潜' : row === 1 ? '中潜' : '低潜';
+    var xLabel = col === 0 ? '低绩' : col === 1 ? '中绩' : '高绩';
+    var isCore = idx === 2;
+    var isProblem = idx === 8;
+    var cellClass = 'tr-grid-cell ' + (isCore ? 'tr-grid-cell--core ' : '') + (isProblem ? 'tr-grid-cell--problem' : '');
+    return '<div class="' + cellClass + '" data-index="' + idx + '" onclick="openGridModal(' + idx + ')">' +
+      '<div class="tr-grid-header">' +
+        '<div class="tr-grid-label">' + label + '</div>' +
+        '<div class="tr-grid-axis">' + yLabel + ' · ' + xLabel + '</div>' +
+      '</div>' +
+      '<div class="tr-grid-names">' +
+        group.map(function(c) {
+          return '<a href="talent-profile.html?id=' + c.id + '" target="_self" class="tr-grid-name-link" title="' + c.name + ' · ' + c.title + '" onclick="event.stopPropagation()">' +
+            '<span class="tr-grid-name-dot"></span>' + c.name +
+          '</a>';
+        }).join('') +
+        (group.length === 0 ? '<span class="tr-grid-empty">—</span>' : '') +
+      '</div>' +
+      '<div class="tr-grid-count">' + group.length + '人</div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderSidebar(cadreStates, allStates) {
+  var el = document.getElementById('trSidebar');
+  var evaluatedStates = cadreStates.filter(function(c) { return c.gridState.state === 'NORMAL'; });
+
+  var avgPerf = evaluatedStates.length > 0
+    ? (evaluatedStates.reduce(function(s, c) { return s + c.gridState.performance; }, 0) / evaluatedStates.length).toFixed(1)
+    : '—';
+  var avgPot = evaluatedStates.length > 0
+    ? (evaluatedStates.reduce(function(s, c) { return s + c.gridState.potential; }, 0) / evaluatedStates.length).toFixed(1)
+    : '—';
+
+  var overviewCard = '<div class="tr-stat-card">' +
+    '<div class="tr-stat-card-title">📊 盘点概览</div>' +
+    '<div class="tr-stat-row"><span class="tr-stat-row-label">参与盘点人数</span><span class="tr-stat-row-value">' + cadreStates.length + ' 人</span></div>' +
+    '<div class="tr-stat-row"><span class="tr-stat-row-label">平均绩效分</span><span class="tr-stat-row-value">' + avgPerf + '</span></div>' +
+    '<div class="tr-stat-row"><span class="tr-stat-row-label">平均潜力分</span><span class="tr-stat-row-value">' + avgPot + '</span></div>' +
+  '</div>';
+
+  var counts = Array(9).fill(0);
+  evaluatedStates.forEach(function(c) { counts[c.gridState.index]++; });
+  var maxCount = Math.max.apply(Math, counts.concat([1]));
+  var distRows = [0,1,2,3,4,5,6,7,8].map(function(idx) {
+    var count = counts[idx];
+    var pct = Math.round(count / maxCount * 100);
+    var barClass = idx <= 2 ? 'high-potential' : idx <= 5 ? 'mid-potential' : 'low-potential';
+    return '<div class="tr-stat-row">' +
+      '<span class="tr-stat-row-label">' + GRID_LABELS[idx] + '</span>' +
+      '<div class="tr-stat-bar"><div class="tr-stat-bar-fill ' + barClass + '" style="width:' + pct + '%"></div></div>' +
+      '<span class="tr-stat-row-value">' + count + ' 人</span>' +
+    '</div>';
+  }).join('');
+  var pendingCount = cadreStates.filter(function(c) { return c.gridState.state === 'PENDING'; }).length;
+  var distCard = '<div class="tr-stat-card">' +
+    '<div class="tr-stat-card-title">📈 象限分布</div>' + distRows +
+    '<div class="tr-stat-row">' +
+      '<span class="tr-stat-row-label">待评估</span>' +
+      '<div class="tr-stat-bar"><div class="tr-stat-bar-fill warning" style="width:' + (pendingCount > 0 ? 30 : 0) + '%"></div></div>' +
+      '<span class="tr-stat-row-value" style="color:var(--color-warning)">' + pendingCount + ' 人</span>' +
+    '</div>' +
+  '</div>';
+
+  var coreTalents = evaluatedStates.filter(function(c) {
+    var gs = c.gridState;
+    return gs.potential >= 8.0 || gs.performance >= 8.0 || (c.bizTags && c.bizTags.includes('领导班子后备'));
+  }).sort(function(a, b) {
+    var priority = { 2: 0, 0: 1, 1: 2, 5: 2 };
+    var pa = priority[a.gridState.index] != null ? priority[a.gridState.index] : 9;
+    var pb = priority[b.gridState.index] != null ? priority[b.gridState.index] : 9;
+    if (pa !== pb) return pa - pb;
+    return b.gridState.potential - a.gridState.potential;
+  });
+
+  var coreList = coreTalents.map(function(c) {
+    var gs = c.gridState;
+    var composite = ((gs.performance + gs.potential) / 2).toFixed(1);
+    return '<div class="tr-talent-item-inline">' +
+      '<div class="tr-talent-avatar">' + c.name[0] + '</div>' +
+      '<div class="tr-talent-info-mini">' +
+        '<div class="tr-talent-name-mini">' + c.name + '</div>' +
+        '<div class="tr-talent-dept-mini">' + c.dept + '</div>' +
+      '</div>' +
+      '<div class="tr-talent-score">' + composite + '</div>' +
+    '</div>';
+  }).join('');
+
+  var coreCard = '<div class="tr-stat-card">' +
+    '<div class="tr-stat-card-title">⭐ 核心人才</div>' +
+    (coreList || '<div style="font-size:13px;color:var(--color-text-tertiary);padding:8px 0;">暂无核心人才</div>') +
+  '</div>';
+
+  el.innerHTML = overviewCard + distCard + coreCard;
+}
+
+function renderDeptStatus(allStates) {
+  var deptMap = {};
+  allStates.forEach(function(c) {
+    if (!deptMap[c.dept]) deptMap[c.dept] = { cadres: [], tags: new Set() };
+    deptMap[c.dept].cadres.push(c);
+    if (c.bizTags) c.bizTags.forEach(function(t) { deptMap[c.dept].tags.add(t); });
+  });
+
+  var tagStyles = {
+    '结构良好': 'good',
+    '副职空缺': 'warn',
+    '达轮岗年限': 'warn',
+    '退休临近': 'danger',
+    '兼职兼任': 'warn',
+    '待聘用': 'info',
+    '副职储备': 'info',
+    '领导班子后备': 'info',
+    '待观察': 'danger'
+  };
+
+  var el = document.getElementById('deptStatusGrid');
+  el.innerHTML = Object.entries(deptMap).map(function(entry) {
+    var dept = entry[0], data = entry[1];
+    var total = data.cadres.length;
+    var evaluated = data.cadres.filter(function(c) { return c.evaluated; }).length;
+    var pending = total - evaluated;
+    var tags = Array.from(data.tags);
+    if (tags.length === 0) tags.push('结构良好');
+    return '<div class="tr-dept-card">' +
+      '<div class="tr-dept-name">' + dept + '</div>' +
+      '<div class="tr-dept-tags">' +
+        tags.map(function(t) { return '<span class="tr-dept-tag tr-dept-tag--' + (tagStyles[t] || 'info') + '">' + t + '</span>'; }).join('') +
+      '</div>' +
+      '<div class="tr-dept-meta">' + total + '人 · ' + evaluated + '人已评' + (pending > 0 ? ' · ' + pending + '人待评' : '') + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function openGridModal(idx) {
+  var label = GRID_LABELS[idx];
+  var row = Math.floor(idx / 3);
+  var col = idx % 3;
+  var yLabel = row === 0 ? '高潜' : row === 1 ? '中潜' : '低潜';
+  var xLabel = col === 0 ? '低绩' : col === 1 ? '中绩' : '高绩';
+  var allStates = CADRES.map(function(c) { return Object.assign({}, c, { gridState: computeGridState(c) }); });
+  var group = allStates.filter(function(c) { return c.gridState.state === 'NORMAL' && c.gridState.index === idx; });
+
+  document.getElementById('gridModalTitle').textContent = label;
+  document.getElementById('gridModalSubtitle').textContent = yLabel + ' · ' + xLabel + ' · ' + group.length + '人';
+  document.getElementById('gridModalList').innerHTML = group.map(function(c) {
+    var gs = c.gridState;
+    return '<div class="tr-grid-detail-item">' +
+      '<div class="tr-grid-detail-avatar">' + c.name[0] + '</div>' +
+      '<div class="tr-grid-detail-info">' +
+        '<div class="tr-grid-detail-name">' + c.name + '</div>' +
+        '<div class="tr-grid-detail-dept">' + c.dept + ' · ' + c.title + '</div>' +
+      '</div>' +
+      '<div class="tr-grid-detail-scores">' +
+        '<span>绩效 ' + gs.performance + '</span>' +
+        '<span>潜力 ' + gs.potential + '</span>' +
+      '</div>' +
+    '</div>';
+  }).join('') || '<div style="color:var(--color-text-tertiary);font-size:13px;padding:8px 0;">该象限暂无人员</div>';
+  document.getElementById('gridModal').classList.add('active');
+}
+function closeGridModal() { document.getElementById('gridModal').classList.remove('active'); }
+
+function renderEvaluate() {
+  renderRaterPills();
+  renderEvalTable();
+  renderProgressBoard();
+}
+
+function renderRaterPills() {
+  var el = document.getElementById('raterPills');
+  el.innerHTML = RATERS.map(function(r) {
+    var assigned = RATER_ASSIGNMENTS[r.id] || [];
+    var done = assigned.filter(function(cid) { return evaluations[r.id + '_' + cid]; }).length;
+    return '<button class="tr-eval-rater-pill ' + (currentRater === r.id ? 'active' : '') + '" onclick="setRater(\'' + r.id + '\')">' +
+      r.name + '<span class="rate-badge">' + done + '/' + assigned.length + '</span></button>';
+  }).join('');
+}
+
+function setRater(rid) {
+  currentRater = rid;
+  renderEvaluate();
+}
+
+function renderEvalTable() {
+  var assignedIds = RATER_ASSIGNMENTS[currentRater] || [];
+  var rows = assignedIds.map(function(cid) {
+    var c = CADRES.find(function(x) { return x.id === cid; });
+    if (!c) return '';
+    var key = currentRater + '_' + cid;
+    var ev = evaluations[key];
+    var isDone = !!ev;
+    var statusHtml = isDone
+      ? '<span class="tr-status-tag tr-status-tag--done">✓ 已评价</span>'
+      : '<span class="tr-status-tag tr-status-tag--pending">⏳ 待评价</span>';
+    var actionHtml = isDone
+      ? '<button class="tr-action-btn tr-action-btn--disabled" onclick="viewScore(' + c.id + ')">查看</button>'
+      : '<button class="tr-action-btn" onclick="openScoreModal(' + c.id + ')">去评价 →</button>';
+    return '<tr><td><strong>' + c.name + '</strong></td><td>' + c.dept + '</td><td>' + c.title + '</td><td>' + statusHtml + '</td><td>' + actionHtml + '</td></tr>';
+  }).join('');
+  document.getElementById('evalTableBody').innerHTML = rows;
+  var doneCount = assignedIds.filter(function(cid) { return evaluations[currentRater + '_' + cid]; }).length;
+  document.getElementById('evalListHint').textContent = '当前评价人：' + RATERS.find(function(r) { return r.id === currentRater; }).name + ' · ' + doneCount + '/' + assignedIds.length + ' 已完成';
+}
+
+function renderProgressBoard() {
+  var el = document.getElementById('progressBoard');
+  var totalTasks = 0, doneTasks = 0;
+  el.innerHTML = RATERS.map(function(r) {
+    var assigned = RATER_ASSIGNMENTS[r.id] || [];
+    var done = assigned.filter(function(cid) { return evaluations[r.id + '_' + cid]; }).length;
+    totalTasks += assigned.length;
+    doneTasks += done;
+    var pct = assigned.length > 0 ? (done / assigned.length * 100) : 0;
+    var fillClass = pct >= 75 ? 'tr-progress-fill--high' : pct >= 50 ? 'tr-progress-fill--mid' : 'tr-progress-fill--low';
+    return '<div class="tr-progress-item">' +
+      '<span class="tr-progress-name">' + r.name + '</span>' +
+      '<div class="tr-progress-track"><div class="tr-progress-fill ' + fillClass + '" style="width:' + pct + '%"></div></div>' +
+      '<span class="tr-progress-count">' + done + '/' + assigned.length + '</span>' +
+    '</div>';
+  }).join('');
+
+  var overallPct = totalTasks > 0 ? (doneTasks / totalTasks * 100).toFixed(1) : 0;
+  var remaining = totalTasks - doneTasks;
+  document.getElementById('progressSummary').innerHTML =
+    '<strong>整体完成率：</strong> ' + doneTasks + '/' + totalTasks + ' · ' + overallPct + '% ' +
+    '<span style="color:var(--color-text-tertiary);">｜还有' + remaining + '人次待评价</span>' +
+    '<button class="tr-remind-btn" onclick="remindAll()">一键提醒</button>';
+}
+
+function remindAll() {
+  var unfinished = RATERS.filter(function(r) {
+    var assigned = RATER_ASSIGNMENTS[r.id] || [];
+    var done = assigned.filter(function(cid) { return evaluations[r.id + '_' + cid]; }).length;
+    return done < assigned.length;
+  });
+  if (unfinished.length === 0) {
+    alert('所有评价人均已完成评价！');
+  } else {
+    alert('已向 ' + unfinished.map(function(r) { return r.name; }).join('、') + ' 发送评价提醒');
+  }
+}
+
+function openScoreModal(cadreId) {
+  currentEvalCadreId = cadreId;
+  var c = CADRES.find(function(x) { return x.id === cadreId; });
+  if (!c) return;
+  document.getElementById('modalAvatar').textContent = c.name[0];
+  document.getElementById('modalName').textContent = c.name;
+  document.getElementById('modalDept').textContent = c.dept + ' · ' + c.title;
+  document.getElementById('modalComment').value = '';
+
+  var key = currentRater + '_' + cadreId;
+  var ev = evaluations[key];
+  currentScores = ev ? { professional: ev.professional, management: ev.management, potential: ev.potential }
+                     : { professional: 8, management: 7, potential: 9 };
+
+  updateScoreUI('professional');
+  updateScoreUI('management');
+  updateScoreUI('potential');
+  renderScoreSteps();
+  document.getElementById('scoreModal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('scoreModal').classList.remove('active');
+  currentEvalCadreId = null;
+}
+
+function onSliderClick(e, dim) {
+  var track = e.currentTarget;
+  var rect = track.getBoundingClientRect();
+  var x = e.clientX - rect.left;
+  var pct = Math.max(0, Math.min(1, x / rect.width));
+  var score = Math.round(pct * 9) + 1;
+  currentScores[dim] = score;
+  updateScoreUI(dim);
+  renderScoreSteps();
+}
+
+function updateScoreUI(dim) {
+  var score = currentScores[dim];
+  var pct = (score - 1) / 9 * 100;
+  document.getElementById('val' + dim.charAt(0).toUpperCase() + dim.slice(1)).textContent = score;
+  document.getElementById('fill' + dim.charAt(0).toUpperCase() + dim.slice(1)).style.width = pct + '%';
+  document.getElementById('thumb' + dim.charAt(0).toUpperCase() + dim.slice(1)).style.left = pct + '%';
+}
+
+function renderScoreSteps() {
+  ['professional', 'management', 'potential'].forEach(function(dim) {
+    var container = document.getElementById('steps' + dim.charAt(0).toUpperCase() + dim.slice(1));
+    var current = currentScores[dim];
+    container.innerHTML = Array.from({ length: 10 }, function(_, i) {
+      var val = i + 1;
+      var active = val === current ? 'active ' + dim : '';
+      return '<div class="tr-score-step ' + active + '" onclick="setStepScore(\'' + dim + '\',' + val + ')">' + val + '</div>';
+    }).join('');
+  });
+}
+
+function setStepScore(dim, val) {
+  currentScores[dim] = val;
+  updateScoreUI(dim);
+  renderScoreSteps();
+}
+
+function submitScore() {
+  if (!currentEvalCadreId) return;
+  var comment = document.getElementById('modalComment').value.trim();
+  evaluations[currentRater + '_' + currentEvalCadreId] = {
+    professional: currentScores.professional,
+    management: currentScores.management,
+    potential: currentScores.potential,
+    comment: comment,
+    time: new Date().toISOString()
+  };
+  var c = CADRES.find(function(x) { return x.id === currentEvalCadreId; });
+  if (c) {
+    c.evaluated = true;
+    c.scores = {
+      professional: currentScores.professional,
+      management: currentScores.management,
+      potential: currentScores.potential,
+      impression: parseFloat(((currentScores.professional + currentScores.management + currentScores.potential) / 3).toFixed(1))
+    };
+  }
+  closeModal();
+  renderEvaluate();
+  if (document.getElementById('tab-board').classList.contains('active')) {
+    renderBoard();
+  }
+}
+
+function viewScore(cadreId) {
+  var key = currentRater + '_' + cadreId;
+  var ev = evaluations[key];
+  if (!ev) return;
+  var c = CADRES.find(function(x) { return x.id === cadreId; });
+  alert(c.name + ' 的评价记录：\n专业能力：' + ev.professional + '\n管理能力：' + ev.management + '\n发展潜力：' + ev.potential + '\n评语：' + (ev.comment || '无'));
+}
+
+function init() {
+  renderBoard();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else { init(); }
+</script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>驾驶舱 - 力合·人才智库 - 力合科创干部信息智能管理平台</title>
+  <link rel="stylesheet" href="../css/base-k3.css">
+  <link rel="stylesheet" href="../css/dashboard-k3-layout-v6.css?v=1">
+</head>
+<body>
+  <script src="../js/app-k3.js"></script>
+  <script>renderLayout('驾驶舱', 'dashboard');</script>
+
+  <main class="app-main">
+    <div class="dashboard-container">
+
+      
+
+      <!-- 人才图谱 -->
+      <section class="dash-section">
+        <div class="section-header">
+          <h2 class="section-title">人才图谱</h2>
+        </div>
+
+        <div class="stat-grid-4">
+          <div class="stat-card k3-anim">
+            <div class="stat-label">干部总数</div>
+            <div class="stat-value loading" id="totalCadres">—</div>
+            <div class="stat-meta">全单位在编</div>
+          </div>
+          <div class="stat-card k3-anim">
+            <div class="stat-label">在岗数</div>
+            <div class="stat-value loading" id="activeCadres">—</div>
+            <div class="stat-meta">不含试用/待岗</div>
+          </div>
+          <div class="stat-card k3-anim">
+            <div class="stat-label">党员数</div>
+            <div class="stat-value loading" id="partyCount">—</div>
+            <div class="stat-meta">中共党员</div>
+          </div>
+          <div class="stat-card k3-anim">
+            <div class="stat-label">平均年龄</div>
+            <div class="stat-value loading" id="avgAge">—</div>
+            <div class="stat-meta">截止本季度</div>
+          </div>
+        </div>
+
+        <div class="charts-row">
+          <div class="chart-card k3-anim">
+            <div class="chart-card-title">职级分布 <span class="chart-badge">在编统计</span></div>
+            <div class="chart-with-legend">
+              <div class="chart-container" id="rank-chart-dom">
+                <div class="chart-center-text" id="rank-center">
+                  <strong>60</strong>在编干部
+                </div>
+              </div>
+              <div class="chart-legend" id="rank-legend"></div>
+            </div>
+          </div>
+          <div class="chart-card k3-anim">
+            <div class="chart-card-title">学历分布 <span class="chart-badge">在编统计</span></div>
+            <div class="chart-with-legend">
+              <div class="chart-container" id="edu-chart-dom">
+                <div class="chart-center-text" id="edu-center">
+                  <strong>88%</strong>本科及以上
+                </div>
+              </div>
+              <div class="chart-legend" id="edu-legend"></div>
+            </div>
+          </div>
+          <div class="chart-card k3-anim">
+            <div class="chart-card-title">年龄分布 <span class="chart-badge">在编统计</span></div>
+            <div class="chart-container age-chart" id="age-chart"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 智库洞察 -->
+      <section class="dash-section">
+        <div class="section-header">
+          <h2 class="section-title">智库洞察</h2>
+        </div>
+
+        <!-- 四标签横排（JS 动态填充） -->
+        <div class="insight-tabs-row" id="insight-tabs">
+          <!-- JS 动态填充 .insight-tab -->
+        </div>
+
+        <div class="insight-cards">
+          <div class="insight-card k3-anim">
+            <div class="insight-header">
+              <span class="insight-icon warning">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              </span>
+              <span class="insight-title">预警干部</span>
+            </div>
+            <div class="insight-data">
+              <span class="value">5</span>
+            </div>
+            <div class="insight-value-top">5人 待处理</div>
+            <div class="insight-sub">需关注</div>
+            <div class="mini-progress">
+              <div class="mini-progress-fill" style="width:8%"></div>
+            </div>
+            <div class="insight-action">查看预警干部</div>
+          </div>
+
+          <div class="insight-card k3-anim">
+            <div class="insight-header">
+              <span class="insight-icon positive">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+                </svg>
+              </span>
+              <span class="insight-title">盘点完成率</span>
+            </div>
+            <div class="insight-data">
+              <span class="value">78</span>
+            </div>
+            <div class="insight-value-top">78% 进行中</div>
+            <div class="insight-sub">本季度</div>
+            <div class="mini-progress">
+              <div class="mini-progress-fill" style="width:78%"></div>
+            </div>
+            <div class="insight-action">查看盘点进度</div>
+          </div>
+
+          <div class="insight-card k3-anim">
+            <div class="insight-header">
+              <span class="insight-icon suggest">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+              </span>
+              <span class="insight-title">任期届满</span>
+            </div>
+            <div class="insight-data">
+              <span class="value">3</span>
+            </div>
+            <div class="insight-value-top">3人 待处理</div>
+            <div class="insight-sub">6个月内</div>
+            <div class="mini-progress">
+              <div class="mini-progress-fill" style="width:5%"></div>
+            </div>
+            <div class="insight-action">查看任期预警</div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script src="../js/dashboard-data.js"></script>
+</body>
+</html>

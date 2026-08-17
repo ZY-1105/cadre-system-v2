@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>驾驶舱 - 力合·人才智库 - 力合科创干部数智平台</title>
+<style>
+:root {
+  --color-primary: #8e2294;
+  --color-primary-dark: #6b1a70;
+  --color-primary-light: #a855a8;
+  --color-accent: #F8C24C;
+  --color-accent-light: #fdecc8;
+  --color-bg: #f5f3f7;
+  --color-surface: #ffffff;
+  --color-text: #1a1a2e;
+  --color-text-secondary: #4a4a6a;
+  --color-border: #e8e0ec;
+  --color-success: #27ae60;
+  --color-warning: #e67e22;
+  --color-danger: #c0392b;
+  --color-danger-bg: #fbe9e7;
+  --font-family: "PingFang SC","Microsoft YaHei",sans-serif;
+  --header-height: 56px;
+  --shadow-md: 0 4px 12px rgba(90,20,126,0.08);
+  --radius-lg: 12px;
+  --radius-md: 8px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;font-family:var(--font-family);font-size:14px;color:var(--color-text);background:var(--color-bg)}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit}
+/* Header */
+.app-header{position:fixed;top:0;left:0;right:0;height:var(--header-height);background:linear-gradient(135deg,var(--color-primary)0%,var(--color-primary-dark)100%);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 16px;box-shadow:var(--shadow-md);z-index:1000}
+.header-brand{display:flex;align-items:center;gap:10px}
+.brand-icon{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+.brand-text-wrap{display:flex;flex-direction:column;justify-content:center}
+.brand-text{font-size:16px;font-weight:700;letter-spacing:1px;line-height:1.2}
+.brand-subtitle{font-size:11px;opacity:0.9;letter-spacing:0.5px;margin-top:1px}
+.page-title{display:none}
+.header-actions{display:flex;align-items:center;gap:10px}
+.user-info{display:flex;align-items:center;gap:8px}
+.user-name{font-size:13px;display:none}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--color-accent);color:#1a1a2e;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px}
+/* Main */
+.app-main{margin-top:var(--header-height);padding:12px;min-height:calc(100vh - var(--header-height))}
+/* Stat Cards */
+.stat-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.stat-card{background:var(--color-surface);border-radius:var(--radius-lg);padding:14px 16px;box-shadow:var(--shadow-md);display:flex;flex-direction:column;gap:4px;border-top:3px solid var(--color-primary)}
+.stat-card.accent{border-top-color:var(--color-accent)}
+.stat-label{font-size:12px;color:var(--color-text-secondary)}
+.stat-value{font-size:26px;font-weight:700;color:var(--color-primary)}
+.stat-value.accent{color:var(--color-text)}
+/* Charts */
+.charts-row{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}
+.chart-card{background:var(--color-surface);border-radius:var(--radius-lg);padding:14px;box-shadow:var(--shadow-md)}
+.chart-card-title{font-size:14px;font-weight:600;color:var(--color-text);margin-bottom:10px;padding-bottom:8px;border-bottom:3px solid var(--color-primary)}
+.chart-card-title.accent{border-bottom-color:var(--color-accent)}
+.chart-container{display:flex;justify-content:center;align-items:center;min-height:200px;width:100%}
+.chart-container svg{max-width:100%;height:auto}
+/* Dashboard Grid */
+.dashboard-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}
+/* Alert */
+.alert-list{display:flex;flex-direction:column;gap:8px}
+.alert-item{display:flex;align-items:flex-start;gap:10px;padding:12px;background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(142,34,148,0.06)}
+.alert-item.high{border-left:4px solid var(--color-danger)}
+.alert-item.medium{border-left:4px solid var(--color-accent)}
+.alert-item.low{border-left:3px solid var(--color-border)}
+.alert-icon{width:32px;height:32px;border-radius:50%;background:var(--color-accent-light);color:#8a6d1f;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.alert-icon.high{background:var(--color-danger-bg);color:var(--color-danger)}
+.alert-content{flex:1}
+.alert-title{font-weight:600;font-size:13px;color:var(--color-text);margin-bottom:2px}
+.alert-desc{font-size:11px;color:var(--color-text-secondary);line-height:1.4}
+.alert-days{font-size:11px;font-weight:600;white-space:nowrap}
+.alert-days.high{color:var(--color-danger)}
+.alert-days.medium{color:#8a6d1f}
+.alert-days.low{color:var(--color-text-secondary)}
+/* Bottom Section */
+.bottom-section{margin-top:12px}
+.quick-entry{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.quick-card{background:linear-gradient(135deg,rgba(142,34,148,0.08),rgba(142,34,148,0.02));border:1px solid var(--color-border);border-radius:10px;padding:12px 8px;text-align:center;cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:6px}
+.quick-card:hover{border-color:var(--color-primary);box-shadow:0 4px 12px rgba(142,34,148,0.12)}
+.quick-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.quick-label{font-size:12px;color:var(--color-text);font-weight:500}
+/* Footer */
+.app-footer{text-align:center;padding:16px;font-size:11px;color:var(--color-text-secondary);border-top:1px solid var(--color-border);margin-top:16px}
+/* Tooltip */
+#chart-tooltip{position:fixed;background:rgba(26,26,46,0.95);color:#fff;padding:8px 12px;border-radius:8px;font-size:12px;pointer-events:none;z-index:9999;opacity:0;transition:opacity 0.2s;box-shadow:0 4px 16px rgba(142,34,148,0.3);border:1px solid var(--color-primary);max-width:200px;line-height:1.5}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(26,26,46,0.6);display:flex;align-items:center;justify-content:center;z-index:2000;opacity:0;visibility:hidden;transition:all 0.25s}
+.modal-overlay.active{opacity:1;visibility:visible}
+.modal{background:var(--color-surface);border-radius:var(--radius-lg);padding:20px;max-width:90%;width:400px;max-height:80vh;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,0.2);transform:scale(0.95);transition:transform 0.25s}
+.modal-overlay.active .modal{transform:scale(1)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:2px solid var(--color-border)}
+.modal-title{font-size:16px;font-weight:600;color:var(--color-text)}
+.modal-close{background:none;border:none;font-size:22px;color:var(--color-text-secondary);cursor:pointer;padding:0 4px}
+.modal-body{font-size:13px;color:var(--color-text-secondary)}
+.people-list{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.people-item{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--color-bg);border-radius:8px;font-size:13px}
+.people-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;flex-shrink:0}
+.people-info{flex:1}
+.people-name{font-weight:500;color:var(--color-text);font-size:13px}
+.people-dept{font-size:11px;color:var(--color-text-secondary)}
+.people-score{font-size:12px;color:var(--color-primary);font-weight:600}
+/* Tablet+ */
+@media(min-width:768px){
+  .app-header{padding:0 24px;--header-height:64px}
+  .brand-text{font-size:20px}
+  .brand-subtitle{font-size:12px}
+  .page-title{display:block;font-size:13px;opacity:0.9;margin-left:12px;padding-left:12px;border-left:1px solid rgba(255,255,255,0.3)}
+  .user-name{display:inline}
+  .app-main{padding:20px}
+  .stat-cards{grid-template-columns:repeat(4,1fr);gap:16px}
+  .stat-card{padding:18px 20px;gap:6px;border-top:4px solid var(--color-primary)}
+  .stat-value{font-size:32px}
+  .charts-row{grid-template-columns:repeat(3,1fr);gap:16px}
+  .chart-card{padding:18px}
+  .chart-container{min-height:240px}
+  .dashboard-grid{grid-template-columns:2fr 1fr;gap:16px}
+  .quick-entry{gap:10px}
+  .quick-card{padding:14px 12px}
+  .quick-icon{width:40px;height:40px}
+  .quick-label{font-size:13px}
+}
+@media(min-width:1024px){
+  .app-main{padding:24px}
+  .stat-cards{gap:20px}
+  .charts-row{gap:20px}
+  .dashboard-grid{gap:20px}
+}
+</style>
+</head>
+<body>
+<header class="app-header">
+  <div class="header-brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 48 48" width="28" height="28"><path d="M24 4 L40 13 L40 35 L24 44 L8 35 L8 13 Z" fill="currentColor"/><circle cx="24" cy="24" r="5" fill="rgba(255,255,255,0.3)"/></svg>
+    </div>
+    <div class="brand-text-wrap">
+      <span class="brand-text">力合·人才智库</span>
+      <span class="brand-subtitle">力合科创干部数智平台</span>
+    </div>
+    <span class="page-title">驾驶舱</span>
+  </div>
+  <div class="header-actions">
+    <div class="user-info">
+      <span class="user-name">管理员</span>
+      <div class="user-avatar">管</div>
+    </div>
+  </div>
+</header>
+
+<main class="app-main">
+  <!-- 统计卡片 -->
+  <div class="stat-cards">
+    <div class="stat-card">
+      <div class="stat-label">干部总数</div>
+      <div class="stat-value" id="totalCadres">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">在任人数</div>
+      <div class="stat-value" id="activeCadres">—</div>
+    </div>
+    <div class="stat-card accent">
+      <div class="stat-label">待任免数</div>
+      <div class="stat-value accent" id="pendingAppointments">—</div>
+    </div>
+    <div class="stat-card accent">
+      <div class="stat-label">预警数</div>
+      <div class="stat-value accent" id="alertCount">—</div>
+    </div>
+  </div>
+
+  <!-- 图表区域 -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-card-title">职级分布</div>
+      <div class="chart-container" id="levelPieChart"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">年龄分布</div>
+      <div class="chart-container" id="ageBarChart"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title">学历分布</div>
+      <div class="chart-container" id="eduRadarChart"></div>
+    </div>
+  </div>
+
+  <!-- 预警 + 九宫格 -->
+  <div class="dashboard-grid">
+    <div class="chart-card">
+      <div class="chart-card-title">九宫格人才矩阵</div>
+      <div class="chart-container" id="nineBoxMini"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-title accent">任免预警</div>
+      <div class="alert-list" id="alertList"></div>
+    </div>
+  </div>
+
+  <!-- 底部快速入口 -->
+  <div class="bottom-section">
+    <div class="chart-card">
+      <div class="chart-card-title">快速入口</div>
+      <div class="quick-entry">
+        <a href="#" class="quick-card">
+          <div class="quick-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M12 14c-3.31 0-6 1.34-6 4v1h12v-1c0-2.66-2.69-4-6-4z"/></svg>
+          </div>
+          <div class="quick-label">干部信息</div>
+        </a>
+        <a href="#" class="quick-card">
+          <div class="quick-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
+          </div>
+          <div class="quick-label">任免管理</div>
+        </a>
+        <a href="#" class="quick-card">
+          <div class="quick-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <div class="quick-label">人才盘点</div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-footer">© 2024 力合科创干部数智平台 · 人力资源部</div>
+</main>
+
+<div id="chart-tooltip"></div>
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle"></div>
+      <button class="modal-close" id="modalClose">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ===== data.js =====
+const POSITION_LEVELS = ['集团领导','部门正职','部门副职','高级主管','主管','专员'];
+const DEPARTMENTS = ['集团总部','人力资源部','财务管理部','投资发展部','市场运营部','技术研发部','工程管理部','生产运营部','法务部','审计部'];
+const EDUCATIONS = ['博士研究生','硕士研究生','大学本科'];
+
+const cadres = [
+  {id:'C001',name:'张明远',gender:'男',birthDate:'1975-03-15',age:49,nativePlace:'广东深圳',politicalStatus:'中共党员',education:'硕士研究生',degree:'工商管理硕士',entryDate:'1998-07-01',tenure:26,currentPosition:'党委书记、董事长',positionLevel:'集团领导',positionDate:'2020-01-15',department:'集团总部',status:'在任',email:'zhangmy@leaguer.com',phone:'13800138001',warning:false},
+  {id:'C002',name:'李淑华',gender:'女',birthDate:'1980-08-22',age:44,nativePlace:'广东广州',politicalStatus:'中共党员',education:'博士研究生',degree:'经济学博士',entryDate:'2005-09-01',tenure:19,currentPosition:'党委副书记、总经理',positionLevel:'集团领导',positionDate:'2021-03-20',department:'集团总部',status:'在任',email:'lish@leaguer.com',phone:'13800138002',warning:false},
+  {id:'C003',name:'王建国',gender:'男',birthDate:'1968-11-05',age:56,nativePlace:'湖南长沙',politicalStatus:'中共党员',education:'大学本科',degree:'工学学士',entryDate:'1990-08-15',tenure:34,currentPosition:'副总经理',positionLevel:'集团领导',positionDate:'2015-06-10',department:'运营管理中心',status:'在任',email:'wangjg@leaguer.com',phone:'13800138003',warning:true},
+  {id:'C004',name:'陈晓东',gender:'男',birthDate:'1982-04-18',age:42,nativePlace:'广东佛山',politicalStatus:'中共党员',education:'硕士研究生',degree:'金融学硕士',entryDate:'2008-07-01',tenure:16,currentPosition:'财务总监',positionLevel:'部门正职',positionDate:'2019-09-01',department:'财务管理部',status:'在任',email:'chenxd@leaguer.com',phone:'13800138004',warning:false},
+  {id:'C005',name:'刘雅琴',gender:'女',birthDate:'1979-12-03',age:44,nativePlace:'广东东莞',politicalStatus:'中共党员',education:'硕士研究生',degree:'法学硕士',entryDate:'2003-07-01',tenure:21,currentPosition:'人力资源总监',positionLevel:'部门正职',positionDate:'2018-04-15',department:'人力资源部',status:'在任',email:'liuyq@leaguer.com',phone:'13800138005',warning:false},
+  {id:'C006',name:'赵伟强',gender:'男',birthDate:'1985-06-28',age:39,nativePlace:'广东中山',politicalStatus:'中共党员',education:'大学本科',degree:'管理学学士',entryDate:'2010-07-01',tenure:14,currentPosition:'投资发展部经理',positionLevel:'部门正职',positionDate:'2022-01-10',department:'投资发展部',status:'在任',email:'zhaowq@leaguer.com',phone:'13800138006',warning:false},
+  {id:'C007',name:'孙丽华',gender:'女',birthDate:'1983-09-14',age:40,nativePlace:'广东珠海',politicalStatus:'中共党员',education:'硕士研究生',degree:'会计学硕士',entryDate:'2009-07-01',tenure:15,currentPosition:'审计部经理',positionLevel:'部门正职',positionDate:'2020-07-01',department:'审计部',status:'在任',email:'sunlh@leaguer.com',phone:'13800138007',warning:false},
+  {id:'C008',name:'周志刚',gender:'男',birthDate:'1972-01-20',age:52,nativePlace:'湖北武汉',politicalStatus:'中共党员',education:'大学本科',degree:'土木工程学士',entryDate:'1995-07-01',tenure:29,currentPosition:'工程管理部经理',positionLevel:'部门正职',positionDate:'2016-03-01',department:'工程管理部',status:'在任',email:'zhouzg@leaguer.com',phone:'13800138008',warning:false},
+  {id:'C009',name:'吴美玲',gender:'女',birthDate:'1987-03-08',age:37,nativePlace:'广东惠州',politicalStatus:'中共党员',education:'硕士研究生',degree:'市场营销硕士',entryDate:'2012-07-01',tenure:12,currentPosition:'市场运营部经理',positionLevel:'部门正职',positionDate:'2023-02-15',department:'市场运营部',status:'在任',email:'wuml@leaguer.com',phone:'13800138009',warning:false},
+  {id:'C010',name:'郑海涛',gender:'男',birthDate:'1978-07-30',age:46,nativePlace:'广东汕头',politicalStatus:'中共党员',education:'大学本科',degree:'计算机科学学士',entryDate:'2001-07-01',tenure:23,currentPosition:'信息技术部经理',positionLevel:'部门正职',positionDate:'2017-08-01',department:'技术研发部',status:'在任',email:'zhenght@leaguer.com',phone:'13800138010',warning:false},
+  {id:'C011',name:'黄雪梅',gender:'女',birthDate:'1984-11-12',age:39,nativePlace:'广东江门',politicalStatus:'中共党员',education:'硕士研究生',degree:'人力资源管理硕士',entryDate:'2011-07-01',tenure:13,currentPosition:'人力资源部副经理',positionLevel:'部门副职',positionDate:'2022-07-01',department:'人力资源部',status:'在任',email:'huangxm@leaguer.com',phone:'13800138011',warning:false},
+  {id:'C012',name:'林浩然',gender:'男',birthDate:'1990-05-05',age:34,nativePlace:'广东肇庆',politicalStatus:'共青团员',education:'大学本科',degree:'金融学学士',entryDate:'2015-07-01',tenure:9,currentPosition:'投资专员',positionLevel:'专员',positionDate:'2023-08-01',department:'投资发展部',status:'在任',email:'linhr@leaguer.com',phone:'13800138012',warning:false},
+  {id:'C013',name:'何思颖',gender:'女',birthDate:'1986-02-17',age:38,nativePlace:'广东茂名',politicalStatus:'中共党员',education:'硕士研究生',degree:'公共管理硕士',entryDate:'2013-07-01',tenure:11,currentPosition:'行政管理部经理',positionLevel:'部门正职',positionDate:'2021-06-01',department:'集团总部',status:'在任',email:'hesy@leaguer.com',phone:'13800138013',warning:false},
+  {id:'C014',name:'谢伟明',gender:'男',birthDate:'1976-09-25',age:47,nativePlace:'广东湛江',politicalStatus:'中共党员',education:'大学本科',degree:'机械工程学士',entryDate:'1999-07-01',tenure:25,currentPosition:'生产运营部经理',positionLevel:'部门正职',positionDate:'2014-05-01',department:'生产运营部',status:'在任',email:'xiewm@leaguer.com',phone:'13800138014',warning:false},
+  {id:'C015',name:'梁晓峰',gender:'男',birthDate:'1988-10-10',age:35,nativePlace:'广东清远',politicalStatus:'中共党员',education:'硕士研究生',degree:'电气工程硕士',entryDate:'2016-07-01',tenure:8,currentPosition:'技术研发部经理',positionLevel:'部门正职',positionDate:'2023-01-01',department:'技术研发部',status:'在任',email:'liangxf@leaguer.com',phone:'13800138015',warning:false},
+  {id:'C016',name:'罗嘉欣',gender:'女',birthDate:'1992-06-22',age:32,nativePlace:'广东阳江',politicalStatus:'中共党员',education:'大学本科',degree:'法学学士',entryDate:'2017-07-01',tenure:7,currentPosition:'法务专员',positionLevel:'专员',positionDate:'2024-01-15',department:'法务部',status:'试用期',email:'luojx@leaguer.com',phone:'13800138016',warning:true},
+  {id:'C017',name:'郭志强',gender:'男',birthDate:'1974-04-03',age:50,nativePlace:'广东梅州',politicalStatus:'中共党员',education:'硕士研究生',degree:'工商管理硕士',entryDate:'1997-07-01',tenure:27,currentPosition:'战略规划部经理',positionLevel:'部门正职',positionDate:'2018-09-01',department:'集团总部',status:'在任',email:'guozq@leaguer.com',phone:'13800138017',warning:true},
+  {id:'C018',name:'马晓燕',gender:'女',birthDate:'1981-07-14',age:43,nativePlace:'广东韶关',politicalStatus:'民盟盟员',education:'博士研究生',degree:'材料科学博士',entryDate:'2009-07-01',tenure:15,currentPosition:'研发总监',positionLevel:'部门正职',positionDate:'2022-04-01',department:'技术研发部',status:'在任',email:'maxy@leaguer.com',phone:'13800138018',warning:false},
+  {id:'C019',name:'陈大伟',gender:'男',birthDate:'1969-12-28',age:54,nativePlace:'广东河源',politicalStatus:'中共党员',education:'大学本科',degree:'化工学士',entryDate:'1992-07-01',tenure:32,currentPosition:'安全环保部经理',positionLevel:'部门正职',positionDate:'2010-03-01',department:'生产运营部',status:'在任',email:'chendw@leaguer.com',phone:'13800138019',warning:true},
+  {id:'C020',name:'杨思琪',gender:'女',birthDate:'1993-01-08',age:31,nativePlace:'广东揭阳',politicalStatus:'中共党员',education:'硕士研究生',degree:'数据分析硕士',entryDate:'2019-07-01',tenure:5,currentPosition:'数据分析师',positionLevel:'主管',positionDate:'2024-03-01',department:'技术研发部',status:'在任',email:'yangsq@leaguer.com',phone:'13800138020',warning:false}
+];
+const appointments = [
+  {id:'A001',cadreId:'C006',cadreName:'赵伟强',type:'提拔',position:'投资发展部经理',department:'投资发展部',date:'2022-01-10',status:'已生效',approver:'党委会',documentNo:'力合党〔2022〕3号'},
+  {id:'A002',cadreId:'C009',cadreName:'吴美玲',type:'提拔',position:'市场运营部经理',department:'市场运营部',date:'2023-02-15',status:'已生效',approver:'党委会',documentNo:'力合党〔2023〕5号'},
+  {id:'A003',cadreId:'C015',cadreName:'梁晓峰',type:'提拔',position:'技术研发部经理',department:'技术研发部',date:'2023-01-01',status:'已生效',approver:'党委会',documentNo:'力合党〔2023〕1号'},
+  {id:'A004',cadreId:'C012',cadreName:'林浩然',type:'平调',position:'投资专员',department:'投资发展部',date:'2024-01-15',status:'已生效',approver:'人力资源部',documentNo:'力合人〔2024〕2号'},
+  {id:'A005',cadreId:'C016',cadreName:'罗嘉欣',type:'平调',position:'法务专员',department:'法务部',date:'2024-07-15',status:'待审批',approver:'人力资源部',documentNo:'力合人〔2024〕8号'},
+  {id:'A006',cadreId:'C003',cadreName:'王建国',type:'免职',position:'副总经理',department:'运营管理中心',date:'2024-12-01',status:'待审批',approver:'党委会',documentNo:'力合党〔2024〕12号'},
+  {id:'A007',cadreId:'C019',cadreName:'陈大伟',type:'免职',position:'安全环保部经理',department:'生产运营部',date:'2025-03-01',status:'预警',approver:'人力资源部',documentNo:'力合人〔2025〕1号'},
+  {id:'A008',cadreId:'C008',cadreName:'周志刚',type:'降职',position:'工程管理部副经理',department:'工程管理部',date:'2024-06-01',status:'已生效',approver:'党委会',documentNo:'力合党〔2024〕6号'},
+  {id:'A009',cadreId:'C020',cadreName:'杨思琪',type:'提拔',position:'数据分析师',department:'技术研发部',date:'2024-03-01',status:'已生效',approver:'人力资源部',documentNo:'力合人〔2024〕3号'},
+  {id:'A010',cadreId:'C011',cadreName:'黄雪梅',type:'提拔',position:'人力资源部副经理',department:'人力资源部',date:'2022-07-01',status:'已生效',approver:'党委会',documentNo:'力合党〔2022〕8号'}
+];
+const directors = [
+  {id:'D001',cadreId:'C001',name:'张明远',position:'董事长',type:'董事',termStart:'2020-01-15',termEnd:'2026-01-14',status:'在任',board:'董事会'},
+  {id:'D002',cadreId:'C002',name:'李淑华',position:'董事',type:'董事',termStart:'2021-03-20',termEnd:'2027-03-19',status:'在任',board:'董事会'},
+  {id:'D003',cadreId:'C004',name:'陈晓东',position:'监事会主席',type:'监事',termStart:'2019-09-01',termEnd:'2025-08-31',status:'在任',board:'监事会'},
+  {id:'D004',cadreId:'C007',name:'孙丽华',position:'监事',type:'监事',termStart:'2020-07-01',termEnd:'2026-06-30',status:'在任',board:'监事会'},
+  {id:'D005',cadreId:'C017',name:'郭志强',position:'职工董事',type:'董事',termStart:'2018-09-01',termEnd:'2024-08-31',status:'任期届满',board:'董事会'}
+];
+const reviews = [
+  {cadreId:'C001',performanceScore:95,abilityScore:92,potentialScore:88,nineBoxX:4.5,nineBoxY:4.2},
+  {cadreId:'C002',performanceScore:93,abilityScore:90,potentialScore:85,nineBoxX:4.3,nineBoxY:4.0},
+  {cadreId:'C003',performanceScore:78,abilityScore:75,potentialScore:60,nineBoxX:3.2,nineBoxY:2.8},
+  {cadreId:'C004',performanceScore:88,abilityScore:85,potentialScore:80,nineBoxX:3.8,nineBoxY:3.5},
+  {cadreId:'C005',performanceScore:90,abilityScore:88,potentialScore:82,nineBoxX:4.0,nineBoxY:3.7},
+  {cadreId:'C006',performanceScore:82,abilityScore:80,potentialScore:88,nineBoxX:3.5,nineBoxY:4.0},
+  {cadreId:'C007',performanceScore:85,abilityScore:82,potentialScore:75,nineBoxX:3.6,nineBoxY:3.2},
+  {cadreId:'C008',performanceScore:75,abilityScore:70,potentialScore:55,nineBoxX:2.8,nineBoxY:2.5},
+  {cadreId:'C009',performanceScore:92,abilityScore:90,potentialScore:95,nineBoxX:4.2,nineBoxY:4.5},
+  {cadreId:'C010',performanceScore:80,abilityScore:78,potentialScore:72,nineBoxX:3.3,nineBoxY:3.0},
+  {cadreId:'C011',performanceScore:85,abilityScore:88,potentialScore:90,nineBoxX:3.7,nineBoxY:4.2},
+  {cadreId:'C012',performanceScore:70,abilityScore:72,potentialScore:85,nineBoxX:2.5,nineBoxY:3.8},
+  {cadreId:'C013',performanceScore:88,abilityScore:85,potentialScore:78,nineBoxX:3.8,nineBoxY:3.3},
+  {cadreId:'C014',performanceScore:72,abilityScore:70,potentialScore:65,nineBoxX:2.8,nineBoxY:2.7},
+  {cadreId:'C015',performanceScore:90,abilityScore:92,potentialScore:94,nineBoxX:4.0,nineBoxY:4.4}
+];
+const alerts = [
+  {id:'AL001',type:'到龄退休',cadreId:'C019',cadreName:'陈大伟',position:'安全环保部经理',date:'2025-03-01',daysRemaining:180,priority:'高',description:'陈大伟将于2025年3月达到退休年龄（60岁），需提前启动接班人选拔程序。'},
+  {id:'AL002',type:'任期届满',cadreId:'D005',cadreName:'郭志强',position:'职工董事',date:'2024-08-31',daysRemaining:15,priority:'高',description:'郭志强职工董事任期将于2024年8月31日届满，需启动换届选举程序。'},
+  {id:'AL003',type:'试用期到期',cadreId:'C016',cadreName:'罗嘉欣',position:'法务专员',date:'2024-07-15',daysRemaining:30,priority:'中',description:'罗嘉欣试用期将于2024年7月15日到期，需组织试用期考核评估。'},
+  {id:'AL004',type:'到龄退居二线',cadreId:'C003',cadreName:'王建国',position:'副总经理',date:'2024-12-01',daysRemaining:90,priority:'中',description:'王建国因年龄原因将于2024年12月退居二线，需做好工作交接。'},
+  {id:'AL005',type:'任期将满',cadreId:'D003',cadreName:'陈晓东',position:'监事会主席',date:'2025-08-31',daysRemaining:360,priority:'低',description:'陈晓东监事会主席任期将于2025年8月31日届满，建议提前6个月启动换届准备。'}
+];
+
+// ===== app.js =====
+const BRAND_COLORS = {primary:'#8e2294',primaryDark:'#6b1a70',primaryLight:'#a855a8',accent:'#F8C24C',accentLight:'#fdecc8',bg:'#f5f3f7',surface:'#ffffff',text:'#1a1a2e',textSecondary:'#4a4a6a',border:'#e8e0ec',success:'#27ae60',warning:'#e67e22',danger:'#c0392b'};
+
+function showModal(title,contentHTML){
+  const overlay=document.getElementById('modalOverlay');
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalBody').innerHTML=contentHTML;
+  overlay.classList.add('active');
+  document.getElementById('modalClose').onclick=()=>overlay.classList.remove('active');
+  overlay.onclick=(e)=>{if(e.target===overlay)overlay.classList.remove('active')};
+}
+
+// ===== charts.js =====
+function createSVGElement(tag,attrs={}){
+  const el=document.createElementNS('http://www.w3.org/2000/svg',tag);
+  Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,v));
+  return el;
+}
+function getTooltip(){
+  let t=document.getElementById('chart-tooltip');
+  if(!t){t=document.createElement('div');t.id='chart-tooltip';document.body.appendChild(t)}
+  return t;
+}
+function showTooltip(e,html){
+  const t=getTooltip();t.innerHTML=html;t.style.opacity='1';
+  t.style.left=Math.min(e.clientX+12,window.innerWidth-220)+'px';
+  t.style.top=Math.min(e.clientY-12,window.innerHeight-60)+'px';
+}
+function hideTooltip(){const t=getTooltip();if(t)t.style.opacity='0'}
+
+const PURPLE_GRADIENTS=[['#8e2294','#6b1a70'],['#a855a8','#8e2294'],['#c77dc8','#a855a8'],['#6b1a70','#4a124d'],['#9b59b6','#7d3c98'],['#8e44ad','#6c3483']];
+
+// 饼图
+function renderPieChart(containerId,data,options={}){
+  const container=document.getElementById(containerId);if(!container)return;
+  container.innerHTML='';
+  const w=container.clientWidth||options.width||300;
+  const h=Math.min(w,options.height||300);
+  const r=Math.min(w,h)/2-40;const cx=w/2,cy=h/2;
+  const total=data.reduce((s,d)=>s+d.value,0);
+  if(total===0){container.innerHTML='<div style="color:#4a4a6a;padding:40px;text-align:center">暂无数据</div>';return}
+  let curAngle=-Math.PI/2;
+  const svg=createSVGElement('svg',{width:w,height:h,viewBox:`0 0 ${w} ${h}`});
+  const defs=createSVGElement('defs');svg.appendChild(defs);
+  data.forEach((_,i)=>{
+    const g=createSVGElement('linearGradient',{id:`pieG-${containerId}-${i}`,x1:'0%',y1:'0%',x2:'100%',y2:'100%'});
+    const [c1,c2]=PURPLE_GRADIENTS[i%PURPLE_GRADIENTS.length];
+    g.appendChild(createSVGElement('stop',{offset:'0%','stop-color':c1}));
+    g.appendChild(createSVGElement('stop',{offset:'100%','stop-color':c2}));defs.appendChild(g);
+  });
+  data.forEach((item,i)=>{
+    const angle=(item.value/total)*2*Math.PI;const endAngle=curAngle+angle;
+    const x1=cx+r*Math.cos(curAngle),y1=cy+r*Math.sin(curAngle);
+    const x2=cx+r*Math.cos(endAngle),y2=cy+r*Math.sin(endAngle);
+    const largeArc=angle>Math.PI?1:0;
+    const path=createSVGElement('path',{d:`M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`,fill:`url(#pieG-${containerId}-${i})`,stroke:'#fff','stroke-width':'2',cursor:'pointer'});
+    path.addEventListener('mouseenter',(e)=>{path.setAttribute('opacity','0.85');showTooltip(e,`<strong>${item.label}</strong><br/>${item.value}人 · ${(item.value/total*100).toFixed(1)}%`)});
+    path.addEventListener('mousemove',(e)=>showTooltip(e,`<strong>${item.label}</strong><br/>${item.value}人 · ${(item.value/total*100).toFixed(1)}%`));
+    path.addEventListener('mouseleave',()=>{path.setAttribute('opacity','1');hideTooltip()});
+    svg.appendChild(path);curAngle=endAngle;
+  });
+  const cc=createSVGElement('circle',{cx,cy,r:r*0.45,fill:'#fff'});svg.appendChild(cc);
+  const ct=createSVGElement('text',{x:cx,y:cy-5,'text-anchor':'middle','font-size':'22','font-weight':'700',fill:BRAND_COLORS.primary});
+  ct.textContent=total;svg.appendChild(ct);
+  const cl=createSVGElement('text',{x:cx,y:cy+16,'text-anchor':'middle','font-size':'11',fill:BRAND_COLORS.primaryLight});
+  cl.textContent='总人数';svg.appendChild(cl);
+  if(options.showLegend!==false){
+    data.forEach((item,i)=>{
+      const [c1]=PURPLE_GRADIENTS[i%PURPLE_GRADIENTS.length];
+      const ly=20+i*22;
+      svg.appendChild(createSVGElement('rect',{x:w-80,y:ly-8,width:12,height:12,rx:3,fill:c1}));
+      const t=createSVGElement('text',{x:w-62,y:ly+3,fill:'#4a4a6a','font-size':'11','font-family':'Microsoft YaHei'});
+      t.textContent=`${item.label} ${item.value}`;svg.appendChild(t);
+    });
+  }
+  container.appendChild(svg);
+}
+
+// 柱状图
+function renderBarChart(containerId,data,options={}){
+  const container=document.getElementById(containerId);if(!container)return;
+  container.innerHTML='';
+  const w=container.clientWidth||options.width||360;
+  const h=Math.min(w*0.7,options.height||250);
+  const m={top:20,right:20,bottom:40,left:40};
+  const cw=w-m.left-m.right,ch=h-m.top-m.bottom;
+  const max=Math.max(...data.map(d=>d.value))*1.1;
+  const bw=(cw/data.length)*0.55,gap=(cw/data.length)*0.45;
+  const svg=createSVGElement('svg',{width:w,height:h,viewBox:`0 0 ${w} ${h}`});
+  const defs=createSVGElement('defs');
+  const g=createSVGElement('linearGradient',{id:`barG-${containerId}`,x1:'0%',y1:'0%',x2:'0%',y2:'100%'});
+  g.appendChild(createSVGElement('stop',{offset:'0%','stop-color':BRAND_COLORS.primary}));
+  g.appendChild(createSVGElement('stop',{offset:'100%','stop-color':BRAND_COLORS.primaryDark}));defs.appendChild(g);svg.appendChild(defs);
+  for(let i=0;i<=5;i++){const y=m.top+(ch/5)*i,val=Math.round(max*(1-i/5));
+    svg.appendChild(createSVGElement('line',{x1:m.left,y1,y2:y,x2:w-m.right,stroke:'#e8e0ec','stroke-width':'1','stroke-dasharray':'3,3'}));
+    const t=createSVGElement('text',{x:m.left-6,y:y+4,fill:'#4a4a6a','font-size':'10','text-anchor':'end','font-family':'Microsoft YaHei'});t.textContent=val;svg.appendChild(t);
+  }
+  data.forEach((item,i)=>{
+    const barH=(item.value/max)*ch,x=m.left+gap/2+i*(bw+gap),y=m.top+ch-barH;
+    const rect=createSVGElement('rect',{x,y,width:bw,height:barH,rx:4,fill:`url(#barG-${containerId})`,cursor:'pointer'});
+    rect.addEventListener('mouseenter',(e)=>{rect.setAttribute('opacity','0.85');showTooltip(e,`<strong>${item.label}</strong><br/>${item.value}人`)});
+    rect.addEventListener('mousemove',(e)=>showTooltip(e,`<strong>${item.label}</strong><br/>${item.value}人`));
+    rect.addEventListener('mouseleave',()=>{rect.setAttribute('opacity','1');hideTooltip()});svg.appendChild(rect);
+    const vt=createSVGElement('text',{x:x+bw/2,y:y-5,'text-anchor':'middle','font-size':'11','font-weight':'600',fill:BRAND_COLORS.primary});vt.textContent=item.value;svg.appendChild(vt);
+    const lb=createSVGElement('text',{x:x+bw/2,y:h-10,fill:'#4a4a6a','font-size':'10','text-anchor':'middle','font-family':'Microsoft YaHei'});lb.textContent=item.label;svg.appendChild(lb);
+  });
+  container.appendChild(svg);
+}
+
+// 雷达图
+function renderRadarChart(containerId,data,options={}){
+  const container=document.getElementById(containerId);if(!container)return;
+  container.innerHTML='';
+  const w=container.clientWidth||options.width||300;
+  const h=Math.min(w,options.height||300);
+  const cx=w/2,cy=h/2,r=Math.min(w,h)/2-45;
+  const angleStep=(2*Math.PI)/data.length;
+  const svg=createSVGElement('svg',{width:w,height:h,viewBox:`0 0 ${w} ${h}`});
+  const defs=createSVGElement('defs');
+  const g=createSVGElement('radialGradient',{id:`radarG-${containerId}`,cx:'50%',cy:'50%',r:'50%'});
+  g.appendChild(createSVGElement('stop',{offset:'0%','stop-color':BRAND_COLORS.primary,'stop-opacity':'0.5'}));
+  g.appendChild(createSVGElement('stop',{offset:'100%','stop-color':BRAND_COLORS.primaryDark,'stop-opacity':'0.15'}));defs.appendChild(g);svg.appendChild(defs);
+  for(let l=1;l<=5;l++){const rr=(r/5)*l;const pts=data.map((_,i)=>{const a=i*angleStep-Math.PI/2;return `${cx+rr*Math.cos(a)},${cy+rr*Math.sin(a)}`}).join(' ');svg.appendChild(createSVGElement('polygon',{points:pts,fill:'none',stroke:'#e8e0ec','stroke-width':'1'}))}
+  data.forEach((_,i)=>{const a=i*angleStep-Math.PI/2;svg.appendChild(createSVGElement('line',{x1:cx,y1:cy,x2:cx+r*Math.cos(a),y2:cy+r*Math.sin(a),stroke:'#e8e0ec','stroke-width':'1'}))});
+  const pts=data.map((item,i)=>{const a=i*angleStep-Math.PI/2,rr=(item.value/item.max)*r;return `${cx+rr*Math.cos(a)},${cy+rr*Math.sin(a)}`}).join(' ');
+  const area=createSVGElement('polygon',{points:pts,fill:`url(#radarG-${containerId})`,stroke:BRAND_COLORS.primary,'stroke-width':'2'});
+  area.addEventListener('mouseenter',(e)=>showTooltip(e,data.map(d=>`${d.label}: ${d.value}`).join('<br/>')));
+  area.addEventListener('mousemove',(e)=>showTooltip(e,data.map(d=>`${d.label}: ${d.value}`).join('<br/>')));
+  area.addEventListener('mouseleave',hideTooltip);svg.appendChild(area);
+  data.forEach((item,i)=>{const a=i*angleStep-Math.PI/2,rr=(item.value/item.max)*r,x=cx+rr*Math.cos(a),y=cy+rr*Math.sin(a);
+    const c=createSVGElement('circle',{cx:x,cy:y,r:4,fill:BRAND_COLORS.primary,stroke:'#fff','stroke-width':'2',cursor:'pointer'});
+    c.addEventListener('mouseenter',(e)=>{c.setAttribute('r','6');c.setAttribute('fill',BRAND_COLORS.accent);showTooltip(e,`<strong>${item.label}</strong><br/>${item.value}人`)});
+    c.addEventListener('mouseleave',()=>{c.setAttribute('r','4');c.setAttribute('fill',BRAND_COLORS.primary);hideTooltip()});svg.appendChild(c);
+    const lr=r+18,lx=cx+lr*Math.cos(a),ly=cy+lr*Math.sin(a);
+    const t=createSVGElement('text',{x:lx,y:ly+3,'text-anchor':'middle','font-size':'11',fill:'#4a4a6a','font-family':'Microsoft YaHei'});t.textContent=item.label;svg.appendChild(t);
+  });
+  container.appendChild(svg);
+}
+
+// 九宫格
+function renderNineBox(containerId,data,options={}){
+  const container=document.getElementById(containerId);if(!container)return;
+  container.innerHTML='';
+  const w=container.clientWidth||options.width||360;
+  const h=Math.min(w,options.height||360);
+  const pad=40,cw=w-pad*2,ch=h-pad*2,cellW=cw/3,cellH=ch/3;
+  const quads=[{x:2,y:2,label:'核心人才',from:'#8e2294',to:'#6b1a70'},{x:1,y:2,label:'中坚力量',from:'#a855a8',to:'#8e2294'},{x:0,y:2,label:'潜力新星',from:'#c77dc8',to:'#a855a8'},{x:2,y:1,label:'熟练员工',from:'#c77dc8',to:'#a855a8'},{x:1,y:1,label:'稳定贡献',from:'#d4a5d4',to:'#c77dc8'},{x:0,y:1,label:'差距员工',from:'#e0c4e0',to:'#d4a5d4'},{x:2,y:0,label:'潜力待挖',from:'#d4a5d4',to:'#c77dc8'},{x:1,y:0,label:'待观察者',from:'#e0c4e0',to:'#d4a5d4'},{x:0,y:0,label:'问题员工',from:'#e8dce8',to:'#d4c8dc'}];
+  const svg=createSVGElement('svg',{width:w,height:h,viewBox:`0 0 ${w} ${h}`});
+  const defs=createSVGElement('defs');svg.appendChild(defs);
+  const counts=quads.map(()=>0);const peopleIn=quads.map(()=>[]);
+  data.forEach(p=>{const qx=Math.min(2,Math.floor(p.x/1.67)),qy=Math.min(2,Math.floor(p.y/1.67));const idx=quads.findIndex(q=>q.x===qx&&q.y===qy);if(idx!==-1){counts[idx]++;peopleIn[idx].push(p)}});
+  quads.forEach((q,i)=>{
+    const x=pad+q.x*cellW,y=pad+(2-q.y)*cellH,gid=`ng-${containerId}-${i}`;
+    const g=createSVGElement('linearGradient',{id:gid,x1:'0%',y1:'0%',x2:'100%',y2:'100%'});
+    g.appendChild(createSVGElement('stop',{offset:'0%','stop-color':q.from}));g.appendChild(createSVGElement('stop',{offset:'100%','stop-color':q.to}));defs.appendChild(g);
+    const rect=createSVGElement('rect',{x,y,width:cellW,height:cellH,fill:`url(#${gid})`,stroke:'#fff','stroke-width':'2',rx:5,cursor:'pointer',opacity:'0.85'});
+    rect.addEventListener('mouseenter',()=>rect.setAttribute('opacity','1'));rect.addEventListener('mouseleave',()=>rect.setAttribute('opacity','0.85'));
+    rect.addEventListener('click',()=>{if(options.onCellClick)options.onCellClick(q.label,peopleIn[i])});svg.appendChild(rect);
+    const t=createSVGElement('text',{x:x+cellW/2,y:y+cellH/2-5,'text-anchor':'middle','font-size':'13','font-weight':'600',fill:'#fff','font-family':'Microsoft YaHei'});t.textContent=q.label;svg.appendChild(t);
+    const ct=createSVGElement('text',{x:x+cellW/2,y:y+cellH/2+14,'text-anchor':'middle','font-size':'18','font-weight':'700',fill:'#fff'});ct.textContent=counts[i]+'人';svg.appendChild(ct);
+  });
+  const aS={fill:'#4a4a6a','font-size':'11','font-family':'Microsoft YaHei'};
+  ['低绩效','中绩效','高绩效'].forEach((l,i)=>{const t=createSVGElement('text',{x:pad+cellW*i+cellW/2,y:h-14,...aS,'text-anchor':'middle'});t.textContent=l;svg.appendChild(t)});
+  ['低潜力','中潜力','高潜力'].forEach((l,i)=>{const t=createSVGElement('text',{x:14,y:pad+cellH*(2-i)+cellH/2+3,...aS,'text-anchor':'middle',transform:`rotate(-90,14,${pad+cellH*(2-i)+cellH/2+3})`});t.textContent=l;svg.appendChild(t)});
+  container.appendChild(svg);
+}
+
+// ===== 驾驶舱初始化 =====
+(function init(){
+  // 统计卡片
+  document.getElementById('totalCadres').textContent=cadres.length;
+  document.getElementById('activeCadres').textContent=cadres.filter(c=>c.status==='在任').length;
+  document.getElementById('pendingAppointments').textContent=appointments.filter(a=>a.status==='待审批').length;
+  document.getElementById('alertCount').textContent=alerts.length;
+
+  // 职级分布饼图
+  const levelCount={};
+  cadres.forEach(c=>{levelCount[c.positionLevel]=(levelCount[c.positionLevel]||0)+1});
+  // 按预设顺序排列
+  const levelOrder=['集团领导','部门正职','部门副职','高级主管','主管','专员'];
+  const levelData=levelOrder.filter(l=>levelCount[l]).map(l=>({label:l,value:levelCount[l]}));
+  renderPieChart('levelPieChart',levelData,{showLegend:true});
+
+  // 年龄分布柱状图
+  const ageRanges={'30岁以下':0,'31-40岁':0,'41-50岁':0,'50岁以上':0};
+  cadres.forEach(c=>{if(c.age<30)ageRanges['30岁以下']++;else if(c.age<=40)ageRanges['31-40岁']++;else if(c.age<=50)ageRanges['41-50岁']++;else ageRanges['50岁以上']++});
+  renderBarChart('ageBarChart',Object.entries(ageRanges).map(([l,v])=>({label:l,value:v})));
+
+  // 学历分布雷达图
+  const eduCount={};
+  cadres.forEach(c=>eduCount[c.education]=(eduCount[c.education]||0)+1);
+  const eduData=Object.entries(eduCount).map(([l,v])=>({label:l,value:v,max:Math.max(...Object.values(eduCount))+2}));
+  renderRadarChart('eduRadarChart',eduData);
+
+  // 九宫格缩略
+  const merged=reviews.map(r=>{const c=cadres.find(ca=>ca.id===r.cadreId);return{name:c?c.name:r.cadreId,x:r.nineBoxX,y:r.nineBoxY}});
+  renderNineBox('nineBoxMini',merged,{onCellClick:(label,people)=>{
+    const html=people.length===0?'<p style="color:#4a4a6a">该象限暂无人员。</p>'
+      :'<div class="people-list">'+people.map(p=>`
+        <div class="people-item">
+          <div class="people-avatar">${p.name.charAt(0)}</div>
+          <div class="people-info">
+            <div class="people-name">${p.name}</div>
+          </div>
+        </div>`).join('')+'</div>';
+    showModal(label+'（'+people.length+'人）',html);
+  }});
+
+  // 预警列表
+  const alertList=document.getElementById('alertList');
+  const priorityMap={'高':'high','中':'medium','低':'low'};
+  alerts.slice(0,5).forEach(a=>{
+    const pClass=priorityMap[a.priority]||'medium';
+    const item=document.createElement('div');
+    item.className='alert-item '+pClass;
+    item.innerHTML=`
+      <div class="alert-icon ${pClass}">⚠️</div>
+      <div class="alert-content">
+        <div class="alert-title">${a.type} · ${a.cadreName}</div>
+        <div class="alert-desc">${a.position} · ${a.description.substring(0,30)}...</div>
+      </div>
+      <div class="alert-days ${pClass}">剩${a.daysRemaining}天</div>
+    `;
+    alertList.appendChild(item);
+  });
+})();
+</script>
+</body>
+</html>

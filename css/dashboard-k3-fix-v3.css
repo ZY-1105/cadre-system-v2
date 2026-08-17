@@ -1,0 +1,67 @@
+/* ============================================================
+   dashboard-k3-fix-v3.css —— 环形图统一 + 中心文字 + 年龄条加粗
+   追加到 dashboard-k3.css 之后
+   ============================================================ */
+
+/* ========== ① 环形图尺寸统一：固定渲染区域，杜绝图例挤压 ========== */
+.chart-with-legend .chart-container {
+  flex: none !important;
+  width: 150px !important;
+  height: 150px !important;
+  min-width: 150px !important;
+  min-height: 150px !important;
+}
+
+/* 图表库生成的 canvas/svg 同步锁定 */
+.chart-container canvas,
+.chart-container svg {
+  width: 150px !important;
+  height: 150px !important;
+}
+
+/* 图例适当收缩，不抢环形图空间 */
+.chart-with-legend .chart-legend {
+  min-width: 100px !important; /* 从120px压到100px */
+}
+
+/* ========== ② 中心文字：CSS 防溢出保护（HTML 需同步改文案） ========== */
+.chart-center-text {
+  max-width: 120px;
+  padding: 0 4px;
+}
+
+/* ========== ③ 年龄分布条形图加粗：轨道 8px → 14px ========== */
+.age-bar-track {
+  height: 14px !important;       /* 加粗，匹配环形图视觉分量 */
+  border-radius: 7px !important;
+}
+
+.age-bar-fill {
+  border-radius: 7px !important;
+}
+
+/* 同步放宽行间距，避免加粗后拥挤 */
+.age-chart {
+  gap: 14px !important;          /* 从10px加大 */
+  padding: 8px 4px 8px 0 !important;
+}
+
+.age-row {
+  gap: 10px !important;
+}
+
+/* 标签与数值同步加大，匹配粗轨道 */
+.age-label {
+  font-size: var(--font-size-sm) !important;  /* xs → sm */
+  width: 64px !important;
+}
+
+.age-count {
+  font-size: var(--font-size-sm) !important;  /* xs → sm */
+  width: 44px !important;
+}
+
+/* ========== 顺手修：图例文字过长时优雅截断 ========== */
+.chart-legend-name {
+  max-width: 90px !important;   /* 配合缩窄后的图例区 */
+}

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>干部信息 - 力合·人才智库</title>
+  <link rel="stylesheet" href="../css/base-k3.css">
+  <link rel="stylesheet" href="../css/cadre-info-k3-v2.css">
+</head>
+<body>
+  <script src="../js/app-k3.js"></script>
+  <script>renderLayout('干部信息', 'cadre-info');</script>
+
+  <main class="app-main">
+    <div class="dashboard-container">
+
+      <!-- 统计概览行 -->
+      <div class="cadre-stats" id="cadreStats">
+        <div class="cadre-stat-card">
+          <div class="cadre-stat-icon">👥</div>
+          <div class="cadre-stat-info">
+            <div class="cadre-stat-label">干部总数</div>
+            <div class="cadre-stat-value" id="statTotal">—</div>
+          </div>
+        </div>
+        <div class="cadre-stat-card">
+          <div class="cadre-stat-icon">🏢</div>
+          <div class="cadre-stat-info">
+            <div class="cadre-stat-label">所属单位</div>
+            <div class="cadre-stat-value" id="statDepts">—</div>
+          </div>
+        </div>
+        <div class="cadre-stat-card">
+          <div class="cadre-stat-icon">✅</div>
+          <div class="cadre-stat-info">
+            <div class="cadre-stat-label">在任人数</div>
+            <div class="cadre-stat-value" id="statActive">—</div>
+          </div>
+        </div>
+        <div class="cadre-stat-card">
+          <div class="cadre-stat-icon">⚠️</div>
+          <div class="cadre-stat-info">
+            <div class="cadre-stat-label">预警人数</div>
+            <div class="cadre-stat-value" id="statWarning">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 部门分布条 -->
+      <div class="dept-distribution" id="deptDistribution"></div>
+
+      <!-- 筛选栏 -->
+      <div class="filter-bar">
+        <input type="text" class="form-input" id="searchInput" placeholder="搜索姓名、部门、职位...">
+        <select class="form-select" id="deptFilter"><option value="">全部部门</option></select>
+        <select class="form-select" id="levelFilter"><option value="">全部职级</option></select>
+        <select class="form-select" id="politicalFilter"><option value="">全部政治面貌</option></select>
+        <select class="form-select" id="ageFilter"><option value="">全部年龄段</option></select>
+        <select class="form-select" id="eduFilter"><option value="">全部学历</option></select>
+        <button class="btn btn-primary" id="searchBtn">查询</button>
+        <button class="btn btn-secondary" id="resetBtn">重置</button>
+      </div>
+
+      <!-- 干部卡片网格 -->
+      <div class="cadre-grid" id="cadreGrid"></div>
+
+      <!-- 分页器 -->
+      <div class="pagination" id="pagination"></div>
+
+    </div>
+  </main>
+
+  <script>
+  // ==================== 数据对接 ====================
+  // 当前使用 MOCK_CADRES 模拟数据；接入真实后端时，把 fetchData 中的 return 语句
+  // 替换为对应的 HTTP 请求即可。后端返回的数据结构需包含：
+  // id, name, department, currentPosition, positionLevel, status,
+  // politicalStatus, education, age（或 birthDate 自动计算）,
+  // warning: { type, daysRemaining, description }（无预警为 null）
+  async function fetchData(endpoint) {
+    if (endpoint === 'cadres') {
+      // 接入真实后端示例：return fetch('/api/cadres').then(r => r.json())
+      return MOCK_CADRES;
+    }
+    return [];
+  }
+
+  function calculateAge(birthDate) {
+    if (!birthDate) return 0;
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+    return age;
+  }
+
+  // ==================== 干部数据（模拟） ====================
+  const MOCK_CADRES = [
+    { id: 'C001', name: '张某某', gender: '男', birthDate: '1985-06-15', age: 41, nativePlace: '广东深圳', politicalStatus: '中共党员', education: '硕士研究生', degree: '硕士', department: '投资管理部', currentPosition: '投资管理部部长', positionLevel: '中层正职', status: '在任', entryDate: '2015-03-01', positionDate: '2020-01-01', tenure: 9, warning: { type: '任期届满', daysRemaining: 45, description: '任期将于2026年9月届满' } },
+    { id: 'C002', name: '李某', gender: '女', birthDate: '1988-03-20', age: 38, nativePlace: '广东广州', politicalStatus: '中共党员', education: '大学本科', degree: '学士', department: '战略发展部', currentPosition: '战略发展部部长', positionLevel: '中层正职', status: '在任', entryDate: '2018-06-01', positionDate: '2021-03-01', tenure: 6, warning: null },
+    { id: 'C003', name: '王某某', gender: '男', birthDate: '1990-01-10', age: 36, nativePlace: '广东深圳', politicalStatus: '中共党员', education: '硕士研究生', degree: '硕士', department: '人力资源部', currentPosition: '人力资源部部长', positionLevel: '中层正职', status: '在任', entryDate: '2020-01-01', positionDate: '2023-06-01', tenure: 4, warning: null },
+    { id: 'C004', name: '赵某某', gender: '男', birthDate: '1981-09-05', age: 45, nativePlace: '湖南长沙', politicalStatus: '中共党员', education: '博士研究生', degree: '博士', department: '战略发展部', currentPosition: '战略发展部副部长', positionLevel: '中层副职', status: '在任', entryDate: '2012-09-01', positionDate: '2019-01-01', tenure: 12, warning: { type: '即将退休', daysRemaining: 180, description: '距法定退休年龄不足6个月' } },
+    { id: 'C005', name: '冯某', gender: '女', birthDate: '1993-05-18', age: 33, nativePlace: '广东佛山', politicalStatus: '预备党员', education: '硕士研究生', degree: '硕士', department: '投资管理部', currentPosition: '投资管理部副部长', positionLevel: '中层副职', status: '在任', entryDate: '2020-02-01', positionDate: '2024-01-01', tenure: 4, warning: null },
+    { id: 'C006', name: '郑某', gender: '男', birthDate: '1985-11-22', age: 41, nativePlace: '广东汕头', politicalStatus: '中共党员', education: '大学本科', degree: '学士', department: '党群工作部', currentPosition: '党群工作部副部长', positionLevel: '中层副职', status: '在任', entryDate: '2017-11-01', positionDate: '2022-01-01', tenure: 7, warning: { type: '档案缺失', daysRemaining: 30, description: '干部档案缺少学历认证材料' } },
+    { id: 'C007', name: '陈某', gender: '女', birthDate: '1987-08-14', age: 39, nativePlace: '广东广州', politicalStatus: '中共党员', education: '硕士研究生', degree: '硕士', department: '财务部', currentPosition: '财务部部长', positionLevel: '中层正职', status: '在任', entryDate: '2016-05-01', positionDate: '2021-06-01', tenure: 8, warning: null },
+    { id: 'C008', name: '钱某', gender: '男', birthDate: '1978-04-02', age: 48, nativePlace: '广东深圳', politicalStatus: '中共党员', education: '大学本科', degree: '学士', department: '风险合规部', currentPosition: '风险合规部部长', positionLevel: '中层正职', status: '在任', entryDate: '2010-01-01', positionDate: '2018-01-01', tenure: 15, warning: { type: '任期届满', daysRemaining: 90, description: '任期将于2026年11月届满' } },
+    { id: 'C009', name: '吴某', gender: '女', birthDate: '1992-12-08', age: 34, nativePlace: '广东东莞', politicalStatus: '群众', education: '硕士研究生', degree: '硕士', department: '人力资源部', currentPosition: '人力资源部专员', positionLevel: '基层干部', status: '在任', entryDate: '2021-03-01', positionDate: '2024-03-01', tenure: 3, warning: null },
+    { id: 'C010', name: '周某', gender: '男', birthDate: '1983-07-25', age: 43, nativePlace: '广东中山', politicalStatus: '民主党派', education: '博士研究生', degree: '博士', department: '投资管理部', currentPosition: '投资管理部高级经理', positionLevel: '基层干部', status: '在任', entryDate: '2014-08-01', positionDate: '2023-01-01', tenure: 10, warning: null },
+    { id: 'C011', name: '孙某', gender: '女', birthDate: '1995-02-14', age: 31, nativePlace: '广东珠海', politicalStatus: '中共党员', education: '大学本科', degree: '学士', department: '党群工作部', currentPosition: '党群工作部专员', positionLevel: '基层干部', status: '试用', entryDate: '2024-01-01', positionDate: '2024-01-01', tenure: 1, warning: null },
+    { id: 'C012', name: '马某', gender: '男', birthDate: '1975-10-30', age: 51, nativePlace: '广东惠州', politicalStatus: '中共党员', education: '大学本科', degree: '学士', department: '财务部', currentPosition: '财务部高级经理', positionLevel: '基层干部', status: '在任', entryDate: '2008-03-01', positionDate: '2015-01-01', tenure: 17, warning: { type: '即将退休', daysRemaining: 60, description: '距法定退休年龄不足2个月' } }
+  ];
+
+  // ==================== 年龄段计算 ====================
+  function getAgeGroup(age) {
+    if (age <= 35) return '35岁以下';
+    if (age <= 45) return '36-45岁';
+    if (age <= 55) return '46-55岁';
+    return '55岁以上';
+  }
+
+  // ==================== 状态管理 ====================
+  let allCadres = [], filtered = [], currentPage = 1;
+  const pageSize = 9;
+
+  // ==================== 初始化 ====================
+  async function init() {
+    const data = await fetchData('cadres');
+    allCadres = data.map(c => ({ ...c, age: c.age ?? calculateAge(c.birthDate), ageGroup: getAgeGroup(c.age ?? calculateAge(c.birthDate)) }));
+    filtered = [...allCadres];
+
+    // 填充筛选下拉
+    fillSelect('deptFilter', [...new Set(allCadres.map(c => c.department))]);
+    fillSelect('levelFilter', [...new Set(allCadres.map(c => c.positionLevel))]);
+    fillSelect('politicalFilter', [...new Set(allCadres.map(c => c.politicalStatus))]);
+    fillSelect('ageFilter', ['35岁以下', '36-45岁', '46-55岁', '55岁以上']);
+    fillSelect('eduFilter', [...new Set(allCadres.map(c => c.education))]);
+
+    renderStats();
+    renderDeptDistribution();
+    renderGrid();
+    bindEvents();
+  }
+
+  function fillSelect(id, options) {
+    const sel = document.getElementById(id);
+    options.forEach(o => sel.appendChild(new Option(o, o)));
+  }
+
+  // ==================== 统计概览 ====================
+  function renderStats() {
+    document.getElementById('statTotal').textContent = allCadres.length;
+    document.getElementById('statDepts').textContent = [...new Set(allCadres.map(c => c.department))].length;
+    document.getElementById('statActive').textContent = allCadres.filter(c => c.status === '在任').length;
+    document.getElementById('statWarning').textContent = allCadres.filter(c => c.warning).length;
+  }
+
+  // ==================== 部门分布条 ====================
+  function renderDeptDistribution() {
+    const deptCounts = {};
+    allCadres.forEach(c => { deptCounts[c.department] = (deptCounts[c.department] || 0) + 1; });
+    const total = allCadres.length;
+    const maxCount = Math.max(...Object.values(deptCounts));
+
+    const html = Object.entries(deptCounts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([dept, count]) => {
+        const pct = (count / total * 100).toFixed(0);
+        const barWidth = (count / maxCount * 100).toFixed(0);
+        return `
+          <div class="dept-dist-item">
+            <span class="dept-dist-name">${dept}</span>
+            <div class="dept-dist-bar-track">
+              <div class="dept-dist-bar-fill" style="width:${barWidth}%"></div>
+            </div>
+            <span class="dept-dist-count">${count}人</span>
+            <span class="dept-dist-pct">${pct}%</span>
+          </div>
+        `;
+      }).join('');
+
+    document.getElementById('deptDistribution').innerHTML = `
+      <div class="dept-dist-header">
+        <span>部门人数分布</span>
+        <span class="dept-dist-total">共 ${total} 人</span>
+      </div>
+      <div class="dept-dist-list">${html}</div>
+    `;
+  }
+
+  // ==================== 卡片网格 ====================
+  function renderGrid() {
+    const grid = document.getElementById('cadreGrid');
+    grid.innerHTML = '';
+    const start = (currentPage - 1) * pageSize;
+    const pageData = filtered.slice(start, start + pageSize);
+
+    pageData.forEach(c => {
+      const card = document.createElement('div');
+      card.className = 'cadre-card k3-anim';
+      card.onclick = () => location.href = 'cadre-detail.html?id=' + c.id;
+
+      // 预警标签
+      let warningBadge = '';
+      if (c.warning) {
+        const warningClass = c.warning.type === '即将退休' ? 'badge-danger' :
+                             c.warning.type === '任期届满' ? 'badge-warning' : 'badge-accent';
+        warningBadge = `<span class="badge ${warningClass}">${c.warning.type}</span>`;
+      }
+
+      // 状态标签
+      const statusClass = c.status === '在任' ? 'badge-success' : 'badge-warning';
+
+      card.innerHTML = `
+        <div class="cadre-avatar">${c.name.charAt(0)}</div>
+        <div class="cadre-info">
+          <div class="cadre-name">${c.name}</div>
+          <div class="cadre-position-wrap">
+            <div class="cadre-unit">${c.department}</div>
+            <div class="cadre-position">${c.currentPosition}</div>
+          </div>
+          <div class="cadre-tags">
+            <span class="badge badge-primary">${c.positionLevel}</span>
+            <span class="badge ${statusClass}">${c.status}</span>
+            ${warningBadge}
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+
+    renderPagination();
+  }
+
+  // ==================== 分页器 ====================
+  function renderPagination() {
+    const totalPages = Math.ceil(filtered.length / pageSize);
+    const pag = document.getElementById('pagination');
+    pag.innerHTML = '';
+
+    if (totalPages <= 1) return;
+
+    const prev = document.createElement('button');
+    prev.textContent = '上一页';
+    prev.disabled = currentPage === 1;
+    prev.onclick = () => { currentPage--; renderGrid(); };
+    pag.appendChild(prev);
+
+    for (let i = 1; i <= totalPages; i++) {
+      const btn = document.createElement('button');
+      btn.textContent = i;
+      btn.className = i === currentPage ? 'active' : '';
+      btn.onclick = () => { currentPage = i; renderGrid(); };
+      pag.appendChild(btn);
+    }
+
+    const next = document.createElement('button');
+    next.textContent = '下一页';
+    next.disabled = currentPage === totalPages;
+    next.onclick = () => { currentPage++; renderGrid(); };
+    pag.appendChild(next);
+  }
+
+  // ==================== 筛选逻辑 ====================
+  function doFilter() {
+    const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+    const dept = document.getElementById('deptFilter').value;
+    const level = document.getElementById('levelFilter').value;
+    const political = document.getElementById('politicalFilter').value;
+    const ageGroup = document.getElementById('ageFilter').value;
+    const edu = document.getElementById('eduFilter').value;
+
+    filtered = allCadres.filter(c => {
+      const matchKw = !keyword ||
+        c.name.includes(keyword) ||
+        c.department.includes(keyword) ||
+        c.currentPosition.includes(keyword);
+      const matchDept = !dept || c.department === dept;
+      const matchLevel = !level || c.positionLevel === level;
+      const matchPolitical = !political || c.politicalStatus === political;
+      const matchAge = !ageGroup || c.ageGroup === ageGroup;
+      const matchEdu = !edu || c.education === edu;
+      return matchKw && matchDept && matchLevel && matchPolitical && matchAge && matchEdu;
+    });
+
+    currentPage = 1;
+    renderGrid();
+  }
+
+  function resetFilter() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('deptFilter').value = '';
+    document.getElementById('levelFilter').value = '';
+    document.getElementById('politicalFilter').value = '';
+    document.getElementById('ageFilter').value = '';
+    document.getElementById('eduFilter').value = '';
+    filtered = [...allCadres];
+    currentPage = 1;
+    renderGrid();
+  }
+
+  function bindEvents() {
+    document.getElementById('searchBtn').addEventListener('click', doFilter);
+    document.getElementById('resetBtn').addEventListener('click', resetFilter);
+    document.getElementById('searchInput').addEventListener('input', debounce(doFilter, 300));
+    document.getElementById('deptFilter').addEventListener('change', doFilter);
+    document.getElementById('levelFilter').addEventListener('change', doFilter);
+    document.getElementById('politicalFilter').addEventListener('change', doFilter);
+    document.getElementById('ageFilter').addEventListener('change', doFilter);
+    document.getElementById('eduFilter').addEventListener('change', doFilter);
+  }
+
+  // ==================== 工具函数 ====================
+  function debounce(fn, delay = 300) {
+    let timer;
+    return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn.apply(this, args), delay); };
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else { init(); }
+  </script>
+</body>
+</html>

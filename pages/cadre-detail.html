@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>干部详情</title>
+<link rel="stylesheet" href="../css/base-k3.css">
+<style>
+  :root {
+    --brand: #8e2294;
+    --brand-light: #f3e8f4;
+    --brand-50: #faf5fb;
+    --bg: #f8f7fc;
+    --surface: #ffffff;
+    --text-primary: #1f1f1f;
+    --text-secondary: #666666;
+    --text-tertiary: #888888;
+    --border: #ede9f0;
+    --green: #10b981;
+    --green-bg: #ecfdf5;
+    --orange: #f59e0b;
+    --orange-bg: #fffbeb;
+    --red: #dc2626;
+    --red-bg: #fef2f2;
+  }
+
+  .app-main { background: var(--bg); min-height: 100%; padding: 20px; }
+
+  /* Back Button */
+  .k3-back {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px;
+    color: var(--brand);
+    font-size: 14px;
+    text-decoration: none;
+    margin-bottom: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  .k3-back svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    display: inline-block;
+  }
+
+  /* Profile Header */
+  .k3-profile-header {
+    background: var(--surface); border-radius: 12px;
+    padding: 16px 20px; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .k3-profile-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 220px; }
+  .k3-profile-avatar {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: var(--brand);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 20px; font-weight: 500;
+    flex-shrink: 0;
+  }
+  .k3-profile-info { display: flex; flex-direction: column; gap: 3px; }
+  .k3-profile-name { font-size: 17px; font-weight: 600; color: var(--text-primary); }
+  .k3-profile-pos { font-size: 12px; color: var(--text-secondary); }
+  .k3-profile-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+  .k3-profile-tag {
+    padding: 1px 8px; border-radius: 4px;
+    font-size: 11px; font-weight: 500;
+    background: var(--brand-50); color: var(--brand);
+    border: 1px solid rgba(142,34,148,0.12);
+  }
+  .k3-profile-stats {
+    display: flex; gap: 14px; flex-wrap: wrap; flex: 2;
+    justify-content: center;
+  }
+  .k3-profile-stat { text-align: center; min-width: 52px; }
+  .k3-profile-stat-value {
+    font-size: 17px; font-weight: 600;
+    line-height: 1.2; font-variant-numeric: tabular-nums;
+  }
+  .k3-profile-stat-value.brand { color: var(--brand); }
+  .k3-profile-stat-value.warn { color: var(--red); }
+  .k3-profile-stat-label {
+    font-size: 11px; color: var(--text-tertiary); margin-top: 1px; font-weight: 400;
+  }
+  .k3-btn-export {
+    height: 30px; padding: 0 12px;
+    background: var(--brand); color: #fff; border: none;
+    border-radius: 8px; font-size: 12px; font-weight: 500;
+    cursor: pointer; display: flex; align-items: center; gap: 6px;
+    transition: filter 0.2s, transform 0.1s;
+    flex-shrink: 0;
+  }
+  .k3-btn-export:hover { filter: brightness(1.1); }
+  .k3-btn-export:active { transform: scale(0.97); }
+
+  /* Main Layout */
+  .k3-main-layout {
+    display: flex; gap: 10px;
+  }
+  .k3-left-col {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 10px;
+    min-width: 0;
+  }
+  .k3-right-col {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 10px;
+    min-width: 0;
+  }
+
+  /* Card Section */
+  .k3-card-section {
+    background: var(--surface); border-radius: 12px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .k3-card-title {
+    font-size: 13px; font-weight: 600; color: var(--text-primary);
+    margin-bottom: 8px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .k3-card-title::before {
+    content: ''; display: inline-block; width: 3px; height: 14px;
+    background: var(--brand); border-radius: 2px;
+  }
+
+  /* Info Grid (2 col) */
+  .k3-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 16px;
+  }
+  .info-row {
+    display: flex; justify-content: space-between; align-items: center;
+    height: 30px; font-size: 12px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .info-row .label { color: #999; font-weight: 400; }
+  .info-row .value { color: var(--text-primary); font-weight: 400; }
+  .info-row .value.mask {
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .k3-eye {
+    width: 14px; height: 14px; color: var(--brand); cursor: pointer;
+    opacity: 0.5; transition: opacity 0.2s;
+  }
+  .k3-eye:hover { opacity: 1; }
+
+  /* Family Table */
+  .k3-family-table {
+    width: 100%; border-collapse: collapse; font-size: 12px;
+  }
+  .k3-family-table th {
+    text-align: left; padding: 5px 4px;
+    color: #999; font-weight: 400;
+    border-bottom: 1px solid #f0f0f0; font-size: 11px;
+  }
+  .k3-family-table td {
+    padding: 5px 4px; color: var(--text-primary); font-weight: 400;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .k3-family-table tr:last-child td { border-bottom: none; }
+
+  /* Family scroll wrapper */
+  .family-scroll-wrap {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  .family-scroll-wrap::-webkit-scrollbar {
+    width: 4px;
+  }
+  .family-scroll-wrap::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 2px;
+  }
+
+  /* Work Table */
+  .k3-work-table {
+    width: 100%; border-collapse: collapse; font-size: 12px;
+  }
+  .k3-work-table th {
+    text-align: left; padding: 6px 4px;
+    color: #999; font-weight: 400;
+    border-bottom: 1px solid var(--border); font-size: 11px;
+  }
+  .k3-work-table td {
+    padding: 6px 4px;
+    border-bottom: 1px solid #f0f0f0;
+    color: var(--text-primary);
+  }
+  .k3-work-table tr:last-child td { border-bottom: none; }
+  .k3-work-table .time-col {
+    width: 110px; font-size: 12px; color: var(--text-secondary);
+    white-space: nowrap;
+  }
+  .k3-work-table .unit-col {
+    font-weight: 500; color: var(--text-primary);
+  }
+  .k3-work-table .pos-col {
+    width: 130px; color: var(--text-primary);
+  }
+
+  /* Education Cards */
+  .k3-edu-row {
+    display: flex; gap: 8px;
+  }
+  .edu-card {
+    flex: 1; min-width: 0;
+    padding: 8px; border-radius: 8px;
+    border:1px solid var(--border);
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .edu-card.party { border-color: rgba(142,34,148,0.15); background: var(--brand-50); }
+  .edu-time {
+    font-size: 11px; color: var(--text-tertiary); font-weight: 400;
+  }
+  .edu-school {
+    font-size: 12px; font-weight: 600; color: var(--text-primary);
+  }
+  .edu-major {
+    font-size: 11px; color: var(--text-secondary); font-weight: 400;
+  }
+  .edu-tag {
+    display: inline-block; padding: 1px 5px; border-radius: 4px;
+    font-size: 10px; font-weight: 500; margin-top: 3px; width: fit-content;
+  }
+  .edu-tag.fulltime { background: var(--green-bg); color: var(--green); }
+  .edu-tag.parttime { background: var(--orange-bg); color: #b45309; }
+  .edu-tag.party { background: var(--brand); color: #fff; }
+
+  /* ===== 考核与奖惩卡片 ===== */
+  .k3-assess-punish-layout {
+    display: flex;
+    gap: 16px;
+  }
+  .assess-col {
+    flex: 1;
+    min-width: 0;
+  }
+  .punish-col {
+    flex: 1;
+    min-width: 0;
+    border-left: 1px solid #f0f0f0;
+    padding-left: 16px;
+  }
+  .col-subtitle {
+    font-size: 12px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+  }
+  .k3-assess-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .k3-assess-table th {
+    text-align: left;
+    padding: 5px 6px;
+    color: #999;
+    font-weight: 400;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 11px;
+  }
+  .k3-assess-table td {
+    padding: 5px 6px;
+    border-bottom: 1px solid #f0f0f0;
+    color: var(--text-primary);
+  }
+  .k3-assess-table tr:last-child td {
+    border-bottom: none;
+  }
+  .k3-assess-table .year-col {
+    width: 50px;
+    color: var(--text-secondary);
+  }
+  .k3-assess-table .grade-col {
+    width: 50px;
+  }
+  .assess-grade {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 18px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .assess-grade.s { background: var(--brand); color: #fff; }
+  .assess-grade.a { background: #f5f5f5; color: #666; }
+  .assess-grade.b { background: var(--green-bg); color: var(--green); }
+  .assess-grade.c { background: var(--orange-bg); color: #b45309; }
+  .assess-grade.d { background: var(--red-bg); color: var(--red); }
+  .k3-assess-table .apply-col {
+    color: var(--text-secondary);
+  }
+  .k3-assess-table .apply-col .has-apply {
+    color: var(--brand);
+    font-weight: 500;
+  }
+  .reward-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 12px;
+    color: #b45309;
+    margin-bottom: 4px;
+  }
+  .reward-item svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .punish-item {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  @media (max-width: 1100px) {
+    .k3-main-layout { flex-direction: column; }
+    .k3-profile-header { flex-direction: column; align-items: flex-start; }
+    .k3-profile-stats { justify-content: flex-start; }
+    .k3-info-grid { grid-template-columns: 1fr; }
+    .k3-edu-row { flex-direction: column; }
+    .k3-work-table .pos-col { width: auto; }
+    .app-main { padding: 16px; }
+    .k3-assess-punish-layout { flex-direction: column; }
+    .punish-col { border-left: none; border-top: 1px solid #f0f0f0; padding-left: 0; padding-top: 12px; }
+  }
+</style>
+</head>
+<body>
+<div id="app-main" class="app-main">
+  <div class="k3-profile-header">
+    <div class="k3-profile-left">
+      <div class="k3-profile-avatar">张</div>
+      <div class="k3-profile-info">
+        <div class="k3-profile-name">张某某</div>
+        <div class="k3-profile-pos">投资管理部部长</div>
+        <div class="k3-profile-tags">
+          <span class="k3-profile-tag">中共党员</span>
+          <span class="k3-profile-tag">中层正职</span>
+          <span class="k3-profile-tag">高级经济师</span>
+        </div>
+      </div>
+    </div>
+    <div class="k3-profile-stats">
+      <div class="k3-profile-stat">
+        <div class="k3-profile-stat-value brand">41岁</div>
+        <div class="k3-profile-stat-label">年龄</div>
+      </div>
+      <div class="k3-profile-stat">
+        <div class="k3-profile-stat-value brand">18年</div>
+        <div class="k3-profile-stat-label">党龄</div>
+      </div>
+      <div class="k3-profile-stat">
+        <div class="k3-profile-stat-value brand">15年3个月</div>
+        <div class="k3-profile-stat-label">工龄</div>
+      </div>
+      <div class="k3-profile-stat">
+        <div class="k3-profile-stat-value warn">19年</div>
+        <div class="k3-profile-stat-label">距退休</div>
+      </div>
+      <div class="k3-profile-stat">
+        <div class="k3-profile-stat-value brand">5年2个月</div>
+        <div class="k3-profile-stat-label">现任岗位</div>
+      </div>
+    </div>
+    <button class="k3-btn-export">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      导出任免审批表
+    </button>
+  </div>
+
+  <div class="k3-main-layout">
+    <!-- 左侧 -->
+    <div class="k3-left-col">
+      <!-- 卡1：基础信息 -->
+      <div class="k3-card-section">
+        <div class="k3-card-title">基础信息</div>
+        <div class="k3-info-grid">
+          <div class="info-row"><span class="label">出生年月</span><span class="value">1985-06-15</span></div>
+          <div class="info-row"><span class="label">入党时间</span><span class="value">2008-07-01</span></div>
+          <div class="info-row"><span class="label">籍贯</span><span class="value">广东深圳</span></div>
+          <div class="info-row"><span class="label">民族</span><span class="value">汉族</span></div>
+          <div class="info-row"><span class="label">学历学位</span><span class="value">硕士/硕士</span></div>
+          <div class="info-row"><span class="label">健康状况</span><span class="value">健康</span></div>
+          <div class="info-row">
+            <span class="label">身份证号</span>
+            <span class="value mask">
+              <span class="mask-text" data-real="440302198506151234">4403****1234</span>
+              <svg class="k3-eye toggle-mask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </span>
+          </div>
+          <div class="info-row">
+            <span class="label">手机号</span>
+            <span class="value mask">
+              <span class="mask-text" data-real="13812348888">138****8888</span>
+              <svg class="k3-eye toggle-mask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </span>
+          </div>
+          <div class="info-row"><span class="label">办公电话</span><span class="value">0755-88888888</span></div>
+          <div class="info-row"><span class="label">电子邮箱</span><span class="value">zhangxx@lihe.com</span></div>
+        </div>
+      </div>
+
+      <!-- 卡2：家庭成员 -->
+      <div class="k3-card-section" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+        <div class="k3-card-title">家庭主要成员</div>
+        <div class="family-scroll-wrap">
+          <table class="k3-family-table">
+            <thead>
+              <tr><th>称谓</th><th>姓名</th><th>政治面貌</th><th>单位/职务</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>配偶</td><td>李某某</td><td>群众</td><td>某科技公司 / 财务总监</td></tr>
+              <tr><td>父亲</td><td>张某</td><td>中共党员</td><td>已退休</td></tr>
+              <tr><td>母亲</td><td>王某</td><td>群众</td><td>已退休</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 卡3：考核与奖惩 -->
+      <div class="k3-card-section">
+        <div class="k3-card-title">考核与奖惩</div>
+        <div class="k3-assess-punish-layout">
+          <!-- 左列：近3年考核 -->
+          <div class="assess-col">
+            <div class="col-subtitle">近3年考核</div>
+            <table class="k3-assess-table">
+              <thead>
+                <tr><th>年份</th><th>等级</th><th>应用</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="year-col">2025</td>
+                  <td class="grade-col"><span class="assess-grade s">S</span></td>
+                  <td class="apply-col"><span class="has-apply">晋升</span></td>
+                </tr>
+                <tr>
+                  <td class="year-col">2024</td>
+                  <td class="grade-col"><span class="assess-grade a">A</span></td>
+                  <td class="apply-col">/</td>
+                </tr>
+                <tr>
+                  <td class="year-col">2023</td>
+                  <td class="grade-col"><span class="assess-grade s">S</span></td>
+                  <td class="apply-col">/</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- 右列：奖惩情况 -->
+          <div class="punish-col">
+            <div class="col-subtitle">奖惩情况</div>
+            <div class="reward-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+              2022年度优秀干部（公司级）
+            </div>
+            <div class="punish-item">处分：无</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧 -->
+    <div class="k3-right-col">
+      <!-- 卡1：教育经历 -->
+      <div class="k3-card-section">
+        <div class="k3-card-title">教育经历</div>
+        <div class="k3-edu-row" id="eduRow"></div>
+      </div>
+
+      <!-- 卡2：工作简历 -->
+      <div class="k3-card-section" style="flex: 1;">
+        <div class="k3-card-title">工作简历</div>
+        <table class="k3-work-table" id="workTable"></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/app-k3.js"></script>
+<script>
+  renderLayout('干部详情', 'cadre-detail');
+
+  (function() {
+    function insertBackBtn() {
+      var main = document.getElementById('app-main');
+      if (!main) return;
+      if (main.querySelector('.k3-back')) return;
+      var back = document.createElement('a');
+      back.className = 'k3-back';
+      back.href = 'cadre-list.html';
+      back.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>返回列表';
+      main.insertBefore(back, main.firstChild);
+    }
+    // 延迟执行，确保 renderLayout 完成后插入
+    setTimeout(insertBackBtn, 0);
+    setTimeout(insertBackBtn, 100);
+    var observer = new MutationObserver(function() { insertBackBtn(); });
+    var main = document.getElementById('app-main');
+    if (main) observer.observe(main, { childList: true });
+  })();
+
+  const workData = [
+    { time: '2020.01 - 至今', unit: '力合科创集团有限公司', pos: '投资管理部部长' },
+    { time: '2016.09 - 2019.12', unit: '力合科创集团有限公司', pos: '投资经理' },
+    { time: '2013.06 - 2016.08', unit: '深圳某投资集团有限公司', pos: '投资主管' },
+    { time: '2010.07 - 2013.05', unit: '深圳某投资集团有限公司', pos: '投资专员' },
+    { time: '2007.09 - 2010.06', unit: '北京大学', pos: '金融学硕士研究生' },
+    { time: '2003.09 - 2007.07', unit: '中山大学', pos: '经济学本科' },
+  ];
+
+  const tableEl = document.getElementById('workTable');
+  tableEl.innerHTML = `
+    <thead>
+      <tr><th class="time-col">起止时间</th><th class="unit-col">任职单位</th><th class="pos-col">职务</th></tr>
+    </thead>
+    <tbody></tbody>
+  `;
+  const tbody = tableEl.querySelector('tbody');
+  workData.forEach(item => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="time-col">${item.time}</td>
+      <td class="unit-col">${item.unit}</td>
+      <td class="pos-col">${item.pos}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  const eduData = [
+    { time: '2007.09 - 2010.07', school: '北京大学', major: '金融学 · 硕士研究生', type: '全日制', party: false },
+    { time: '2003.09 - 2007.07', school: '中山大学', major: '经济学 · 本科', type: '全日制', party: false },
+    { time: '2021.03 - 2021.06', school: '中央党校', major: '中青年干部培训班', type: '在职', party: true },
+    { time: '2019.09 - 2019.12', school: '深圳市委党校', major: '处级干部进修班', type: '在职', party: true },
+  ];
+
+  const eduRow = document.getElementById('eduRow');
+  eduData.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'edu-card' + (item.party ? ' party' : '');
+    card.innerHTML = `
+      <div class="edu-time">${item.time}</div>
+      <div class="edu-school">${item.school}</div>
+      <div class="edu-major">${item.major}</div>
+      <span class="edu-tag ${item.party ? 'party' : (item.type === '全日制' ? 'fulltime' : 'parttime')}">${item.type}</span>
+    `;
+    eduRow.appendChild(card);
+  });
+
+  document.querySelectorAll('.toggle-mask').forEach(eye => {
+    eye.addEventListener('click', function() {
+      const textEl = this.previousElementSibling;
+      const real = textEl.dataset.real;
+      const current = textEl.textContent;
+      if (current.includes('*')) {
+        textEl.textContent = real;
+      } else {
+        const masked = real.slice(0, 4) + '****' + real.slice(-4);
+        textEl.textContent = masked;
+      }
+    });
+  });
+</script>
+</body>
+</html>

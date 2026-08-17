@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>董监高管理 - 力合·人才智库 - 力合科创干部数智平台</title>
+  <link rel="stylesheet" href="../css/base.css?v=3">
+  <style>
+    .directors-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .director-card {
+      background: var(--color-surface);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      border-top: 4px solid var(--color-primary);
+      transition: all 0.2s;
+    }
+
+    .director-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(142, 34, 148, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    .director-card.warning {
+      border-top-color: var(--color-accent);
+    }
+
+    .director-card.danger {
+      border-top-color: var(--color-danger);
+    }
+
+    .director-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .director-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .director-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .director-position {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      margin-top: 2px;
+    }
+
+    .director-body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 14px;
+    }
+
+    .director-row {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .director-label {
+      color: var(--color-text-secondary);
+    }
+
+    .director-value {
+      color: var(--color-text);
+      font-weight: 500;
+    }
+
+    .director-value.warning {
+      color: #8a6d1f;
+      font-weight: 600;
+    }
+
+    .term-progress {
+      margin-top: 14px;
+    }
+
+    .term-progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .term-progress-bar {
+      height: 8px;
+      background: var(--color-border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .term-progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
+      transition: width 0.5s ease;
+    }
+
+    .term-progress-fill.warning {
+      background: linear-gradient(90deg, var(--color-accent), #f39c12);
+    }
+
+    .term-progress-fill.danger {
+      background: linear-gradient(90deg, var(--color-danger), #e74c3c);
+    }
+
+    @media (max-width: 1200px) {
+      .directors-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .directors-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+<script src="../js/data.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/charts.js"></script>
+</head>
+<body>
+  <main class="app-main">
+    <div class="directors-grid" id="directorsGrid"></div>
+  </main>
+
+  <script>
+
+    renderLayout('董监高管理', 'directors');
+
+    async function init() {
+      const directors = await fetchData('directors');
+      const container = document.getElementById('directorsGrid');
+      const now = new Date();
+
+      directors.forEach(d => {
+        const start = new Date(d.termStart);
+        const end = new Date(d.termEnd);
+        const total = end - start;
+        const elapsed = now - start;
+        const pct = Math.min(100, Math.max(0, (elapsed / total) * 100));
+        const daysLeft = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+
+        let cardClass = '';
+        let progressClass = '';
+        let valueClass = '';
+
+        if (daysLeft <= 90) {
+          cardClass = daysLeft <= 0 ? 'danger' : 'warning';
+          progressClass = daysLeft <= 0 ? 'danger' : 'warning';
+          valueClass = 'warning';
+        }
+
+        const card = document.createElement('div');
+        card.className = `director-card ${cardClass}`;
+        card.innerHTML = `
+          <div class="director-header">
+            <div class="director-avatar">${d.name.charAt(0)}</div>
+            <div>
+              <div class="director-name">${d.name}</div>
+              <div class="director-position">${d.position} · ${d.board}</div>
+            </div>
+          </div>
+          <div class="director-body">
+            <div class="director-row">
+              <span class="director-label">类型</span>
+              <span class="director-value">${d.type}</span>
+            </div>
+            <div class="director-row">
+              <span class="director-label">任期开始</span>
+              <span class="director-value">${formatDate(d.termStart)}</span>
+            </div>
+            <div class="director-row">
+              <span class="director-label">任期结束</span>
+              <span class="director-value ${valueClass}">${formatDate(d.termEnd)}</span>
+            </div>
+            <div class="director-row">
+              <span class="director-label">状态</span>
+              <span class="director-value ${valueClass}">${d.status}</span>
+            </div>
+            <div class="term-progress">
+              <div class="term-progress-label">
+                <span>任期进度</span>
+                <span class="${valueClass}">${daysLeft > 0 ? '剩余 ' + daysLeft + ' 天' : '已届满'}</span>
+              </div>
+              <div class="term-progress-bar">
+                <div class="term-progress-fill ${progressClass}" style="width: ${pct}%"></div>
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>

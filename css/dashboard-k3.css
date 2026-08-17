@@ -1,0 +1,598 @@
+/* ============================================================
+   dashboard-k3.css - Dashboard 最终合并版
+   包含：K4 视觉升级 + 间距压缩 + 层级优化 + 截图修复
+   品牌色 #8e2294 绝对不变
+   ============================================================ */
+
+/* ========== 全局底色 ========== */
+.dashboard-container,
+.dash-main,
+.dash-content {
+  background: #f0eef2;
+  padding-top: 14px;
+}
+
+/* ========== 三层级卡片体系 ========== */
+
+/* L1 核心指标 — 纯白，标准阴影 */
+.stat-card {
+  background: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08),
+              0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s var(--ease-out),
+              box-shadow 0.2s var(--ease-out);
+}
+
+.stat-card:hover {
+  box-shadow: 0 4px 12px rgba(142, 34, 148, 0.08),
+              0 2px 4px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
+}
+
+/* L2 分析展示 — 微紫灰底，极淡阴影，自然退后 */
+.chart-card {
+  background: #f8f7fa;
+  border: none;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s var(--ease-out),
+              box-shadow 0.2s var(--ease-out);
+}
+
+.chart-card:hover {
+  box-shadow: 0 3px 10px rgba(142, 34, 148, 0.06),
+              0 1px 3px rgba(0, 0, 0, 0.03);
+  transform: translateY(-2px);
+}
+
+/* L3 行动预警 — 纯白，左侧语义色条 */
+.insight-card {
+  background: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08),
+              0 2px 8px rgba(0, 0, 0, 0.04);
+  position: relative;
+  padding-left: 16px; /* 为左侧色条预留 */
+  transition: transform 0.2s var(--ease-out),
+              box-shadow 0.2s var(--ease-out);
+}
+
+.insight-card:hover {
+  box-shadow: 0 4px 12px rgba(142, 34, 148, 0.08),
+              0 2px 4px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
+}
+
+/* 洞察卡左侧语义色条 */
+.insight-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 4px;
+  border-radius: 0 2px 2px 0;
+}
+
+.insight-card:nth-child(1)::before { background: var(--color-danger); }
+.insight-card:nth-child(2)::before { background: var(--color-primary); }
+.insight-card:nth-child(3)::before { background: var(--color-warning); }
+
+/* 四标签 — 纯白，顶部语义色条，与洞察卡呼应 */
+.insight-tab {
+  background: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s var(--ease-out),
+              box-shadow 0.2s var(--ease-out);
+}
+
+.insight-tab:hover {
+  box-shadow: 0 4px 12px rgba(142, 34, 148, 0.08),
+              0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+/* ========== 板块层级分隔 ========== */
+.dash-section {
+  margin-bottom: 16px;
+}
+
+/* 两个 Section 之间：紫线 + 呼吸空间 */
+.dash-section + .dash-section {
+  border-top: 1px solid rgba(142, 34, 148, 0.06);
+  padding-top: 16px;
+}
+
+.section-header {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.section-title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.section-header::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: var(--color-primary);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ========== 统计卡片 ========== */
+.stat-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.stat-card {
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 顶部装饰条：首卡 6px 始终显示，其余 2px hover 显示 */
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-primary);
+  opacity: 0;
+  transition: opacity 0.2s var(--ease-out);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+.stat-card:first-child::before {
+  height: 6px;
+  opacity: 1;
+}
+
+.stat-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.1;
+  margin-bottom: 4px;
+  letter-spacing: -0.02em;
+}
+
+.stat-value.loading {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-2xl);
+}
+
+.stat-meta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+/* ========== 图表行（强制等高） ========== */
+.charts-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  align-items: stretch; /* 强制三卡片等高 */
+}
+
+.chart-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 10px;
+}
+
+/* ========== 图表卡片标题 ========== */
+.chart-card-title {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* 在编统计 badge 加深 */
+.chart-badge {
+  background: rgba(142, 34, 148, 0.15);
+  color: #6b1a70;
+  font-weight: 600;
+  padding: 2px 8px;
+  font-size: 12px;
+  border-radius: 100px;
+  line-height: 1.4;
+}
+
+/* ========== 图表容器（自适应高度） ========== */
+.chart-container {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ========== 环形图中心文字 ========== */
+.chart-center-text {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  line-height: 1.3;
+  text-align: center;
+}
+
+.chart-center-text strong {
+  font-size: var(--font-size-2xl);
+  color: var(--color-primary);
+  font-weight: 700;
+  display: block;
+}
+
+/* ========== 环形图图例 ========== */
+.chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  padding: 2px 0;
+}
+
+.chart-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.chart-legend-name {
+  color: var(--color-text-secondary);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80px;
+}
+
+.chart-legend-count {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.chart-legend-percent {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  min-width: 40px;
+  text-align: right;
+}
+
+.chart-with-legend {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.chart-with-legend .chart-container {
+  flex: 1;
+  min-height: 0;
+}
+
+.chart-with-legend .chart-legend {
+  flex: 1;
+  margin-top: 0;
+  min-width: 120px;
+}
+
+/* ========== 年龄分布：纵向条形图 ========== */
+.age-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 4px 4px 0;
+  width: 100%;
+}
+
+.age-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.age-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  width: 56px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.age-bar-track {
+  flex: 1;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 4px;
+  overflow: hidden;
+  min-width: 40px;
+}
+
+.age-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary) 0%, #c44fcc 100%);
+  border-radius: 4px;
+  transition: width 0.8s var(--ease-out);
+}
+
+.age-count {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-primary);
+  width: 36px;
+  text-align: left;
+  flex-shrink: 0;
+}
+
+.age-total {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  text-align: center;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--color-border-light);
+}
+
+/* ========== 智库洞察卡片 ========== */
+.insight-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.insight-card {
+  padding: 12px 12px 12px 16px;
+}
+
+.insight-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+/* 图标去色块，纯图标语义色 */
+.insight-icon {
+  width: 20px;
+  height: 20px;
+  background: none;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.insight-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.insight-icon.warning  { color: var(--color-danger); }
+.insight-icon.positive { color: var(--color-success); }
+.insight-icon.suggest  { color: var(--color-warning); }
+
+.insight-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.insight-data {
+  margin-bottom: 2px;
+}
+
+.insight-data .value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.insight-data .value.loading {
+  color: var(--color-text-muted);
+  font-size: 20px;
+}
+
+.insight-sub {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-bottom: 8px;
+}
+
+/* ========== 迷你进度条（轨道加深 + 极小值兜底） ========== */
+.mini-progress {
+  height: 5px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.mini-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s var(--ease-out);
+  min-width: 6px;
+  position: relative;
+}
+
+/* 极小值圆点兜底 */
+.mini-progress-fill::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  background: inherit;
+  border-radius: 50%;
+  opacity: 0.6;
+}
+
+.insight-card:nth-child(1) .mini-progress-fill { background: var(--color-danger); }
+.insight-card:nth-child(2) .mini-progress-fill { background: var(--color-primary); }
+.insight-card:nth-child(3) .mini-progress-fill { background: var(--color-warning); }
+
+/* ========== 底部四标签横排 ========== */
+.insight-tabs-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px; /* 与洞察卡明确分隔 */
+}
+
+.insight-tab {
+  flex: 1;
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.insight-tab::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  opacity: 0.6;
+  transition: height 0.2s var(--ease-out), opacity 0.2s var(--ease-out);
+}
+
+.insight-tab:hover::before {
+  height: 4px;
+  opacity: 1;
+}
+
+.insight-tab:nth-child(1)::before { background: var(--color-danger); }
+.insight-tab:nth-child(2)::before { background: var(--color-warning); }
+.insight-tab:nth-child(3)::before { background: var(--color-primary); }
+.insight-tab:nth-child(4)::before { background: #3b82f6; }
+
+.insight-tab:active {
+  transform: scale(0.98);
+}
+
+.insight-tab-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+}
+
+.insight-tab-value {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.insight-tab-unit {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+}
+
+/* ========== K3 入场动画 ========== */
+.k3-anim {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: k3FadeInUp 0.35s var(--ease-out) forwards;
+}
+
+.k3-anim:nth-child(1) { animation-delay: 0ms; }
+.k3-anim:nth-child(2) { animation-delay: 50ms; }
+.k3-anim:nth-child(3) { animation-delay: 100ms; }
+.k3-anim:nth-child(4) { animation-delay: 150ms; }
+.k3-anim:nth-child(5) { animation-delay: 200ms; }
+
+@keyframes k3FadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.stat-value:not(.loading),
+.insight-data .value:not(.loading),
+.insight-tab-value:not(.loading) {
+  animation: countUp 0.35s var(--ease-out);
+}
+
+/* ========== 响应式 ========== */
+@media (max-width: 1200px) {
+  .charts-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 992px) {
+  .stat-grid-4      { grid-template-columns: repeat(2, 1fr); }
+  .insight-cards    { grid-template-columns: repeat(2, 1fr); }
+  .insight-tabs-row { flex-wrap: wrap; }
+  .insight-tab      { min-width: calc(50% - 6px); }
+  .charts-row       { grid-template-columns: 1fr; }
+  .chart-with-legend { flex-direction: column; }
+}
+
+@media (max-width: 640px) {
+  .stat-grid-4      { grid-template-columns: 1fr; }
+  .insight-cards    { grid-template-columns: 1fr; }
+  .insight-tabs-row { flex-direction: column; }
+  .insight-tab      { width: 100%; min-width: auto; }
+}

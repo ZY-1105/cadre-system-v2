@@ -1,0 +1,233 @@
+/* ============================================================
+   dashboard-k3-fix-v4.css —— 层级感强制生效 + 图表易读性 + 空间利用率
+   追加到 dashboard-k3.css 之后
+   ============================================================ */
+
+/* ========== 1. 层级感强制生效（加权选择器 + !important 兜底） ========== */
+
+/* L1 统计卡 — 纯白标准阴影（已生效，无需覆盖） */
+
+/* L2 图表卡 — 微紫灰底 #f8f7fa，强制生效 */
+.charts-row > .chart-card,
+.chart-card {
+  background: #f8f7fa !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+.charts-row > .chart-card:hover,
+.chart-card:hover {
+  box-shadow: 0 3px 10px rgba(142, 34, 148, 0.06),
+              0 1px 3px rgba(0, 0, 0, 0.03) !important;
+}
+
+/* L3 洞察卡 — 纯白 + 左侧语义色条（强制生效） */
+.insight-cards > .insight-card,
+.insight-card {
+  background: #ffffff !important;
+  padding-left: 16px !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* 左侧语义色条 — 强制绘制 */
+.insight-card::before {
+  content: '' !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 12px !important;
+  bottom: 12px !important;
+  width: 4px !important;
+  border-radius: 0 2px 2px 0 !important;
+  display: block !important;
+}
+
+.insight-card:nth-child(1)::before { background: var(--color-danger) !important; }
+.insight-card:nth-child(2)::before { background: var(--color-primary) !important; }
+.insight-card:nth-child(3)::before { background: var(--color-warning) !important; }
+
+/* ========== 2. 环形图尺寸统一 + 图例防挤压 ========== */
+
+/* 环形图渲染区域锁定 */
+.chart-with-legend .chart-container {
+  flex: none !important;
+  width: 130px !important;
+  height: 130px !important;
+  min-width: 130px !important;
+  min-height: 130px !important;
+}
+
+.chart-container canvas,
+.chart-container svg {
+  width: 130px !important;
+  height: 130px !important;
+}
+
+/* 图例区放大 + 防挤压 */
+.chart-with-legend {
+  gap: 20px !important;
+  align-items: center !important;
+}
+
+.chart-legend {
+  flex: 1 !important;
+  min-width: 130px !important;
+  margin-top: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.chart-legend-item {
+  font-size: var(--font-size-sm) !important;  /* 放大到 sm */
+  gap: 10px !important;
+  padding: 3px 0 !important;
+}
+
+.chart-legend-dot {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.chart-legend-name {
+  max-width: none !important;  /* 去掉截断 */
+  color: var(--color-text) !important;  /* 加深 */
+}
+
+.chart-legend-count {
+  font-size: var(--font-size-sm) !important;
+}
+
+.chart-legend-percent {
+  font-size: var(--font-size-xs) !important;
+  min-width: 42px !important;
+}
+
+/* 中心文字防溢出 */
+.chart-center-text {
+  max-width: 110px !important;
+  padding: 0 2px !important;
+}
+
+.chart-center-text strong {
+  font-size: var(--font-size-xl) !important;  /* 从2xl压到xl，避免撑破 */
+}
+
+/* ========== 3. 年龄分布重构：去圆点 + 比例正确 + 占满宽度 ========== */
+
+/* 容器占满卡片，无多余 padding */
+.age-chart {
+  width: 100% !important;
+  padding: 4px 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+
+/* 单行结构：label | flex轨道 | count */
+.age-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+
+.age-label {
+  font-size: var(--font-size-sm) !important;
+  color: var(--color-text-secondary) !important;
+  width: 68px !important;
+  text-align: right !important;
+  flex-shrink: 0 !important;
+  line-height: 1 !important;
+}
+
+/* 轨道：占满所有剩余空间，严格按数值比例 */
+.age-bar-track {
+  flex: 1 !important;           /* 关键：占满剩余宽度 */
+  height: 12px !important;     /* 加粗，匹配环形图分量 */
+  background: rgba(0, 0, 0, 0.06) !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+  min-width: 40px !important;  /* 极小值保底 */
+}
+
+.age-bar-fill {
+  height: 100% !important;
+  background: linear-gradient(90deg, var(--color-primary) 0%, #c44fcc 100%) !important;
+  border-radius: 6px !important;
+  transition: width 0.8s var(--ease-out) !important;
+}
+
+/* 右侧人数：固定宽度左对齐，不漂移 */
+.age-count {
+  font-size: var(--font-size-sm) !important;
+  font-weight: 700 !important;
+  color: var(--color-primary) !important;
+  width: 44px !important;
+  text-align: left !important;
+  flex-shrink: 0 !important;
+  line-height: 1 !important;
+}
+
+/* 总计行居中 */
+.age-total {
+  font-size: var(--font-size-xs) !important;
+  color: var(--color-text-tertiary) !important;
+  text-align: center !important;
+  margin-top: 4px !important;
+  padding-top: 8px !important;
+  border-top: 1px solid var(--color-border-light) !important;
+}
+
+/* ========== 4. 空间利用率：卡片内外边距均匀化 ========== */
+
+/* 图表卡 padding 统一 */
+.chart-card {
+  padding: 14px !important;
+}
+
+/* 图表标题与内容间距收紧 */
+.chart-card-title {
+  margin-bottom: 12px !important;
+}
+
+/* ========== 5. 洞察卡进度条：去孤立感 ========== */
+
+/* 进度条上方文字与进度条间距收紧 */
+.insight-sub {
+  margin-bottom: 6px !important;  /* 从8px压到6px */
+}
+
+/* 进度条作为卡片"底部锚定"，加深轨道形成视觉收边 */
+.mini-progress {
+  height: 5px !important;
+  background: rgba(0, 0, 0, 0.08) !important;
+  border-radius: 3px !important;
+  margin-top: 2px !important;  /* 与上方文字更紧密 */
+}
+
+/* 进度条填充：极小值发光兜底 */
+.mini-progress-fill {
+  min-width: 6px !important;
+  position: relative !important;
+}
+
+.mini-progress-fill::after {
+  content: '' !important;
+  position: absolute !important;
+  right: -3px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 5px !important;
+  height: 5px !important;
+  background: inherit !important;
+  border-radius: 50% !important;
+  opacity: 0.5 !important;
+}
+
+/* ========== 6. 板块分隔线强化（人才图谱 ↔ 智库洞察） ========== */
+
+.dash-section + .dash-section {
+  border-top: 1px solid rgba(142, 34, 148, 0.08) !important;  /* 加深 */
+  padding-top: 16px !important;
+  margin-top: 4px !important;
+}

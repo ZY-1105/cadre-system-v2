@@ -1,0 +1,627 @@
+/* ============================================================
+   dashboard-k3-final-v2.css —— 驾驶舱最终视觉
+   A~F 方案完整落地 + K3 视觉体系对齐
+   品牌色 #8e2294 绝对不变
+   ============================================================ */
+
+/* ========== 全局底色 ========== */
+.dashboard-container,
+.dash-main,
+.dash-content {
+  background: #f0eef2;
+  padding-top: 14px;
+}
+
+/* ========== 板块分隔（F：线加深 + 16px 间距） ========== */
+.dash-section {
+  margin-bottom: 16px;
+}
+
+.dash-section + .dash-section {
+  border-top: 1px solid rgba(142, 34, 148, 0.12);
+  padding-top: 16px;
+  margin-top: 4px;
+}
+
+.section-header {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.section-title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.section-header::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: var(--color-primary);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ========== L1 核心指标 — 纯白标准阴影 ========== */
+.stat-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.stat-card {
+  background: #ffffff;
+  border: none;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08),
+              0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s var(--ease-out),
+              box-shadow 0.2s var(--ease-out);
+}
+
+.stat-card:hover {
+  box-shadow: 0 4px 12px rgba(142, 34, 148, 0.08),
+              0 2px 4px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-primary);
+  opacity: 0;
+  transition: opacity 0.2s var(--ease-out);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.stat-card:hover::before {
+  opacity: 1;
+}
+
+.stat-card:first-child::before {
+  height: 6px;
+  opacity: 1;
+}
+
+.stat-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  margin-bottom: 6px;
+}
+
+.stat-value {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.1;
+  margin-bottom: 4px;
+  letter-spacing: -0.02em;
+}
+
+.stat-meta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+/* ========== L2 图表卡 — 微紫灰底 #f8f7fa（强制生效） ========== */
+.charts-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+.charts-row > .chart-card,
+.chart-card {
+  background: #f8f7fa !important;
+  border: none !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 240px;
+  padding: 14px !important;
+  transition: transform 0.2s var(--ease-out),
+              box-shadow 0.2s var(--ease-out) !important;
+}
+
+.charts-row > .chart-card:hover,
+.chart-card:hover {
+  box-shadow: 0 3px 10px rgba(142, 34, 148, 0.06),
+              0 1px 3px rgba(0, 0, 0, 0.03) !important;
+  transform: translateY(-2px) !important;
+}
+
+.chart-card-title {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.chart-badge {
+  background: rgba(142, 34, 148, 0.15);
+  color: #6b1a70;
+  font-weight: 600;
+  padding: 2px 8px;
+  font-size: 12px;
+  border-radius: 100px;
+  line-height: 1.4;
+}
+
+/* 环形图容器 */
+.chart-with-legend {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+}
+
+.chart-with-legend .chart-container {
+  flex: none;
+  width: 130px;
+  height: 130px;
+  min-width: 130px;
+  min-height: 130px;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.chart-container canvas,
+.chart-container svg {
+  width: 130px !important;
+  height: 130px !important;
+}
+
+/* E：环形图中心数字加大到 2xl */
+.chart-center-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  line-height: 1.3;
+  text-align: center;
+  pointer-events: none;
+}
+
+.chart-center-text strong {
+  font-size: var(--font-size-2xl);
+  color: var(--color-primary);
+  font-weight: 700;
+  display: block;
+}
+
+/* 图例 */
+.chart-legend {
+  flex: 1;
+  min-width: 130px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 0;
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  padding: 3px 0;
+}
+
+.chart-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.chart-legend-name {
+  color: var(--color-text);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chart-legend-count {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.chart-legend-percent {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  min-width: 44px;
+  text-align: right;
+}
+
+/* ========== 年龄分布 — 14px 粗条 + 极淡灰轨道 + 垂直居中 ========== */
+.age-chart {
+  width: 100%;
+  padding: 4px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  justify-content: center;
+  flex: 1;
+}
+
+.age-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.age-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  width: 68px;
+  text-align: right;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.age-bar-track {
+  flex: 1;
+  height: 14px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 7px;
+  overflow: hidden;
+  min-width: 40px;
+}
+
+.age-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary) 0%, #c44fcc 100%);
+  border-radius: 7px;
+  transition: width 0.8s var(--ease-out);
+}
+
+.age-count {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-primary);
+  width: 44px;
+  text-align: left;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.age-total {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  text-align: center;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-border-light);
+}
+
+/* ========== A：四标签 — 单行药丸导航条 ========== */
+.insight-tabs-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.insight-tab {
+  flex: 1;
+  height: 36px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  transition: background 0.15s var(--ease-out),
+              transform 0.15s var(--ease-out);
+}
+
+/* 左侧色圆点 */
+.insight-tab::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  opacity: 0.8;
+  transition: transform 0.15s var(--ease-out);
+}
+
+.insight-tab:nth-child(1)::before { background: var(--color-danger); }
+.insight-tab:nth-child(2)::before { background: var(--color-warning); }
+.insight-tab:nth-child(3)::before { background: var(--color-primary); }
+.insight-tab:nth-child(4)::before { background: #3b82f6; }
+
+.insight-tab:hover {
+  background: rgba(142, 34, 148, 0.04);
+  transform: translateY(-1px);
+}
+
+.insight-tab:active {
+  transform: scale(0.98);
+}
+
+/* 标签名 */
+.insight-tab-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+/* 数值 */
+.insight-tab-value {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.insight-tab-unit {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  margin-left: 1px;
+}
+
+/* ========== L3 洞察卡 — 纯白 + 左侧语义色条 + 行动锚点 ========== */
+.insight-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.insight-card {
+  background: #ffffff !important;
+  border: none !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08),
+              0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  padding: 16px 16px 12px 20px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  transition: transform 0.2s var(--ease-out),
+              box-shadow 0.2s var(--ease-out) !important;
+}
+
+.insight-card:hover {
+  box-shadow: 0 4px 12px rgba(142, 34, 148, 0.08),
+              0 2px 4px rgba(0, 0, 0, 0.04) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* 左侧语义色条 */
+.insight-card::before {
+  content: '' !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 16px !important;
+  bottom: 16px !important;
+  width: 4px !important;
+  border-radius: 0 2px 2px 0 !important;
+  display: block !important;
+}
+
+.insight-card:nth-child(1)::before { background: var(--color-danger) !important; }
+.insight-card:nth-child(2)::before { background: var(--color-primary) !important; }
+.insight-card:nth-child(3)::before { background: var(--color-warning) !important; }
+
+.insight-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.insight-icon {
+  width: 20px;
+  height: 20px;
+  background: none;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.insight-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.insight-icon.warning  { color: var(--color-danger); }
+.insight-icon.positive { color: var(--color-success); }
+.insight-icon.suggest  { color: var(--color-warning); }
+
+.insight-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* C：数字置顶（进度条上方） */
+.insight-data {
+  margin-bottom: 2px;
+}
+
+.insight-data .value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.insight-value-top {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.insight-value-top::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* 各卡语义色 */
+.insight-card:nth-child(1) .insight-value-top { color: var(--color-danger); }
+.insight-card:nth-child(2) .insight-value-top { color: var(--color-primary); }
+.insight-card:nth-child(3) .insight-value-top { color: var(--color-warning); }
+
+.insight-sub {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-bottom: 6px;
+}
+
+/* 进度条 */
+.mini-progress {
+  height: 6px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.mini-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s var(--ease-out);
+  min-width: 6px;
+  position: relative;
+}
+
+.mini-progress-fill::after {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  background: inherit;
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+.insight-card:nth-child(1) .mini-progress-fill { background: var(--color-danger); }
+.insight-card:nth-child(2) .mini-progress-fill { background: var(--color-primary); }
+.insight-card:nth-child(3) .mini-progress-fill { background: var(--color-warning); }
+
+/* B：行动锚点 */
+.insight-action {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border-light);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: gap 0.2s var(--ease-out);
+}
+
+.insight-action::after {
+  content: '→';
+  transition: transform 0.2s var(--ease-out);
+}
+
+.insight-card:hover .insight-action {
+  gap: 8px;
+}
+
+.insight-card:hover .insight-action::after {
+  transform: translateX(4px);
+}
+
+/* ========== 入场动画 ========== */
+.k3-anim {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: k3FadeInUp 0.35s var(--ease-out) forwards;
+}
+
+.k3-anim:nth-child(1) { animation-delay: 0ms; }
+.k3-anim:nth-child(2) { animation-delay: 50ms; }
+.k3-anim:nth-child(3) { animation-delay: 100ms; }
+.k3-anim:nth-child(4) { animation-delay: 150ms; }
+.k3-anim:nth-child(5) { animation-delay: 200ms; }
+
+@keyframes k3FadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.stat-value:not(.loading),
+.insight-data .value:not(.loading),
+.insight-tab-value:not(.loading) {
+  animation: countUp 0.35s var(--ease-out);
+}
+
+/* ========== 响应式 ========== */
+@media (max-width: 1200px) {
+  .charts-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 992px) {
+  .stat-grid-4      { grid-template-columns: repeat(2, 1fr); }
+  .insight-cards    { grid-template-columns: repeat(2, 1fr); }
+  .insight-tabs-row { flex-wrap: wrap; }
+  .insight-tab      { min-width: calc(50% - 6px); }
+  .charts-row       { grid-template-columns: 1fr; }
+  .chart-with-legend { flex-direction: column; }
+}
+
+@media (max-width: 640px) {
+  .stat-grid-4      { grid-template-columns: 1fr; }
+  .insight-cards    { grid-template-columns: 1fr; }
+  .insight-tabs-row { flex-direction: column; }
+  .insight-tab      { width: 100%; min-width: auto; }
+}
