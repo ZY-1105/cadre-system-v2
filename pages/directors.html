@@ -705,6 +705,11 @@ function init() {
     const wrapper = document.querySelector('.dgj-select-wrap');
     if (wrapper && !wrapper.contains(e.target)) closeDropdown();
   });
+  // 默认选中第一家，避免空页面
+  setTimeout(function() {
+    const companies = getCompanies();
+    if (companies.length > 0) selectCompany(companies[0].id);
+  }, 0);
 }
 
 // ==================== 分类切换 ====================
