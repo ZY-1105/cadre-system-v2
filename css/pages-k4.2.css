@@ -1,17 +1,17 @@
 /* ============================================================
    pages-k4.2.css - List / Detail / Form 页面视觉升级
-   全局底色 #f0eef2 + 卡片去边框密铺 + 标签扁平化
+   全局底色 var(--bg-pill) + 卡片去边框密铺 + 标签扁平化
    品牌色 #8e2294 绝对不变
    ============================================================ */
 
 /* ========== 全局底色：主内容区压暗，卡片纯白浮起 ========== */
 .main-content, .page-container, .app-main {
-  background: #f0eef2;
+  background: var(--bg-pill);
 }
 
 /* ========== 卡片基础类（去边框 + 微重阴影） ========== */
 .page-card, .list-toolbar, .detail-section, .form-card, .detail-header, .list-filter-bar, .cadre-card {
-  background: #ffffff;
+  background: var(--color-white);
   border: none;
   border-radius: var(--radius-sm);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06),
@@ -33,26 +33,6 @@
   justify-content: space-between;
   gap: var(--space-3);
   flex-wrap: wrap;
-}
-
-.page-title {
-  font-size: var(--font-size-xl);
-  font-weight: 700;
-  color: var(--color-text);
-  line-height: 1.3;
-  letter-spacing: -0.01em;
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.page-title::before {
-  content: '';
-  width: 4px;
-  height: 20px;
-  background: var(--color-primary);
-  border-radius: 2px;
-  flex-shrink: 0;
 }
 
 .page-subtitle {
@@ -92,18 +72,18 @@
 
 .btn-primary {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   border-color: var(--color-primary);
 }
 
 .btn-primary:hover {
-  background: #7a1d80;
-  border-color: #7a1d80;
+  background: var(--color-purple-dark);
+  border-color: var(--color-purple-dark);
   box-shadow: 0 2px 8px rgba(142, 34, 148, 0.2);
 }
 
 .btn-secondary {
-  background: #fff;
+  background: var(--color-white);
   color: var(--color-text);
   border-color: var(--color-border);
 }
@@ -127,13 +107,13 @@
 
 .btn-danger {
   background: var(--color-danger);
-  color: #fff;
+  color: var(--color-white);
   border-color: var(--color-danger);
 }
 
 .btn-danger:hover {
-  background: #c0392b;
-  border-color: #c0392b;
+  background: var(--color-danger-dark);
+  border-color: var(--color-danger-dark);
   box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2);
 }
 
@@ -173,12 +153,12 @@
 }
 
 .tag-status {
-  color: #16a34a;
+  color: var(--color-success-bright);
 }
 .tag-status::before {
   content: '•';
   margin-right: 3px;
-  color: #16a34a;
+  color: var(--color-success-bright);
 }
 
 .tag-alert {
@@ -195,7 +175,7 @@
   margin-right: 3px;
   font-size: 8px;
   font-weight: 700;
-  color: #fff;
+  color: var(--color-white);
   background: var(--color-danger);
   border-radius: 50%;
 }
@@ -215,8 +195,8 @@
 .tag-warning { color: var(--color-warning); }
 .tag-warning::before { content: '•'; margin-right: 3px; color: var(--color-warning); }
 
-.tag-info { color: #2563eb; }
-.tag-info::before { content: '•'; margin-right: 3px; color: #2563eb; }
+.tag-info { color: var(--color-blue); }
+.tag-info::before { content: '•'; margin-right: 3px; color: var(--color-blue); }
 
 .tag-danger {
   background: none;
@@ -235,7 +215,7 @@
   margin-right: 3px;
   font-size: 8px;
   font-weight: 700;
-  color: #fff;
+  color: var(--color-white);
   background: var(--color-danger);
   border-radius: 50%;
 }
@@ -247,7 +227,7 @@
   font-size: var(--font-size-sm);
   line-height: 1.5;
   color: var(--color-text);
-  background: #fff;
+  background: var(--color-white);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   transition: border-color 0.15s var(--ease-out),
@@ -343,7 +323,7 @@
   font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--color-text-secondary);
-  background: #fff;
+  background: var(--color-white);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -358,7 +338,7 @@
 
 .pagination-item.active, .pagination-compact .page-num.active {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   border-color: var(--color-primary);
   box-shadow: 0 2px 6px rgba(142, 34, 148, 0.15);
 }
@@ -427,7 +407,7 @@
   padding: 7px 28px 7px 12px;
   font-size: var(--font-size-sm);
   color: var(--color-text);
-  background: #fff;
+  background: var(--color-white);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   appearance: none;
@@ -463,7 +443,7 @@
   gap: 12px;
   padding: 12px;
   padding-left: calc(12px + 4px);
-  background: #ffffff;
+  background: var(--color-white);
   border: none;
   border-radius: var(--radius-sm);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06),
@@ -501,7 +481,7 @@
   height: 40px;
   border-radius: var(--radius-sm);
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -596,7 +576,7 @@
   font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--color-text-secondary);
-  background: #fff;
+  background: var(--color-white);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   cursor: pointer;
@@ -612,7 +592,7 @@
 
 .pagination-compact .page-num.active {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-white);
   border-color: var(--color-primary);
   box-shadow: 0 2px 8px rgba(142, 34, 148, 0.2);
 }
@@ -765,7 +745,7 @@
   height: 8px;
   background: var(--color-primary);
   border-radius: 50%;
-  border: 2px solid #fff;
+  border: 2px solid var(--color-white);
   box-shadow: 0 0 0 2px var(--color-primary-light);
   transition: box-shadow 0.2s var(--ease-out);
 }
@@ -886,7 +866,7 @@
    表格（任免管理 / 档案管理 等列表页共用）
    ============================================================ */
 .list-table-wrap {
-  background: #ffffff;
+  background: var(--color-white);
   border: none;
   border-radius: var(--radius-sm);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06),
@@ -910,7 +890,7 @@
   padding: 10px 12px;
   font-weight: 600;
   color: var(--color-text-secondary);
-  background: #faf9fb;
+  background: var(--bg-surface-warm);
   border-bottom: 1px solid var(--color-border);
   text-align: left;
   white-space: nowrap;
@@ -947,7 +927,7 @@
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid var(--color-border-light);
-  background: #faf9fb;
+  background: var(--bg-surface-warm);
 }
 
 /* ============================================================

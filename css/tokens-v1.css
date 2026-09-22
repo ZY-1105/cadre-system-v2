@@ -1,0 +1,93 @@
+/* ============================================================
+   tokens-v1.css — 设计令牌统一层（dashboard 页面专用）
+   定位：颜色/字号的唯一来源。只被 pages/dashboard.html 引用。
+   规则：
+   1. 只定义变量，不写组件样式
+   2. 新增样式禁止使用 !important
+   ============================================================ */
+
+:root {
+  /* ========== 品牌色（唯一来源） ========== */
+  --brand-primary: #8e2294;
+  --brand-primary-dark: #6b1a70;
+  --brand-gold: #F8C24C;
+
+  /* 品牌紫 channel 写法：同时支撑纯色与任意透明度 */
+  --primary: 142 34 148;
+  --color-primary-new: rgb(var(--primary));
+  --color-primary-soft: rgb(var(--primary) / 0.08);
+  --color-primary-softer: rgb(var(--primary) / 0.04);
+  --color-primary-medium: rgb(var(--primary) / 0.15);
+
+  /* ========== 中性色（固定 5 级，对比度达标） ========== */
+  --text-1: #1a1a2e;    /* 正文/标题 */
+  --text-2: #4a4a6a;    /* 次级文字 */
+  --text-3: #6e6e85;    /* 辅助文字，小字也能 ≥4.5:1 */
+
+  /* 别名（兼容 pages-k4.2-extra.css 新映射） */
+  --text-primary: var(--text-1);
+  --text-secondary: var(--text-2);
+  --text-tertiary: var(--text-3);
+  --bg-page: #f5f3f7;   /* 全局唯一页面灰（对齐品牌文档） */
+  --bg-card: #ffffff;
+
+  /* ========== 预警三级语义化 ========== */
+  --alert-high: #FF5353;
+  --alert-mid: #F8C24C;
+  --alert-low: #b0a0b8;
+
+  /* ========== 字号 ========== */
+  --fs-caption: 12px;
+  --fs-body: 14px;
+  --fs-title: 16px;
+  --fs-h2: 18px;
+  --fs-h1: 22px;
+  --fs-num: 28px;
+
+  /* 数字排版：等宽数字，刷新不跳位 */
+  --num-variant: tabular-nums;
+
+  /* ========== 旧变量重映射（兼容驾驶舱 v6） ==========
+     v6 仍用 --color-bg / --color-text-* 等旧名，重映射后自动升级 */
+  --color-bg: var(--bg-page);
+  --color-text: var(--text-1);
+  --color-text-secondary: var(--text-2);
+  --color-text-tertiary: var(--text-3);
+  --color-surface-raised: var(--bg-card);
+
+  /* ========== 通用辅助色（兼容各 K3 页面组件） ========== */
+  --color-primary: var(--brand-primary);
+  --color-white: #ffffff;
+
+  --bg-pill: #f0eef2;
+  --bg-pill-hover: #e8e5eb;
+  --bg-surface-soft: #f9f9fb;
+  --bg-surface-muted: #f5f5f7;
+  --bg-ghost: #fafafa;
+
+  /* ========== 状态标签色（背景 + 文字） ========== */
+  --status-success-bg: #ecfdf5;
+  --status-success-text: #065f46;
+  --status-warning-bg: #fef3c7;
+  --status-warning-text: #92400e;
+  --status-danger-bg: #fef2f2;
+  --status-danger-text: #991b1b;
+  --status-info-bg: #eef2ff;
+  --status-info-text: #3730a3;
+  --status-neutral-bg: #f3f4f6;
+  --status-neutral-text: #6b7280;
+
+  /* 蓝色系（独立标签色，避免覆盖 base-k3 的 --color-info） */
+  --color-blue: #2563eb;
+  --color-blue-bg: #eff6ff;
+
+  /* 其他页面专属补充色 */
+  --color-success-bright: #16a34a;
+  --color-danger-dark: #c0392b;
+  --bg-surface-warm: #faf9fb;
+
+  /* ========== 紫色调阶（渐变/强调） ========== */
+  --color-purple-light: #b85ebd;
+  --color-purple-medium: #a53baa;
+  --color-purple-dark: #7a1d80;
+}

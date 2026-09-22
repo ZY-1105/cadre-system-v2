@@ -5,7 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>考察详情 - 力合·人才智库</title>
   <link rel="stylesheet" href="../css/base-k3.css">
+  <link rel="stylesheet" href="../css/tokens-v1.css">
   <link rel="stylesheet" href="../css/pages-k4.2-extra.css">
+  <style>
+    /* 考察详情页 tokens 对齐：底色/焦点环 */
+    body { background: var(--bg-page, #f5f3f7); }
+    /* 覆盖 pages-k4.2-extra.css 中 .cid-container 的 max-width: 1400px，本页容器全宽自适应 */
+    .cid-container { max-width: 100%; }
+
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2px solid rgb(var(--primary) / 0.55);
+      outline-offset: 2px;
+    }
+  </style>
 </head>
 <body>
   <script src="../js/app-k3.js"></script>
@@ -13,7 +29,7 @@
 
   <main class="app-main">
     <div class="cid-container">
-      <a href="cadre-inspection.html" class="cid-back">
+      <a href="cadre-inspection.html" class="cid-back" aria-label="返回干部考察列表">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
         返回列表
       </a>
@@ -55,7 +71,7 @@
     document.getElementById('cid-header').innerHTML = `
       <div class="cid-title-row">
         <h1 class="cid-title">${task.name}</h1>
-        <span class="cid-status" style="color:${st.color};background:${st.bg}">${st.label}</span>
+        <span class="cid-status" style="color:${st.color};background:${st.bg}" aria-label="当前考察状态：${st.label}">${st.label}</span>
         <button class="cid-btn-text" onclick="alert('编辑功能开发中')">编辑</button>
       </div>
       <div class="cid-meta">
@@ -69,24 +85,29 @@
 
   function renderProgress(taskId) {
     const ev = evalStatus[taskId] || { evaluated:false, archived:false };
+    const iconDoc = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>';
+    const iconFolder = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>';
+    const iconCheck = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+    const iconBox = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>';
+
     document.getElementById('cid-progress').innerHTML = `
       <div class="cid-progress-card">
-        <div class="cid-progress-item">
-          <div class="cid-progress-icon">📋</div>
+        <div class="cid-progress-item" role="region" tabindex="0" aria-label="考察评价，${ev.evaluated?'已完成':'未完成'}">
+          <div class="cid-progress-icon">${iconDoc}</div>
           <div class="cid-progress-info">
             <div class="cid-progress-name">考察评价</div>
-            <div class="cid-progress-status ${ev.evaluated?'done':'todo'}">${ev.evaluated?'✓ 已完成':'□ 未完成'}</div>
+            <div class="cid-progress-status ${ev.evaluated?'done':'todo'}">${ev.evaluated?iconCheck+' 已完成':iconBox+' 未完成'}</div>
           </div>
-          <a href="cadre-inspection-evaluate.html?task=${taskId}" class="cid-progress-btn ${ev.evaluated?'disabled':''}">${ev.evaluated?'查看':'去评价 →'}</a>
+          <a href="cadre-inspection-evaluate.html?task=${taskId}" class="cid-progress-btn ${ev.evaluated?'disabled':''}" aria-label="${ev.evaluated?'查看考察评价':'去评价'}">${ev.evaluated?'查看':'去评价 →'}</a>
         </div>
         <div class="cid-progress-divider"></div>
-        <div class="cid-progress-item">
-          <div class="cid-progress-icon">📁</div>
+        <div class="cid-progress-item" role="region" tabindex="0" aria-label="考察档案，${ev.archived?'已生成':'未生成'}">
+          <div class="cid-progress-icon">${iconFolder}</div>
           <div class="cid-progress-info">
             <div class="cid-progress-name">考察档案</div>
-            <div class="cid-progress-status ${ev.archived?'done':'todo'}">${ev.archived?'✓ 已生成':'□ 未生成'}</div>
+            <div class="cid-progress-status ${ev.archived?'done':'todo'}">${ev.archived?iconCheck+' 已生成':iconBox+' 未生成'}</div>
           </div>
-          <a href="cadre-inspection-archive.html?task=${taskId}" class="cid-progress-btn ${!ev.evaluated?'disabled':''}">${ev.archived?'查看':'去归档 →'}</a>
+          <a href="cadre-inspection-archive.html?task=${taskId}" class="cid-progress-btn ${!ev.evaluated?'disabled':''}" aria-label="${ev.archived?'查看考察档案':'去归档'}">${ev.archived?'查看':'去归档 →'}</a>
         </div>
       </div>
     `;

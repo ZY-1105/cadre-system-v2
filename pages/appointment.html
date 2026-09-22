@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>任免管理 - 力合·人才智库 - 力合科创干部数智平台</title>
-  <link rel="stylesheet" href="../css/base.css?v=3">
+  <link rel="stylesheet" href="../css/base-k3.css">
+  <link rel="stylesheet" href="../css/tokens-v1.css">
   <link rel="stylesheet" href="../css/pages-k4.1.css?v=4.1">
   <link rel="stylesheet" href="../css/pages-k4.2.css?v=4.2">
   <style>
@@ -14,6 +15,17 @@
       margin-bottom: 20px;
       flex-wrap: wrap;
       align-items: center;
+    }
+
+    .filter-bar .form-select,
+    .filter-bar .form-input {
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .filter-bar .btn {
+      flex: 0 0 auto;
+      min-width: 96px;
     }
 
     .lane-container {
@@ -117,55 +129,91 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 14px 0;
+      padding: 12px 0;
+      margin-bottom: 8px;
       border-bottom: 1px solid var(--color-border);
     }
 
-    .app-item:last-child { border-bottom: none; }
+    .app-item:last-child { border-bottom: none; margin-bottom: 0; }
 
     .app-info h4 {
       font-size: 14px;
       color: var(--color-text);
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
 
     .app-info p {
       font-size: 12px;
       color: var(--color-text-secondary);
+      margin: 0;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 640px) {
       .lane-container { padding: 12px; }
       .swimlane { min-width: 700px; }
+      .filter-bar { flex-direction: column; align-items: stretch; }
+      .filter-bar .btn { width: 100%; }
+    }
+  </style>
+  <style>
+    /* 任免页 tokens 对齐：旧栈页面也统一底色和焦点环 */
+    body { background: var(--bg-page, #f5f3f7); }
+    .month-header { background: var(--color-primary-softer, rgba(142, 34, 148, 0.04)); color: var(--text-2); }
+    .lane-label { background: var(--color-primary-softer, rgba(142, 34, 148, 0.04)); }
+
+    /* 状态标签：替代旧 base.css 的 .badge（tokens 版） */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 4px;
+      font-size: 12px; font-weight: 500;
+    }
+    .badge-primary { background: var(--color-primary-soft, rgba(142, 34, 148, 0.08)); color: var(--brand-primary); }
+    .badge-success { background: var(--status-success-bg, #ecfdf5); color: var(--status-success-text, #065f46); }
+    .badge-warning { background: var(--status-warning-bg, #fef3c7); color: var(--status-warning-text, #92400e); }
+
+    /* 弹窗组件样式已迁移至 base-k3.css（.k3-modal-* 全局组件） */
+
+    /* 空状态组件样式已迁移至 base-k3.css（.k3-empty-state 全局组件） */
+
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2px solid rgb(var(--primary) / 0.55);
+      outline-offset: 2px;
     }
   </style>
 <script src="../js/data.js"></script>
-<script src="../js/app.js"></script>
-<script src="../js/charts.js"></script>
+<script src="../js/app-k3.js"></script>
 </head>
 <body>
   <main class="app-main">
     <div class="filter-bar">
-      <select class="form-select" id="typeFilter">
+      <select class="form-select" id="typeFilter" aria-label="全部类型">
         <option value="">全部类型</option>
         <option value="提拔">提拔</option>
         <option value="平调">平调</option>
         <option value="降职">降职</option>
         <option value="免职">免职</option>
       </select>
-      <select class="form-select" id="yearFilter">
+      <select class="form-select" id="yearFilter" aria-label="全部年份">
         <option value="">全部年份</option>
       </select>
-      <input type="text" class="form-input" id="searchInput" placeholder="搜索姓名...">
-      <button class="btn btn-primary" id="searchBtn">查询</button>
+      <input type="text" class="form-input" id="searchInput" aria-label="搜索任免姓名或职务" placeholder="搜索姓名...">
+      <button class="btn btn-primary" id="searchBtn" aria-label="执行筛选查询">查询</button>
     </div>
 
     <div class="lane-container">
-      <div class="swimlane" id="swimlane"></div>
+      <div class="swimlane" id="swimlane" role="table" aria-label="年度任免概览泳道图"></div>
     </div>
 
     <div class="appointment-list">
       <div class="appointment-list-title">最近任免记录</div>
+      <div class="k3-empty-state" id="app-empty-state" role="status" aria-live="polite">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+        <div class="k3-empty-text">暂无任免记录</div>
+      </div>
       <div id="appList"></div>
     </div>
   </main>
@@ -180,7 +228,8 @@
     const typeMap = { '提拔': 'promote', '平调': 'transfer', '降职': 'demote', '免职': 'dismiss' };
 
     async function init() {
-      allAppointments = await fetchData('appointments');
+      // app-k3.js 的 fetchData 走真实接口，本页数据来自 data.js 的 window.MOCK_DATA
+      allAppointments = (window.MOCK_DATA && window.MOCK_DATA.appointments) ? [...window.MOCK_DATA.appointments] : [];
       allAppointments.sort((a, b) => new Date(b.date) - new Date(a.date));
       filtered = [...allAppointments];
 
@@ -198,15 +247,17 @@
       container.innerHTML = '';
 
       // 表头
-      container.appendChild(Object.assign(document.createElement('div'), { className: 'lane-header', textContent: '类型' }));
+      container.appendChild(Object.assign(document.createElement('div'), { className: 'lane-header', role: 'columnheader', scope: 'col', textContent: '类型' }));
       months.forEach(m => {
-        container.appendChild(Object.assign(document.createElement('div'), { className: 'month-header', textContent: m }));
+        container.appendChild(Object.assign(document.createElement('div'), { className: 'month-header', role: 'columnheader', scope: 'col', textContent: m }));
       });
 
       // 泳道
       Object.keys(typeMap).forEach(type => {
         const label = document.createElement('div');
         label.className = 'lane-label';
+        label.setAttribute('role', 'rowheader');
+        label.setAttribute('scope', 'row');
         label.textContent = type;
         container.appendChild(label);
 
@@ -216,6 +267,12 @@
           const cell = document.createElement('div');
           cell.className = 'lane-row';
           const monthItems = typeItems.filter(a => new Date(a.date).getMonth() === m);
+          // 多人同月修复：节点是绝对定位，不会撑开单元格；按节点数量显式扩展
+          // 单元格 min-height（每个节点占 34px 槽位 + 上下各 8px 留白），
+          // 否则第二人起会被裁掉/重叠。
+          if (monthItems.length > 1) {
+            cell.style.minHeight = (16 + monthItems.length * 34) + 'px';
+          }
           monthItems.forEach((item, idx) => {
             const node = document.createElement('div');
             node.className = `lane-node ${typeMap[type]}`;
@@ -246,10 +303,23 @@
 
     function renderList() {
       const list = document.getElementById('appList');
+      const emptyState = document.getElementById('app-empty-state');
+      if (filtered.length === 0) {
+        // 无记录：显示空状态容器，隐藏列表
+        list.innerHTML = '';
+        list.style.display = 'none';
+        emptyState.classList.add('show');
+        return;
+      }
+      // 有记录：隐藏空状态容器，恢复列表
+      emptyState.classList.remove('show');
+      list.style.display = '';
       list.innerHTML = '';
       filtered.slice(0, 8).forEach(item => {
         const div = document.createElement('div');
         div.className = 'app-item';
+        div.tabIndex = 0;
+        div.setAttribute('aria-label', `${item.type} · ${item.cadreName} · ${item.position}，${item.department}，${formatDate(item.date)}，${item.approver}，文号 ${item.documentNo}`);
         div.innerHTML = `
           <div class="app-info">
             <h4>${item.type} · ${item.cadreName} · ${item.position}</h4>
@@ -259,6 +329,29 @@
         `;
         list.appendChild(div);
       });
+    }
+
+    // K3 弹窗：替代旧 app.js 的 showModal（app-k3.js 的 showModal 只是 console.log 桩）
+    function showModal(title, contentHTML) {
+      let overlay = document.getElementById('aptModalOverlay');
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'aptModalOverlay';
+        overlay.className = 'k3-modal-overlay';
+        document.body.appendChild(overlay);
+      }
+      overlay.innerHTML = `
+        <div class="k3-modal" role="dialog" aria-modal="true" aria-labelledby="apt-modal-title">
+          <div class="k3-modal-header">
+            <div class="k3-modal-title" id="apt-modal-title">${title}</div>
+            <button class="k3-modal-close" aria-label="关闭弹窗">&times;</button>
+          </div>
+          <div class="k3-modal-body">${contentHTML}</div>
+        </div>
+      `;
+      overlay.classList.add('show');
+      overlay.querySelector('.k3-modal-close').addEventListener('click', () => overlay.classList.remove('show'));
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('show'); });
     }
 
     function doFilter() {

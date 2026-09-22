@@ -5,7 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>考察评价 - 力合·人才智库</title>
   <link rel="stylesheet" href="../css/base-k3.css">
+  <link rel="stylesheet" href="../css/tokens-v1.css">
   <link rel="stylesheet" href="../css/pages-k4.2-extra.css">
+  <style>
+    /* 考察评价页 tokens 对齐：底色/焦点环 */
+    body { background: var(--bg-page, #f5f3f7); }
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2px solid rgb(var(--primary) / 0.55);
+      outline-offset: 2px;
+    }
+  </style>
 </head>
 <body>
   <script src="../js/app-k3.js"></script>

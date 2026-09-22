@@ -5,17 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>干部信息</title>
 <link rel="stylesheet" href="../css/base-k3.css">
+<link rel="stylesheet" href="../css/tokens-v1.css">
 <style>
+  /* 页面变量对齐 tokens-v1.css：品牌/文字/背景/边框统一走令牌 */
   :root {
-    --brand: #8e2294;
-    --brand-light: #f3e8f4;
-    --brand-50: #faf5fb;
-    --bg: #f8f7fc;
-    --surface: #ffffff;
-    --text-primary: #1f1f1f;
-    --text-secondary: #666666;
-    --text-tertiary: #888888;
-    --border: #ede9f0;
+    --brand: var(--brand-primary);
+    --brand-light: var(--color-primary-soft);
+    --brand-50: var(--color-primary-softer);
+    --bg: var(--bg-page);
+    --surface: var(--bg-card);
+    --text-primary: var(--text-1);
+    --text-secondary: var(--text-2);
+    --text-tertiary: var(--text-3);
+    --border: var(--color-border);
     --green: #10b981;
     --green-bg: #ecfdf5;
     --orange: #f59e0b;
@@ -72,8 +74,9 @@
   }
   .k3-stat-icon svg { width: 20px; height: 20px; }
   .k3-stat-label { font-size: 12px; color: var(--text-tertiary); font-weight: 400; }
+  /* 统计数字规范：深色 + 等宽数字，品牌紫只留给图标 */
   .k3-stat-value {
-    font-size: 28px; font-weight: 500; color: var(--brand);
+    font-size: 28px; font-weight: 500; color: var(--text-primary);
     line-height: 1; margin-top: 4px;
     font-variant-numeric: tabular-nums;
   }
@@ -160,6 +163,8 @@
     color: var(--text-tertiary); font-size: 14px;
   }
 
+  /* 空状态组件样式已迁移至 base-k3.css（.k3-empty-state 全局组件） */
+
   /* Pagination */
   .k3-pagination {
     display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -188,6 +193,16 @@
     .k3-stats { grid-template-columns: repeat(2, 1fr); }
     .k3-filter-bar { flex-direction: column; align-items: stretch; }
     .k3-search { max-width: none; }
+  }
+
+  /* 键盘焦点可见 */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid rgb(var(--primary) / 0.55);
+    outline-offset: 2px;
   }
 </style>
 </head>
@@ -247,9 +262,9 @@
   <div class="k3-filter-bar">
     <div class="k3-search">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="searchInput" placeholder="搜索姓名、部门、职位" />
+      <input type="text" id="searchInput" placeholder="搜索姓名、部门、职位" aria-label="搜索干部姓名、部门或职位" />
     </div>
-    <select class="k3-select" id="filterDept">
+    <select class="k3-select" id="filterDept" aria-label="按部门筛选">
       <option value="">全部部门</option>
       <option value="投资管理部">投资管理部</option>
       <option value="战略发展部">战略发展部</option>
@@ -258,31 +273,36 @@
       <option value="财务部">财务部</option>
       <option value="风险合规部">风险合规部</option>
     </select>
-    <select class="k3-select" id="filterLevel">
+    <select class="k3-select" id="filterLevel" aria-label="按职级筛选">
       <option value="">全部职级</option>
       <option value="中层正职">中层正职</option>
       <option value="中层副职">中层副职</option>
       <option value="基层">基层</option>
     </select>
-    <select class="k3-select" id="filterParty">
+    <select class="k3-select" id="filterParty" aria-label="按政治面貌筛选">
       <option value="">全部政治面貌</option>
       <option value="中共党员">中共党员</option>
       <option value="群众">群众</option>
     </select>
-    <select class="k3-select" id="filterAge">
+    <select class="k3-select" id="filterAge" aria-label="按年龄段筛选">
       <option value="">全部年龄段</option>
       <option value="30以下">30岁以下</option>
       <option value="30-40">30-40岁</option>
       <option value="40-50">40-50岁</option>
       <option value="50以上">50岁以上</option>
     </select>
-    <select class="k3-select" id="filterEdu">
+    <select class="k3-select" id="filterEdu" aria-label="按学历筛选">
       <option value="">全部学历</option>
       <option value="本科">本科</option>
       <option value="硕士研究生">硕士研究生</option>
       <option value="博士">博士</option>
     </select>
-    <button class="k3-btn-reset" id="btnReset">重置</button>
+    <button class="k3-btn-reset" id="btnReset" aria-label="重置所有筛选条件">重置</button>
+  </div>
+
+  <div class="k3-empty-state" id="emptyState" role="status" aria-live="polite">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+    <div class="k3-empty-text">暂无干部数据</div>
   </div>
 
   <div class="k3-grid" id="cardGrid"></div>
@@ -363,12 +383,21 @@
     const start = (currentPage - 1) * PAGE_SIZE;
     const pageData = filtered.slice(start, start + PAGE_SIZE);
 
+    const emptyState = document.getElementById('emptyState');
     if (pageData.length === 0) {
-      cardGrid.innerHTML = '<div class="k3-empty">暂无匹配数据</div>';
+      // 无数据：显示空状态容器，隐藏卡片网格
+      emptyState.classList.add('show');
+      cardGrid.style.display = 'none';
     } else {
+      // 有数据：隐藏空状态容器，恢复卡片网格
+      emptyState.classList.remove('show');
+      cardGrid.style.display = '';
       pageData.forEach((c, i) => {
         const card = document.createElement('div');
         card.className = 'k3-card';
+        card.tabIndex = 0;
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', `查看 ${c.name} 的干部详情`);
         card.style.animation = 'fadeIn 0.3s ease ' + (i * 0.05) + 's both';
         card.innerHTML = `
           <div class="k3-card-name">${c.name}</div>
@@ -378,7 +407,9 @@
             ${c.tags.map((t, idx) => `<span class="k3-tag ${tagClass[t] || 'k3-tag--level'}">${c.tagText[idx]}</span>`).join('')}
           </div>
         `;
-        card.onclick = () => { window.location.href = 'cadre-detail.html'; };
+        const openDetail = () => { window.location.href = 'cadre-detail.html'; };
+        card.onclick = openDetail;
+        card.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDetail(); } };
         cardGrid.appendChild(card);
       });
     }
@@ -395,6 +426,7 @@
     const prev = document.createElement('button');
     prev.className = 'k3-page-btn';
     prev.textContent = '上一页';
+    prev.setAttribute('aria-label', '上一页');
     prev.disabled = currentPage === 1;
     prev.onclick = () => { if (currentPage > 1) { currentPage--; render(); } };
     pagination.appendChild(prev);
@@ -403,6 +435,8 @@
       const btn = document.createElement('button');
       btn.className = 'k3-page-btn' + (i === currentPage ? ' active' : '');
       btn.textContent = i;
+      btn.setAttribute('aria-label', '第 ' + i + ' 页');
+      if (i === currentPage) btn.setAttribute('aria-current', 'page');
       btn.onclick = () => { currentPage = i; render(); };
       pagination.appendChild(btn);
     }
@@ -410,6 +444,7 @@
     const next = document.createElement('button');
     next.className = 'k3-page-btn';
     next.textContent = '下一页';
+    next.setAttribute('aria-label', '下一页');
     next.disabled = currentPage === totalPages;
     next.onclick = () => { if (currentPage < totalPages) { currentPage++; render(); } };
     pagination.appendChild(next);

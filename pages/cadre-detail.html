@@ -5,17 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>干部详情</title>
 <link rel="stylesheet" href="../css/base-k3.css">
+<link rel="stylesheet" href="../css/tokens-v1.css">
 <style>
   :root {
-    --brand: #8e2294;
-    --brand-light: #f3e8f4;
-    --brand-50: #faf5fb;
-    --bg: #f8f7fc;
-    --surface: #ffffff;
-    --text-primary: #1f1f1f;
-    --text-secondary: #666666;
-    --text-tertiary: #888888;
-    --border: #ede9f0;
+    --brand: var(--brand-primary);
+    --brand-light: var(--color-primary-soft);
+    --brand-50: var(--color-primary-softer);
+    --bg: var(--bg-page);
+    --surface: var(--bg-card);
+    --text-primary: var(--text-1);
+    --text-secondary: var(--text-2);
+    --text-tertiary: var(--text-3);
+    --border: var(--color-border);
     --green: #10b981;
     --green-bg: #ecfdf5;
     --orange: #f59e0b;
@@ -24,12 +25,12 @@
     --red-bg: #fef2f2;
   }
 
-  .app-main { background: var(--bg); min-height: 100%; padding: 20px; }
+  .app-main { background: var(--bg); min-height: 100%; padding: 80px 28px 40px; }
 
   /* Back Button */
   .k3-back {
     display: inline-flex !important;
-    align-items: center !important;
+    align-items: center;
     gap: 6px;
     color: var(--brand);
     font-size: 14px;
@@ -81,6 +82,7 @@
   .k3-profile-stat-value {
     font-size: 17px; font-weight: 600;
     line-height: 1.2; font-variant-numeric: tabular-nums;
+    color: var(--text-primary);
   }
   .k3-profile-stat-value.brand { color: var(--brand); }
   .k3-profile-stat-value.warn { color: var(--red); }
@@ -197,14 +199,14 @@
   }
   .k3-work-table tr:last-child td { border-bottom: none; }
   .k3-work-table .time-col {
-    width: 110px; font-size: 12px; color: var(--text-secondary);
+    min-width: 110px; font-size: 12px; color: var(--text-secondary);
     white-space: nowrap;
   }
   .k3-work-table .unit-col {
     font-weight: 500; color: var(--text-primary);
   }
   .k3-work-table .pos-col {
-    width: 130px; color: var(--text-primary);
+    min-width: 130px; color: var(--text-primary);
   }
 
   /* Education Cards */
@@ -214,7 +216,7 @@
   .edu-card {
     flex: 1; min-width: 0;
     padding: 8px; border-radius: 8px;
-    border:1px solid var(--border);
+    border: 1px solid var(--border);
     display: flex; flex-direction: column; gap: 2px;
   }
   .edu-card.party { border-color: rgba(142,34,148,0.15); background: var(--brand-50); }
@@ -325,7 +327,7 @@
     color: var(--text-tertiary);
   }
 
-  @media (max-width: 1100px) {
+  @media (max-width: 992px) {
     .k3-main-layout { flex-direction: column; }
     .k3-profile-header { flex-direction: column; align-items: flex-start; }
     .k3-profile-stats { justify-content: flex-start; }
@@ -336,10 +338,17 @@
     .k3-assess-punish-layout { flex-direction: column; }
     .punish-col { border-left: none; border-top: 1px solid #f0f0f0; padding-left: 0; padding-top: 12px; }
   }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible { outline: 2px solid rgb(var(--primary) / 0.55); outline-offset: 2px; }
 </style>
 </head>
 <body>
 <div id="app-main" class="app-main">
+  <!-- 返回列表按钮 — 静态保留，renderLayout 后由 JS 重新插入 -->
+  <a class="k3-back" href="cadre-list.html" aria-label="返回干部列表">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    返回列表
+  </a>
+
   <div class="k3-profile-header">
     <div class="k3-profile-left">
       <div class="k3-profile-avatar">张</div>
@@ -354,23 +363,23 @@
       </div>
     </div>
     <div class="k3-profile-stats">
-      <div class="k3-profile-stat">
+      <div class="k3-profile-stat" tabindex="0" role="button" aria-label="年龄 41 岁">
         <div class="k3-profile-stat-value brand">41岁</div>
         <div class="k3-profile-stat-label">年龄</div>
       </div>
-      <div class="k3-profile-stat">
+      <div class="k3-profile-stat" tabindex="0" role="button" aria-label="党龄 18 年">
         <div class="k3-profile-stat-value brand">18年</div>
         <div class="k3-profile-stat-label">党龄</div>
       </div>
-      <div class="k3-profile-stat">
+      <div class="k3-profile-stat" tabindex="0" role="button" aria-label="工龄 15 年 3 个月">
         <div class="k3-profile-stat-value brand">15年3个月</div>
         <div class="k3-profile-stat-label">工龄</div>
       </div>
-      <div class="k3-profile-stat">
+      <div class="k3-profile-stat" tabindex="0" role="button" aria-label="距退休 19 年">
         <div class="k3-profile-stat-value warn">19年</div>
         <div class="k3-profile-stat-label">距退休</div>
       </div>
-      <div class="k3-profile-stat">
+      <div class="k3-profile-stat" tabindex="0" role="button" aria-label="现任岗位任职 5 年 2 个月">
         <div class="k3-profile-stat-value brand">5年2个月</div>
         <div class="k3-profile-stat-label">现任岗位</div>
       </div>
@@ -416,10 +425,10 @@
       <!-- 卡2：家庭成员 -->
       <div class="k3-card-section" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
         <div class="k3-card-title">家庭主要成员</div>
-        <div class="family-scroll-wrap">
-          <table class="k3-family-table">
+        <div class=family-scroll-wrap style=overflow-x:auto;>
+          <table class="k3-family-table" role="table">
             <thead>
-              <tr><th>称谓</th><th>姓名</th><th>政治面貌</th><th>单位/职务</th></tr>
+              <tr><th scope="col">称谓</th><th scope="col">姓名</th><th scope="col">政治面貌</th><th scope="col">单位/职务</th></tr>
             </thead>
             <tbody>
               <tr><td>配偶</td><td>李某某</td><td>群众</td><td>某科技公司 / 财务总监</td></tr>
@@ -435,11 +444,11 @@
         <div class="k3-card-title">考核与奖惩</div>
         <div class="k3-assess-punish-layout">
           <!-- 左列：近3年考核 -->
-          <div class="assess-col">
+          <div class=assess-col style=overflow-x:auto;>
             <div class="col-subtitle">近3年考核</div>
-            <table class="k3-assess-table">
+            <table class="k3-assess-table" role="table">
               <thead>
-                <tr><th>年份</th><th>等级</th><th>应用</th></tr>
+                <tr><th scope="col">年份</th><th scope="col">等级</th><th scope="col">应用</th></tr>
               </thead>
               <tbody>
                 <tr>
@@ -482,9 +491,9 @@
       </div>
 
       <!-- 卡2：工作简历 -->
-      <div class="k3-card-section" style="flex: 1;">
+      <div class=k3-card-section style=flex:1;overflow-x:auto;>
         <div class="k3-card-title">工作简历</div>
-        <table class="k3-work-table" id="workTable"></table>
+        <table class="k3-work-table" id="workTable" role="table"></table>
       </div>
     </div>
   </div>
@@ -494,6 +503,7 @@
 <script>
   renderLayout('干部详情', 'cadre-detail');
 
+  // 返回按钮防覆盖：setTimeout 双保险 + MutationObserver 持续监听
   (function() {
     function insertBackBtn() {
       var main = document.getElementById('app-main');
@@ -502,10 +512,10 @@
       var back = document.createElement('a');
       back.className = 'k3-back';
       back.href = 'cadre-list.html';
+      back.setAttribute('aria-label', '返回干部列表');
       back.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>返回列表';
       main.insertBefore(back, main.firstChild);
     }
-    // 延迟执行，确保 renderLayout 完成后插入
     setTimeout(insertBackBtn, 0);
     setTimeout(insertBackBtn, 100);
     var observer = new MutationObserver(function() { insertBackBtn(); });
@@ -525,7 +535,7 @@
   const tableEl = document.getElementById('workTable');
   tableEl.innerHTML = `
     <thead>
-      <tr><th class="time-col">起止时间</th><th class="unit-col">任职单位</th><th class="pos-col">职务</th></tr>
+      <tr><th scope="col" class="time-col">起止时间</th><th scope="col" class="unit-col">任职单位</th><th scope="col" class="pos-col">职务</th></tr>
     </thead>
     <tbody></tbody>
   `;

@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>选聘任用 - 力合·人才智库</title>
+  <link rel="stylesheet" href="../css/base-k3.css">
+  <script src="../js/app-k3.js?v=20260810"></script>
+  <style>
+  :root {
+    --color-primary: #8e2294;
+    --color-primary-light: rgba(142, 34, 148, 0.06);
+    --color-primary-medium: rgba(142, 34, 148, 0.12);
+    --color-text: #1a1a2e;
+    --color-text-secondary: rgba(0,0,0,0.55);
+    --color-text-tertiary: rgba(0,0,0,0.35);
+    --color-bg: #F8F7FC;
+    --color-surface: #ffffff;
+    --color-border: rgba(0,0,0,0.06);
+    --color-border-light: rgba(0,0,0,0.04);
+    --color-success: #059669;
+    --color-warning: #d97706;
+    --color-danger: #dc2626;
+    --color-info: #6a8fa8;
+    --font-size-xs: 12px;
+    --font-size-sm: 13px;
+    --font-size-base: 14px;
+    --font-size-lg: 15px;
+    --font-size-xl: 17px;
+    --font-size-2xl: 22px;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg-page, #f5f3f7);
+    color: var(--color-text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    font-size: var(--font-size-base);
+  }
+  a { text-decoration: none; color: inherit; }
+
+  /* 顶部间距须 ≥ 64px 固定顶栏高度，否则内容上滑与顶栏重叠 */
+  .app-main { padding: 80px var(--space-6) var(--space-5); }
+  .cs-container { max-width: 1200px; margin: 0 auto; }
+
+  /* ========== 统计卡片 ========== */
+  /* 统计卡片：统一走 base-k3.css 的 .k3-stat-* 全局组件 */
+
+  /* ========== 年度概览泳道 ========== */
+  .cs-lane-section {
+    background: var(--color-surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border-light);
+    padding: var(--space-5);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.02);
+    margin-bottom: var(--space-5);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .cs-lane-section:hover {
+    box-shadow: 0 4px 20px rgba(142, 34, 148, 0.08);
+    border-color: rgba(142, 34, 148, 0.1);
+  }
+  .cs-lane-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+  }
+  .cs-lane-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .cs-year-select {
+    padding: 6px 28px 6px 12px;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    font-weight: 500;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+  }
+  .cs-year-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(142, 34, 148, 0.08);
+  }
+  .cs-year-select:hover {
+    border-color: rgba(142, 34, 148, 0.3);
+  }
+
+  /* 全年列样式 */
+  .cs-year-col-header {
+    background: var(--color-primary-light);
+    padding: 10px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-primary, #1a1a2e);
+    font-weight: 700;
+  }
+  .cs-year-col-cell {
+    background: #fff;
+    padding: 8px;
+    min-height: 56px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cs-year-col-cell .cs-year-count {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-primary);
+    background: var(--color-primary-light);
+    padding: 4px 12px;
+    border-radius: 100px;
+    border: 1px solid rgba(142, 34, 148, 0.15);
+  }
+  .cs-year-col-cell .cs-year-count.zero {
+    color: var(--color-text-tertiary);
+    background: #f3f4f6;
+    border-color: var(--color-border);
+  }
+
+  .cs-lane-scroll {
+    overflow-x: auto;
+    border-radius: var(--radius-sm);
+  }
+  .cs-swimlane {
+    display: grid;
+    grid-template-columns: 90px repeat(12, 1fr);
+    gap: 1px;
+    min-width: 960px;
+    background: var(--color-border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  .cs-swimlane-header {
+    background: linear-gradient(135deg, var(--color-primary), #6b1a70);
+    color: #fff;
+    padding: 12px 8px;
+    font-weight: 600;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .cs-month-header {
+    background: var(--color-primary-light);
+    padding: 10px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-primary, #1a1a2e);
+    font-weight: 600;
+  }
+  .cs-lane-label {
+    background: #faf9fc;
+    padding: 10px;
+    font-size: 12px;
+    color: var(--color-text);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cs-lane-cell {
+    background: #fff;
+    padding: 8px;
+    min-height: 56px;
+    position: relative;
+  }
+  .cs-lane-node {
+    display: block;
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 4px;
+    text-align: center;
+  }
+  .cs-lane-node:last-child { margin-bottom: 0; }
+  .cs-lane-node:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    z-index: 10;
+  }
+  .cs-lane-node--motion { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+  .cs-lane-node--inspect { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+  .cs-lane-node--pending { background: #f3e8ff; color: #7c3aed; border: 1px solid #c4b5fd; }
+  .cs-lane-node--done { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+  .cs-lane-node--archive { background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; }
+
+  /* ========== 筛选区 ========== */
+  .cs-filter-card {
+    background: var(--color-surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border-light);
+    padding: var(--space-4) var(--space-5);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.02);
+    margin-bottom: var(--space-5);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .cs-filter-card:hover {
+    box-shadow: 0 4px 20px rgba(142, 34, 148, 0.08);
+    border-color: rgba(142, 34, 148, 0.1);
+  }
+  .cs-filter-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--space-4);
+  }
+  .cs-filter-bar {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  /* 筛选栏控件：与 cadre-inspection 的 .ci-filter-* 规范一致（32px 高、6px 圆角、浅边框） */
+  .cs-filter-input, .cs-filter-select {
+    height: 32px;
+    padding: 0 10px;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 6px;
+    font-size: var(--font-size-sm);
+    font-family: inherit;
+    color: var(--color-text);
+    background: var(--color-surface);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    min-width: 140px;
+  }
+  .cs-filter-input:focus, .cs-filter-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(142, 34, 148, 0.08);
+  }
+  .cs-filter-input::placeholder { color: var(--color-text-tertiary); }
+  .cs-filter-btn {
+    height: 32px;
+    padding: 0 20px;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 2px 8px rgba(142, 34, 148, 0.25);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .cs-filter-btn:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(142, 34, 148, 0.35);
+  }
+  .cs-filter-btn:active { transform: translateY(0); }
+
+  /* ========== 表格 ========== */
+  .cs-table-card {
+    background: var(--color-surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border-light);
+    padding: var(--space-5);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.02);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .cs-table-card:hover {
+    box-shadow: 0 4px 20px rgba(142, 34, 148, 0.08);
+    border-color: rgba(142, 34, 148, 0.1);
+  }
+  .cs-table-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .cs-table-wrap { overflow-x: auto; border-radius: var(--radius-sm); }
+  .cs-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+    background: var(--color-surface);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  .cs-table th {
+    background: var(--color-primary-softer, rgba(142, 34, 148, 0.04));
+    color: var(--text-primary, #1a1a2e);
+    font-weight: 600;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 2px solid var(--color-border-light);
+    white-space: nowrap;
+    font-size: var(--font-size-xs);
+  }
+  .cs-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--color-border-light);
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .cs-table tbody tr { transition: background 0.15s; }
+  .cs-table tbody tr:hover td { background: rgba(142, 34, 148, 0.04); }
+  .cs-table tr:last-child td { border-bottom: none; }
+
+  .cs-status-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .cs-status-tag--motion { background: #fef3c7; color: #92400e; }
+  .cs-status-tag--inspect { background: #e0f2fe; color: #0369a1; }
+  .cs-status-tag--pending { background: #f3e8ff; color: #7c3aed; }
+  .cs-status-tag--done { background: #d1fae5; color: #065f46; }
+  .cs-status-tag--archive { background: #f3f4f6; color: #4b5563; }
+
+  .cs-action-btn {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-primary);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.15s;
+  }
+  .cs-action-btn:hover {
+    background: var(--color-primary-light);
+    text-decoration: none;
+  }
+
+  .cs-empty-state {
+    text-align: center;
+    padding: var(--space-6);
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-sm);
+  }
+  .cs-empty-state-icon {
+    font-size: 40px;
+    margin-bottom: var(--space-3);
+    opacity: 0.4;
+  }
+
+  /* ========== 详情弹窗（结构样式已迁移至 base-k3.css .k3-modal-*，以下为选聘页特有覆盖） ========== */
+  .cs-modal {
+    background: var(--color-surface);
+    max-width: 560px;
+    max-height: 90vh;
+    padding: 0;
+    border: 1px solid var(--color-border-light);
+    animation: cs-modal-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes cs-modal-in {
+    from { opacity: 0; transform: translateY(20px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .cs-modal-header {
+    margin-bottom: 0;
+    padding: var(--space-5);
+    border-bottom: 1px solid var(--color-border-light);
+    justify-content: flex-start;
+  }
+  .cs-modal-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .cs-modal-info-title {
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  .cs-modal-info-sub {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+    margin-top: 2px;
+  }
+  .cs-modal-body { padding: var(--space-5); }
+  .cs-modal-section {
+    margin-bottom: var(--space-5);
+  }
+  .cs-modal-section:last-child { margin-bottom: 0; }
+  .cs-modal-section-title {
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1.5px solid var(--color-primary-light);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cs-info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--color-border-light);
+    font-size: var(--font-size-sm);
+  }
+  .cs-info-row:last-child { border-bottom: none; }
+  .cs-info-label { color: var(--color-text-secondary); font-weight: 500; }
+  .cs-info-value { font-weight: 600; color: var(--color-text); }
+
+  /* 时间线 */
+  .cs-timeline {
+    position: relative;
+    padding-left: 24px;
+  }
+  .cs-timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    background: var(--color-border);
+    border-radius: 1px;
+  }
+  .cs-timeline-item {
+    position: relative;
+    padding-bottom: var(--space-4);
+  }
+  .cs-timeline-item:last-child { padding-bottom: 0; }
+  .cs-timeline-dot {
+    position: absolute;
+    left: -22px;
+    top: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    z-index: 1;
+  }
+  .cs-timeline-item.done .cs-timeline-dot {
+    background: var(--color-success);
+    border-color: var(--color-success);
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+  }
+  .cs-timeline-item.active .cs-timeline-dot {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(142, 34, 148, 0.15);
+    animation: cs-pulse 2s infinite;
+  }
+  @keyframes cs-pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(142, 34, 148, 0.15); }
+    50% { box-shadow: 0 0 0 6px rgba(142, 34, 148, 0.08); }
+  }
+  .cs-timeline-label {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 2px;
+  }
+  .cs-timeline-item.done .cs-timeline-label { color: var(--color-success); }
+  .cs-timeline-item.active .cs-timeline-label { color: var(--color-primary); }
+  .cs-timeline-item.pending .cs-timeline-label { color: var(--color-text-tertiary); }
+  .cs-timeline-date {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    font-weight: 500;
+  }
+  .cs-timeline-item.done .cs-timeline-date { color: var(--color-success); opacity: 0.8; }
+  .cs-timeline-item.active .cs-timeline-date { color: var(--color-primary); opacity: 0.8; }
+
+  /* 文档列表 */
+  .cs-doc-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .cs-doc-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--color-primary-light);
+    border: 1px solid rgba(142, 34, 148, 0.08);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .cs-doc-item:hover {
+    background: rgba(142, 34, 148, 0.1);
+    border-color: rgba(142, 34, 148, 0.15);
+  }
+  .cs-doc-icon { font-size: 16px; }
+  .cs-doc-name { flex: 1; font-weight: 500; }
+  .cs-doc-status {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 100px;
+    background: rgba(142, 34, 148, 0.08);
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
+  .cs-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    border-top: 1px solid var(--color-border-light);
+  }
+  .cs-btn {
+    padding: 8px 20px;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    border: none;
+    transition: all 0.2s;
+  }
+  .cs-btn--secondary {
+    background: #f0eef2;
+    color: var(--color-text-secondary);
+  }
+  .cs-btn--secondary:hover { background: #e5e1e8; }
+  .cs-btn--primary {
+    background: var(--color-primary);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(142, 34, 148, 0.2);
+  }
+  .cs-btn--primary:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(142, 34, 148, 0.3);
+  }
+
+  @media (max-width: 960px) {
+  }
+  @media (max-width: 640px) {
+    .app-main { padding: 72px var(--space-4) var(--space-4); }
+    .cs-filter-bar { flex-direction: column; align-items: stretch; }
+    .cs-filter-input, .cs-filter-select, .cs-filter-btn { width: 100%; }
+    .cs-table th, .cs-table td { padding: 8px 10px; font-size: 12px; }
+    .cs-modal { max-width: 100%; margin: var(--space-3); }
+    .cs-lane-scroll { margin: 0 -12px; padding: 0 12px; }
+  }
+  </style>
+</head>
+<body>
+
+<main id="app-main" class="app-main">
+  <div class="cs-container">
+
+    <!-- ① 顶部概览统计 -->
+    <div class="k3-stat-grid" id="statsBar" style="margin-bottom: 20px;"></div>
+
+    <!-- ② 年度概览泳道 -->
+    <div class="cs-lane-section">
+      <div class="cs-lane-header">
+        <div class="cs-lane-title">📊 年度概览</div>
+        <select class="cs-year-select" id="yearSelect"></select>
+      </div>
+      <div class="cs-lane-scroll">
+        <div class="cs-swimlane" id="swimlane"></div>
+      </div>
+    </div>
+
+    <!-- ③ 筛选区 -->
+    <div class="cs-filter-card">
+      <div class="cs-filter-title">筛选条件</div>
+      <div class="cs-filter-bar">
+        <input type="text" class="cs-filter-input" id="searchInput" placeholder="搜索姓名、职务...">
+        <select class="cs-filter-select" id="statusFilter">
+          <option value="">全部状态</option>
+          <option value="动议中">动议中</option>
+          <option value="考察中">考察中</option>
+          <option value="待决策">待决策</option>
+          <option value="已任职">已任职</option>
+          <option value="已归档">已归档</option>
+        </select>
+        <select class="cs-filter-select" id="yearFilter">
+          <option value="">全部年份</option>
+        </select>
+        <select class="cs-filter-select" id="deptFilter">
+          <option value="">全部部门</option>
+        </select>
+        <button class="cs-filter-btn" id="searchBtn">查询</button>
+      </div>
+    </div>
+
+    <!-- ④ 选聘记录表格 -->
+    <div class="cs-table-card">
+      <div class="cs-table-title">
+        <span>选聘记录</span>
+        <span style="font-size:12px;color:var(--color-text-tertiary);font-weight:400;" id="tableCount"></span>
+      </div>
+      <div class="cs-table-wrap">
+        <table class="cs-table" id="recordTable">
+          <thead>
+            <tr>
+              <th>岗位</th>
+              <th>拟任人选</th>
+              <th>所属部门</th>
+              <th>当前状态</th>
+              <th>发起时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+        <div class="cs-empty-state" id="emptyState" style="display:none;">
+          <div class="cs-empty-state-icon">📭</div>
+          <div>暂无数据</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ⑤ 详情弹窗 -->
+<div class="k3-modal-overlay" id="detailModal">
+  <div class="k3-modal cs-modal">
+    <div class="k3-modal-header cs-modal-header">
+      <div class="cs-modal-avatar" id="modalAvatar">选</div>
+      <div>
+        <div class="cs-modal-info-title" id="modalTitle">选聘详情</div>
+        <div class="cs-modal-info-sub" id="modalSubtitle">--</div>
+      </div>
+    </div>
+    <div class="cs-modal-body">
+      <!-- 岗位基本信息 -->
+      <div class="cs-modal-section">
+        <div class="cs-modal-section-title">📋 岗位基本信息</div>
+        <div class="cs-info-row">
+          <span class="cs-info-label">岗位名称</span>
+          <span class="cs-info-value" id="modalPosition">--</span>
+        </div>
+        <div class="cs-info-row">
+          <span class="cs-info-label">所属部门</span>
+          <span class="cs-info-value" id="modalDept">--</span>
+        </div>
+        <div class="cs-info-row">
+          <span class="cs-info-label">当前状态</span>
+          <span class="cs-info-value" id="modalStatus">--</span>
+        </div>
+        <div class="cs-info-row">
+          <span class="cs-info-label">发起时间</span>
+          <span class="cs-info-value" id="modalStartDate">--</span>
+        </div>
+      </div>
+
+      <!-- 拟任人选信息 -->
+      <div class="cs-modal-section">
+        <div class="cs-modal-section-title">👤 拟任人选信息</div>
+        <div class="cs-info-row">
+          <span class="cs-info-label">姓名</span>
+          <span class="cs-info-value" id="modalName">--</span>
+        </div>
+        <div class="cs-info-row">
+          <span class="cs-info-label">现任职务</span>
+          <span class="cs-info-value" id="modalCurrentTitle">--</span>
+        </div>
+        <div class="cs-info-row">
+          <span class="cs-info-label">学历</span>
+          <span class="cs-info-value" id="modalEducation">--</span>
+        </div>
+        <div class="cs-info-row">
+          <span class="cs-info-label">年龄</span>
+          <span class="cs-info-value" id="modalAge">--</span>
+        </div>
+      </div>
+
+      <!-- 时间线 -->
+      <div class="cs-modal-section">
+        <div class="cs-modal-section-title">⏱️ 选聘流程时间线</div>
+        <div class="cs-timeline" id="modalTimeline"></div>
+      </div>
+
+      <!-- 关联文档 -->
+      <div class="cs-modal-section">
+        <div class="cs-modal-section-title">📎 关联文档</div>
+        <div class="cs-doc-list" id="modalDocs"></div>
+      </div>
+    </div>
+    <div class="cs-modal-footer">
+      <button class="cs-btn cs-btn--secondary" onclick="closeModal()">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script>
+renderLayout('选聘任用', 'cadre-selection');
+
+// ========== ⑥ 数据管理（内联模拟数据） ==========
+const STATUS_CONFIG = {
+  '动议中': { class: 'motion', color: 'warning', label: '动议中', order: 1 },
+  '考察中': { class: 'inspect', color: 'info', label: '考察中', order: 2 },
+  '待决策': { class: 'pending', color: 'primary', label: '待决策', order: 3 },
+  '已任职': { class: 'done', color: 'success', label: '已任职', order: 4 },
+  '已归档': { class: 'archive', color: '', label: '已归档', order: 5 }
+};
+
+const MONTHS = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+const STATUSES = ['动议中','考察中','待决策','已任职','已归档'];
+
+const SELECTION_DATA = [
+  { id: 1, month: 1, status: '动议中', name: '梁晓峰', position: '投资总监', dept: '投资部', startDate: '2026-01-15', currentTitle: '投资部副总监', education: '硕士', age: 42, timeline: { '动议': '2026-01-15', '推荐': null, '考察': null, '决策': null, '任职': null }, docs: [{ name: '动议报告.pdf', status: '已上传' }] },
+  { id: 2, month: 1, status: '考察中', name: '林浩然', position: '风控副总', dept: '风控部', startDate: '2026-01-20', currentTitle: '风控部高级经理', education: '博士', age: 39, timeline: { '动议': '2026-01-10', '推荐': '2026-01-15', '考察': '2026-01-20', '决策': null, '任职': null }, docs: [{ name: '动议报告.pdf', status: '已上传' }, { name: '考察材料.pdf', status: '已上传' }] },
+  { id: 3, month: 2, status: '动议中', name: '吴美玲', position: '财务总监', dept: '财务部', startDate: '2026-02-10', currentTitle: '财务部副总监', education: '硕士', age: 44, timeline: { '动议': '2026-02-10', '推荐': null, '考察': null, '决策': null, '任职': null }, docs: [{ name: '动议报告.pdf', status: '已上传' }] },
+  { id: 4, month: 3, status: '待决策', name: '杨思琪', position: '运营总监', dept: '运营部', startDate: '2026-03-05', currentTitle: '运营部副总监', education: '本科', age: 41, timeline: { '动议': '2026-02-20', '推荐': '2026-02-25', '考察': '2026-03-01', '决策': '2026-03-05', '任职': null }, docs: [{ name: '动议报告.pdf', status: '已上传' }, { name: '考察材料.pdf', status: '已上传' }, { name: '推荐函.pdf', status: '已上传' }] },
+  { id: 5, month: 3, status: '已任职', name: '陈大伟', position: '技术总工', dept: '技术部', startDate: '2026-03-18', currentTitle: '技术部总监', education: '博士', age: 47, timeline: { '动议': '2026-02-10', '推荐': '2026-02-18', '考察': '2026-03-01', '决策': '2026-03-10', '任职': '2026-03-18' }, docs: [{ name: '动议报告.pdf', status: '已上传' }, { name: '考察材料.pdf', status: '已上传' }, { name: '任免通知.pdf', status: '已上传' }] },
+  { id: 6, month: 4, status: '考察中', name: '赵佳强', position: '市场总监', dept: '市场部', startDate: '2026-04-12', currentTitle: '市场部副总监', education: '硕士', age: 38, timeline: { '动议': '2026-04-01', '推荐': '2026-04-08', '考察': '2026-04-12', '决策': null, '任职': null }, docs: [{ name: '动议报告.pdf', status: '已上传' }, { name: '考察材料.pdf', status: '已上传' }] },
+  { id: 7, month: 5, status: '动议中', name: '周志刚', position: '审计部长', dept: '审计部', startDate: '2026-05-08', currentTitle: '审计部高级经理', education: '本科', age: 43, timeline: { '动议': '2026-05-08', '推荐': null, '考察': null, '决策': null, '任职': null }, docs: [{ name: '动议报告.pdf', status: '已上传' }] },
+  { id: 8, month: 6, status: '待决策', name: '黄雪梅', position: '人力总监', dept: '人力部', startDate: '2026-06-22', currentTitle: '人力部副总监', education: '硕士', age: 40, timeline: { '动议': '2026-06-10', '推荐': '2026-06-15', '考察': '2026-06-20', '决策': '2026-06-22', '任职': null }, docs: [{ name: '动议报告.pdf', status: '已上传' }, { name: '考察材料.pdf', status: '已上传' }, { name: '推荐函.pdf', status: '已上传' }] },
+  { id: 9, month: 7, status: '已任职', name: '罗嘉欣', position: '合规总监', dept: '合规部', startDate: '2026-07-01', currentTitle: '合规部副总监', education: '硕士', age: 36, timeline: { '动议': '2026-06-15', '推荐': '2026-06-20', '考察': '2026-06-25', '决策': '2026-06-28', '任职': '2026-07-01' }, docs: [{ name: '动议报告.pdf', status: '已上传' }, { name: '考察材料.pdf', status: '已上传' }, { name: '任免通知.pdf', status: '已上传' }] },
+  { id: 10, month: 8, status: '已归档', name: '王建国', position: '战略顾问', dept: '战略部', startDate: '2026-08-14', currentTitle: '战略部总监', education: '博士', age: 55, timeline: { '动议': '2026-07-20', '推荐': '2026-07-28', '考察': '2026-08-05', '决策': '2026-08-10', '任职': '2026-08-14' }, docs: [{ name: '动议报告.pdf', status: '已上传' }, { name: '考察材料.pdf', status: '已上传' }, { name: '任免通知.pdf', status: '已上传' }, { name: '归档材料.pdf', status: '已上传' }] },
+  { id: 11, month: 9, status: '考察中', name: '张明远', position: '研发总监', dept: '研发部', startDate: '2026-09-03', currentTitle: '研发部副总监', education: '博士', age: 37, timeline: { '动议': '2026-08-25', '推荐': '2026-08-30', '考察': '2026-09-03', '决策': null, '任职': null }, docs: [{ name: '动议报告.pdf', status: '已上传' }, { name: '考察材料.pdf', status: '已上传' }] },
+  { id: 12, month: 10, status: '动议中', name: '李淑华', position: '董秘', dept: '总经办', startDate: '2026-10-11', currentTitle: '总经办副主任', education: '硕士', age: 45, timeline: { '动议': '2026-10-11', '推荐': null, '考察': null, '决策': null, '任职': null }, docs: [{ name: '动议报告.pdf', status: '已上传' }] },
+  { id: 13, month: 11, status: '待决策', name: '刘思远', position: '财务副总', dept: '财务部', startDate: '2026-11-02', currentTitle: '财务部高级经理', education: '硕士', age: 40, timeline: { '动议': '2026-10-20', '推荐': '2026-10-25', '考察': '2026-10-30', '决策': '2026-11-02', '任职': null }, docs: [{ name: '动议报告.pdf', status: '已上传' }, { name: '考察材料.pdf', status: '已上传' }, { name: '推荐函.pdf', status: '已上传' }] },
+  { id: 14, month: 12, status: '已任职', name: '孙晓梅', position: '法务总监', dept: '法务部', startDate: '2026-12-05', currentTitle: '法务部副总监', education: '硕士', age: 42, timeline: { '动议': '2026-11-20', '推荐': '2026-11-25', '考察': '2026-11-30', '决策': '2026-12-02', '任职': '2026-12-05' }, docs: [{ name: '动议报告.pdf', status: '已上传' }, { name: '考察材料.pdf', status: '已上传' }, { name: '任免通知.pdf', status: '已上传' }] },
+  { id: 15, month: 12, status: '已归档', name: '何志强', position: '信息总监', dept: '信息部', startDate: '2026-12-18', currentTitle: '信息部副总监', education: '本科', age: 46, timeline: { '动议': '2026-11-25', '推荐': '2026-12-01', '考察': '2026-12-08', '决策': '2026-12-12', '任职': '2026-12-18' }, docs: [{ name: '动议报告.pdf', status: '已上传' }, { name: '考察材料.pdf', status: '已上传' }, { name: '任免通知.pdf', status: '已上传' }, { name: '归档材料.pdf', status: '已上传' }] }
+];
+
+let currentYear = 2026;
+let filteredData = [...SELECTION_DATA];
+
+// ========== 初始化 ==========
+function init() {
+  initYearTabs();
+  initFilters();
+  renderStats();
+  renderSwimlane();
+  renderTable();
+}
+
+function initYearTabs() {
+  const years = [...new Set(SELECTION_DATA.map(d => parseInt(d.startDate.split('-')[0])))].sort((a,b) => b-a);
+  const select = document.getElementById('yearSelect');
+  select.innerHTML = years.map(y =>
+    '<option value="' + y + '"' + (y === currentYear ? ' selected' : '') + '>' + y + '年</option>'
+  ).join('');
+  select.addEventListener('change', function() {
+    switchYear(parseInt(this.value));
+  });
+}
+
+function initFilters() {
+  const years = [...new Set(SELECTION_DATA.map(d => parseInt(d.startDate.split('-')[0])))].sort((a,b) => b-a);
+  const yearFilter = document.getElementById('yearFilter');
+  years.forEach(y => yearFilter.appendChild(new Option(y + '年', y)));
+
+  const depts = [...new Set(SELECTION_DATA.map(d => d.dept))].sort();
+  const deptFilter = document.getElementById('deptFilter');
+  depts.forEach(d => deptFilter.appendChild(new Option(d, d)));
+}
+
+// ========== ① 统计卡片 ==========
+function renderStats() {
+  const yearData = SELECTION_DATA.filter(d => parseInt(d.startDate.split('-')[0]) === currentYear);
+  const total = SELECTION_DATA.length;
+  const inProgress = yearData.filter(d => ['动议中','考察中','待决策'].includes(d.status)).length;
+  const completed = yearData.filter(d => d.status === '已任职' || d.status === '已归档').length;
+  const newThisYear = yearData.length;
+
+  const iconTotal = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>';
+  const iconProgress = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+  const iconDone = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+  const iconYear = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+  const stats = [
+    { label: '总选聘次数', value: total, icon: iconTotal },
+    { label: '在办事项', value: inProgress, icon: iconProgress },
+    { label: '已完成', value: completed, icon: iconDone },
+    { label: '本年度新增', value: newThisYear, icon: iconYear }
+  ];
+
+  // 统计卡片：统一 .k3-stat-* 全局组件（紫色图标、白底、阴影、数字深色）
+  document.getElementById('statsBar').innerHTML = stats.map(s =>
+    '<div class="k3-stat-card">' +
+      '<div class="k3-stat-header">' +
+        '<div class="k3-stat-icon">' + s.icon + '</div>' +
+        '<div><div class="k3-stat-label">' + s.label + '</div>' +
+        '<div class="k3-stat-value">' + s.value + '</div></div>' +
+      '</div>' +
+    '</div>'
+  ).join('');
+}
+
+// ========== ② 年度概览泳道 ==========
+function renderSwimlane() {
+  const container = document.getElementById('swimlane');
+  container.innerHTML = '';
+
+  // 表头行：状态 + 12个月 + 全年
+  const corner = document.createElement('div');
+  corner.className = 'cs-swimlane-header';
+  corner.textContent = '状态';
+  container.appendChild(corner);
+
+  MONTHS.forEach(m => {
+    const th = document.createElement('div');
+    th.className = 'cs-month-header';
+    th.textContent = m;
+    container.appendChild(th);
+  });
+
+  // 全年列表头
+  const yearTh = document.createElement('div');
+  yearTh.className = 'cs-year-col-header';
+  yearTh.textContent = '全年';
+  container.appendChild(yearTh);
+
+  // 更新网格列数：90px + 12fr + 全年列
+  container.style.gridTemplateColumns = '90px repeat(12, 1fr) 80px';
+
+  // 数据行
+  const yearData = SELECTION_DATA.filter(d => parseInt(d.startDate.split('-')[0]) === currentYear);
+
+  STATUSES.forEach(status => {
+    const label = document.createElement('div');
+    label.className = 'cs-lane-label';
+    label.textContent = status;
+    container.appendChild(label);
+
+    let yearCount = 0;
+    for (let m = 0; m < 12; m++) {
+      const cell = document.createElement('div');
+      cell.className = 'cs-lane-cell';
+      const items = yearData.filter(d => d.status === status && d.month === m + 1);
+      yearCount += items.length;
+      items.forEach(item => {
+        const node = document.createElement('div');
+        const cfg = STATUS_CONFIG[status];
+        node.className = 'cs-lane-node cs-lane-node--' + cfg.class;
+        node.textContent = item.name + ' · ' + item.position;
+        node.title = item.name + ' · ' + item.position + '（' + item.startDate + '）';
+        node.addEventListener('click', () => openModal(item.id));
+        cell.appendChild(node);
+      });
+      container.appendChild(cell);
+    }
+
+    // 全年汇总列
+    const yearCell = document.createElement('div');
+    yearCell.className = 'cs-year-col-cell';
+    const countSpan = document.createElement('span');
+    countSpan.className = 'cs-year-count' + (yearCount === 0 ? ' zero' : '');
+    countSpan.textContent = yearCount + '人';
+    yearCell.appendChild(countSpan);
+    container.appendChild(yearCell);
+  });
+}
+
+function switchYear(year) {
+  currentYear = year;
+  const select = document.getElementById('yearSelect');
+  if (select) select.value = year;
+  renderSwimlane();
+  renderStats();
+}
+
+// ========== ③④ 筛选与表格 ==========
+function doFilter() {
+  const keyword = document.getElementById('searchInput').value.trim();
+  const status = document.getElementById('statusFilter').value;
+  const year = document.getElementById('yearFilter').value;
+  const dept = document.getElementById('deptFilter').value;
+
+  filteredData = SELECTION_DATA.filter(d => {
+    const matchKeyword = !keyword || d.name.includes(keyword) || d.position.includes(keyword);
+    const matchStatus = !status || d.status === status;
+    const matchYear = !year || parseInt(d.startDate.split('-')[0]) === parseInt(year);
+    const matchDept = !dept || d.dept === dept;
+    return matchKeyword && matchStatus && matchYear && matchDept;
+  });
+
+  renderTable();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+  const countLabel = document.getElementById('tableCount');
+
+  if (filteredData.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    countLabel.textContent = '共 0 条';
+    return;
+  }
+
+  empty.style.display = 'none';
+  countLabel.textContent = '共 ' + filteredData.length + ' 条';
+
+  tbody.innerHTML = filteredData.map(item => {
+    const cfg = STATUS_CONFIG[item.status];
+    return '<tr>' +
+      '<td><strong>' + item.position + '</strong></td>' +
+      '<td>' + item.name + '</td>' +
+      '<td>' + item.dept + '</td>' +
+      '<td><span class="cs-status-tag cs-status-tag--' + cfg.class + '">' + item.status + '</span></td>' +
+      '<td>' + item.startDate + '</td>' +
+      '<td><button class="cs-action-btn" onclick="openModal(' + item.id + ')">查看详情</button></td>' +
+    '</tr>';
+  }).join('');
+}
+
+// ========== ⑤ 详情弹窗 ==========
+function openModal(id) {
+  const item = SELECTION_DATA.find(d => d.id === id);
+  if (!item) return;
+
+  const cfg = STATUS_CONFIG[item.status];
+
+  document.getElementById('modalAvatar').textContent = item.name[0];
+  document.getElementById('modalTitle').textContent = item.position + ' · 选聘详情';
+  document.getElementById('modalSubtitle').textContent = item.name + ' · ' + item.dept;
+
+  document.getElementById('modalPosition').textContent = item.position;
+  document.getElementById('modalDept').textContent = item.dept;
+  document.getElementById('modalStatus').innerHTML = '<span class="cs-status-tag cs-status-tag--' + cfg.class + '">' + item.status + '</span>';
+  document.getElementById('modalStartDate').textContent = item.startDate;
+
+  document.getElementById('modalName').textContent = item.name;
+  document.getElementById('modalCurrentTitle').textContent = item.currentTitle;
+  document.getElementById('modalEducation').textContent = item.education;
+  document.getElementById('modalAge').textContent = item.age + ' 岁';
+
+  // 时间线
+  const steps = ['动议','推荐','考察','决策','任职'];
+  const timeline = document.getElementById('modalTimeline');
+  const statusOrder = cfg.order;
+  timeline.innerHTML = steps.map((step, idx) => {
+    const date = item.timeline[step];
+    let stateClass = 'pending';
+    if (date) {
+      stateClass = 'done';
+    } else if (idx + 1 === statusOrder) {
+      stateClass = 'active';
+    }
+    return '<div class="cs-timeline-item ' + stateClass + '">' +
+      '<div class="cs-timeline-dot"></div>' +
+      '<div class="cs-timeline-label">' + step + '</div>' +
+      '<div class="cs-timeline-date">' + (date || '待完成') + '</div>' +
+    '</div>';
+  }).join('');
+
+  // 关联文档
+  const docs = document.getElementById('modalDocs');
+  docs.innerHTML = item.docs.map(doc =>
+    '<div class="cs-doc-item" onclick="alert(&quot;即将打开：' + doc.name + '&quot;)">' +
+      '<span class="cs-doc-icon">📄</span>' +
+      '<span class="cs-doc-name">' + doc.name + '</span>' +
+      '<span class="cs-doc-status">' + doc.status + '</span>' +
+    '</div>'
+  ).join('');
+
+  document.getElementById('detailModal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('detailModal').classList.remove('show');
+}
+
+// 点击遮罩关闭
+ document.getElementById('detailModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// 事件绑定
+document.getElementById('searchBtn').addEventListener('click', doFilter);
+document.getElementById('statusFilter').addEventListener('change', doFilter);
+document.getElementById('yearFilter').addEventListener('change', doFilter);
+document.getElementById('deptFilter').addEventListener('change', doFilter);
+document.getElementById('searchInput').addEventListener('input', debounce(doFilter, 300));
+
+function debounce(fn, wait) {
+  let t;
+  return function() {
+    clearTimeout(t);
+    t = setTimeout(() => fn.apply(this, arguments), wait);
+  };
+}
+
+// 启动
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+
+</body>
+</html>

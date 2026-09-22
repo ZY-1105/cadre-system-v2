@@ -5,7 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>考察档案 - 力合·人才智库</title>
   <link rel="stylesheet" href="../css/base-k3.css">
+  <link rel="stylesheet" href="../css/tokens-v1.css">
   <link rel="stylesheet" href="../css/pages-k4.2-extra.css">
+  <style>
+    /* 考察档案页 tokens 对齐：底色/焦点环 */
+    body { background: var(--bg-page, #f5f3f7); }
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2px solid rgb(var(--primary) / 0.55);
+      outline-offset: 2px;
+    }
+  </style>
 </head>
 <body>
   <script src="../js/app-k3.js"></script>
@@ -116,10 +130,11 @@
   }
 
   function renderInspection(task) {
+    const iconTick = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;color:var(--color-primary)"><polyline points="20 6 9 17 4 12"/></svg>';
     document.getElementById('cia-inspection').innerHTML = `
       <div class="cia-info-item"><span>考察任务</span><strong>${task.name}</strong></div>
       <div class="cia-info-item"><span>考察时间</span><strong>${task.startDate} ~ ${task.endDate}</strong></div>
-      <div class="cia-info-item"><span>考察方式</span><strong>${task.methods.map(m=>'☑'+m).join(' ')}</strong></div>
+      <div class="cia-info-item"><span>考察方式</span><strong>${task.methods.map(m=>iconTick+m).join(' ')}</strong></div>
       <div class="cia-info-item"><span>考察组长</span><strong>${task.leaderName}</strong></div>
       <div class="cia-info-item"><span>考察组成员</span><strong>${task.memberNames.join('、')||'—'}</strong></div>
       <div class="cia-info-item"><span>考察目的</span><strong>${task.purpose||'—'}</strong></div>

@@ -60,18 +60,19 @@ const dashboardData = {
 /* ========== 渲染引擎 ========== */
 
 function renderStats() {
-  const cards = document.querySelectorAll('.stat-card');
+  const cards = document.querySelectorAll('.k3-stat-card');
   const keys = ['total', 'onDuty', 'party', 'avgAge'];
   keys.forEach((key, idx) => {
     const card = cards[idx];
     if (!card) return;
     const data = dashboardData.stats[key];
-    const valueEl = card.querySelector('.stat-value');
-    const labelEl = card.querySelector('.stat-label');
-    const metaEl = card.querySelector('.stat-meta');
+    const valueEl = card.querySelector('.k3-stat-value');
+    const labelEl = card.querySelector('.k3-stat-label');
+    const metaEl = card.querySelector('.k3-stat-meta');
     if (valueEl) {
       valueEl.textContent = data.value;
-      valueEl.classList.remove('loading');
+      // 数据到达：移除骨架屏与 loading，数字经 transition 0.3s 淡入
+      valueEl.classList.remove('skeleton-pulse', 'loading');
     }
     if (labelEl) labelEl.textContent = data.label;
     if (metaEl) metaEl.textContent = data.meta;
@@ -283,6 +284,10 @@ function getEduChartOption() {
 /* ========== 初始化 ========== */
 
 function initDashboard() {
+  // 数据请求开始：4 个统计数字进入骨架屏状态（隐藏真实数字）
+  document.querySelectorAll('.k3-stat-card .k3-stat-value').forEach(el => el.classList.add('skeleton-pulse'));
+
+  // 数据就绪后立即渲染（骨架屏在 renderStats 赋值后移除，无人为延迟）
   renderStats();
   renderRankChart();
   renderRank();

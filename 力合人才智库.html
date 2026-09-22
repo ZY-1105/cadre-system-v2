@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>力合·人才智库 - 力合科创干部数智平台</title>
+<style>
+/* ==================== 设计规范 ==================== */
+:root {
+  --color-primary: #8e2294;
+  --color-primary-dark: #6b1a70;
+  --color-primary-light: #a855a8;
+  --color-accent: #F8C24C;
+  --color-accent-light: #fdecc8;
+  --color-bg: #f5f3f7;
+  --color-surface: #ffffff;
+  --color-text: #1a1a2e;
+  --color-text-secondary: #4a4a6a;
+  --color-border: #e8e0ec;
+  --color-success: #27ae60;
+  --color-success-bg: #e8f8ef;
+  --color-warning: #e67e22;
+  --color-warning-bg: #fef4e8;
+  --color-danger: #c0392b;
+  --color-danger-bg: #fbe9e7;
+  --color-info: #3498db;
+  --color-info-bg: #eaf5fb;
+  --font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Helvetica Neue", Arial, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 2rem;
+  --header-height: 64px;
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 64px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-sm: 0 1px 2px rgba(90, 20, 126, 0.05);
+  --shadow-md: 0 4px 12px rgba(90, 20, 126, 0.08);
+  --shadow-lg: 0 10px 24px rgba(90, 20, 126, 0.12);
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.25s ease;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; font-family: var(--font-family); font-size: 14px; color: var(--color-text); background: var(--color-bg); }
+body { min-height: 100vh; }
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; }
+
+/* ==================== 布局 ==================== */
+.app-layout { display: flex; min-height: 100vh; }
+.app-header {
+  position: fixed; top: 0; left: 0; right: 0; height: var(--header-height);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: #fff; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--spacing-6); box-shadow: var(--shadow-md); z-index: 1000;
+}
+.header-brand { display: flex; align-items: center; gap: 12px; }
+.brand-icon {
+  width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center; color: #fff;
+}
+.brand-text { font-size: var(--font-size-xl); font-weight: 700; letter-spacing: 1px; line-height: 1.2; }
+.brand-text-wrap { display: flex; flex-direction: column; justify-content: center; }
+.brand-subtitle { font-size: 12px; opacity: 0.9; letter-spacing: 0.5px; margin-top: 2px; }
+.page-title { font-size: var(--font-size-sm); opacity: 0.9; margin-left: 12px; padding-left: 12px; border-left: 1px solid rgba(255,255,255,0.3); }
+.header-actions { display: flex; align-items: center; gap: 16px; }
+.user-info { display: flex; align-items: center; gap: 10px; }
+.user-name { font-size: var(--font-size-sm); }
+.user-avatar {
+  width: 34px; height: 34px; border-radius: 50%; background: var(--color-accent); color: var(--color-text);
+  display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: var(--font-size-sm);
+}
+.header-btn { display: none; background: none; border: none; color: #fff; cursor: pointer; padding: 6px; border-radius: 6px; }
+.header-btn:hover { background: rgba(255,255,255,0.15); }
+
+/* ==================== 侧边栏 ==================== */
+.app-sidebar {
+  position: fixed; top: var(--header-height); left: 0; bottom: 0; width: var(--sidebar-width);
+  background: var(--color-surface); border-right: 1px solid var(--color-border);
+  display: flex; flex-direction: column; z-index: 900; transition: transform var(--transition-base);
+}
+.sidebar-nav { flex: 1; padding: var(--spacing-4) 0; }
+.sidebar-link {
+  display: flex; align-items: center; gap: 12px; padding: 14px var(--spacing-6);
+  color: var(--color-text-secondary); font-size: var(--font-size-base);
+  transition: all var(--transition-fast); border-left: 3px solid transparent;
+}
+.sidebar-link:hover { background: #faf7fb; color: var(--color-primary); }
+.sidebar-link.active {
+  background: linear-gradient(90deg, rgba(142,34,148,0.08) 0%, rgba(142,34,148,0.02) 100%);
+  color: var(--color-primary); border-left-color: var(--color-primary); font-weight: 600;
+}
+.sidebar-link svg { flex-shrink: 0; }
+.sidebar-footer { padding: var(--spacing-4) var(--spacing-6); font-size: var(--font-size-xs); color: var(--color-text-secondary); border-top: 1px solid var(--color-border); }
+
+/* ==================== 主内容 ==================== */
+.app-main {
+  flex: 1; margin-left: var(--sidebar-width); margin-top: var(--header-height);
+  padding: var(--spacing-6); min-height: calc(100vh - var(--header-height));
+}
+.app-main.no-sidebar { margin-left: 0; }
+
+/* ==================== 通用卡片 ==================== */
+.card { background: var(--color-surface); border-radius: var(--radius-lg); padding: var(--spacing-5); box-shadow: var(--shadow-md); margin-bottom: var(--spacing-5); }
+.card-title { font-size: var(--font-size-lg); font-weight: 600; color: var(--color-text); margin-bottom: var(--spacing-4); padding-bottom: var(--spacing-3); border-bottom: 3px solid var(--color-primary); }
+.card-title.accent { border-bottom-color: var(--color-accent); }
+
+/* ==================== 统计卡片 ==================== */
+.stat-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacing-5); margin-bottom: var(--spacing-6); }
+.stat-card {
+  background: var(--color-surface); border-radius: var(--radius-lg); padding: var(--spacing-5);
+  box-shadow: var(--shadow-md); display: flex; flex-direction: column; gap: var(--spacing-2); border-top: 4px solid var(--color-primary);
+}
+.stat-card.accent { border-top-color: var(--color-accent); }
+.stat-label { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+.stat-value { font-size: var(--font-size-3xl); font-weight: 700; color: var(--color-primary); }
+.stat-value.accent { color: var(--color-accent); }
+
+/* ==================== 按钮 ==================== */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 20px; border-radius: var(--radius-md); font-size: var(--font-size-sm); font-weight: 500; cursor: pointer; transition: all var(--transition-fast); border: none; }
+.btn-primary { background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%); color: #fff; box-shadow: 0 2px 8px rgba(142,34,148,0.25); }
+.btn-primary:hover { box-shadow: 0 4px 12px rgba(142,34,148,0.35); transform: translateY(-1px); }
+.btn-outline { background: transparent; border: 1px solid var(--color-border); color: var(--color-text-secondary); }
+.btn-outline:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+/* ==================== 表单 ==================== */
+.form-input, .form-select { padding: 10px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: var(--font-size-sm); color: var(--color-text); background: var(--color-surface); outline: none; transition: all var(--transition-fast); }
+.form-input:focus, .form-select:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(142,34,148,0.1); }
+
+/* ==================== 标签 ==================== */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: var(--font-size-xs); font-weight: 500; }
+.badge-primary { background: rgba(142,34,148,0.1); color: var(--color-primary); }
+.badge-success { background: var(--color-success-bg); color: var(--color-success); }
+.badge-warning { background: var(--color-warning-bg); color: var(--color-warning); }
+.badge-danger { background: var(--color-danger-bg); color: var(--color-danger); }
+.badge-accent { background: var(--color-accent-light); color: #8a6d1f; }
+
+/* ==================== 分页 ==================== */
+.pagination { display: flex; justify-content: center; align-items: center; gap: 8px; padding: 16px 0; }
+.pagination button { padding: 8px 14px; border: 1px solid var(--color-border); background: var(--color-surface); border-radius: var(--radius-md); cursor: pointer; font-size: var(--font-size-sm); color: var(--color-text-secondary); transition: all var(--transition-fast); }
+.pagination button:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.pagination button.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+.pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ==================== 弹窗 ==================== */
+.modal-overlay { position: fixed; inset: 0; background: rgba(26,26,46,0.6); display: flex; align-items: center; justify-content: center; z-index: 2000; opacity: 0; visibility: hidden; transition: all var(--transition-base); }
+.modal-overlay.active { opacity: 1; visibility: visible; }
+.modal { background: var(--color-surface); border-radius: var(--radius-lg); padding: var(--spacing-6); max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: var(--shadow-lg); transform: scale(0.95); transition: transform var(--transition-base); }
+.modal-overlay.active .modal { transform: scale(1); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-4); padding-bottom: var(--spacing-3); border-bottom: 2px solid var(--color-border); }
+.modal-title { font-size: var(--font-size-xl); font-weight: 600; color: var(--color-text); }
+.modal-close { background: none; border: none; font-size: 24px; color: var(--color-text-secondary); cursor: pointer; }
+.modal-body p { margin-bottom: 8px; font-size: 14px; line-height: 1.6; }
+
+/* ==================== Dashboard 专属 ==================== */
+.dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+.charts-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px; }
+.chart-card { background: var(--color-surface); border-radius: 12px; padding: 20px; box-shadow: var(--shadow-md); }
+.chart-card-title { font-size: 15px; font-weight: 600; color: var(--color-text); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 3px solid var(--color-primary); }
+.chart-card-title.accent { border-bottom-color: var(--color-accent); }
+.chart-container { display: flex; justify-content: center; align-items: center; min-height: 250px; }
+.alert-list { display: flex; flex-direction: column; gap: 12px; }
+.alert-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; background: #fff; border-radius: 10px; border-left: 4px solid var(--color-accent); box-shadow: 0 1px 4px rgba(142,34,148,0.06); }
+.alert-icon { width: 36px; height: 36px; border-radius: 50%; background: var(--color-accent-light); color: #8a6d1f; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.alert-content { flex: 1; }
+.alert-title { font-weight: 600; font-size: 14px; color: var(--color-text); margin-bottom: 4px; }
+.alert-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+.alert-days { font-size: 12px; color: var(--color-danger); font-weight: 600; white-space: nowrap; }
+.bottom-section { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-top: 20px; }
+.quick-entry { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; }
+.quick-card { background: linear-gradient(135deg, rgba(142,34,148,0.08), rgba(142,34,148,0.02)); border: 1px solid var(--color-border); border-radius: 10px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.2s; }
+.quick-card:hover { border-color: var(--color-primary); box-shadow: 0 4px 12px rgba(142,34,148,0.12); }
+.quick-icon { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); color: #fff; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-size: 18px; }
+.quick-label { font-size: 13px; color: var(--color-text); font-weight: 500; }
+
+/* ==================== 干部列表 专属 ==================== */
+.filter-bar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+.cadre-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.cadre-card { background: var(--color-surface); border-radius: 12px; padding: 20px; box-shadow: var(--shadow-md); display: flex; gap: 16px; align-items: center; transition: all 0.2s; cursor: pointer; border-left: 4px solid transparent; }
+.cadre-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(142,34,148,0.15); border-left-color: var(--color-primary); }
+.cadre-avatar { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; flex-shrink: 0; }
+.cadre-info { flex: 1; min-width: 0; }
+.cadre-name { font-size: 16px; font-weight: 600; color: var(--color-text); margin-bottom: 4px; }
+.cadre-dept { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 8px; }
+.cadre-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* ==================== 干部详情 专属 ==================== */
+.back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--color-primary); font-size: 14px; margin-bottom: 16px; cursor: pointer; }
+.back-link:hover { text-decoration: underline; }
+.detail-header { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; padding: 24px; background: var(--color-surface); border-radius: 12px; box-shadow: var(--shadow-md); }
+.detail-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); display: flex; align-items: center; justify-content: center; font-size: 32px; color: #fff; font-weight: 700; }
+.detail-info h1 { font-size: 24px; font-weight: 700; color: var(--color-text); margin-bottom: 8px; }
+.detail-meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 14px; color: var(--color-text-secondary); }
+.detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.detail-card { background: var(--color-surface); border-radius: 12px; padding: 20px; box-shadow: var(--shadow-md); }
+.detail-card-title { font-size: 16px; font-weight: 600; color: var(--color-text); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 3px solid var(--color-primary); }
+.detail-card-title.warning { border-bottom-color: var(--color-accent); }
+.detail-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--color-border); font-size: 14px; }
+.detail-row:last-child { border-bottom: none; }
+.detail-label { color: var(--color-text-secondary); }
+.detail-value { color: var(--color-text); font-weight: 500; }
+.detail-value.accent { color: #8a6d1f; font-weight: 600; }
+.warning-item { padding: 12px; background: var(--color-accent-light); border-radius: 8px; border-left: 4px solid var(--color-accent); margin-bottom: 10px; }
+.warning-title { font-weight: 600; color: #8a6d1f; margin-bottom: 4px; }
+.warning-desc { font-size: 13px; color: #4a4a6a; }
+
+/* ==================== 任免管理 专属 ==================== */
+.lane-container { background: var(--color-surface); border-radius: 12px; padding: 20px; box-shadow: var(--shadow-md); overflow-x: auto; margin-bottom: 20px; }
+.swimlane { display: grid; grid-template-columns: 100px repeat(12, 1fr); gap: 1px; min-width: 900px; background: var(--color-border); border-radius: 8px; overflow: hidden; }
+.lane-header { background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); color: #fff; padding: 14px 10px; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; text-align: center; }
+.month-header { background: #f9f7fb; padding: 10px; text-align: center; font-size: 12px; color: #4a4a6a; font-weight: 500; }
+.lane-row { background: #fff; padding: 10px; min-height: 60px; position: relative; }
+.lane-label { background: #f9f7fb; padding: 10px; font-size: 13px; color: var(--color-text); font-weight: 500; display: flex; align-items: center; }
+.lane-node { position: absolute; padding: 8px 10px; border-radius: 8px; font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: transform 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+.lane-node:hover { transform: translateY(-2px); z-index: 10; }
+.lane-node.promote { background: var(--color-accent-light); color: #8a6d1f; border: 1px solid var(--color-accent); }
+.lane-node.transfer { background: #e8f8f5; color: #1abc9c; border: 1px solid #a3e4d7; }
+.lane-node.demote { background: #fdeaea; color: #c0392b; border: 1px solid #f5b7b1; }
+.lane-node.dismiss { background: #eaf5fb; color: #2980b9; border: 1px solid #aed6f1; }
+.appointment-list { background: var(--color-surface); border-radius: 12px; padding: 20px; box-shadow: var(--shadow-md); }
+.appointment-list-title { font-size: 16px; font-weight: 600; color: var(--color-text); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 3px solid var(--color-primary); }
+.app-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--color-border); }
+.app-item:last-child { border-bottom: none; }
+.app-info h4 { font-size: 14px; color: var(--color-text); margin-bottom: 4px; }
+.app-info p { font-size: 12px; color: var(--color-text-secondary); }
+
+/* ==================== 董监高 专属 ==================== */
+.directors-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.director-card { background: var(--color-surface); border-radius: 12px; padding: 24px; box-shadow: var(--shadow-md); border-top: 4px solid var(--color-primary); transition: all 0.2s; }
+.director-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(142,34,148,0.15); }
+.director-card.warning { border-top-color: var(--color-accent); }
+.director-card.danger { border-top-color: var(--color-danger); }
+.director-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+.director-avatar { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; flex-shrink: 0; }
+.director-name { font-size: 18px; font-weight: 600; color: var(--color-text); }
+.director-position { font-size: 14px; color: var(--color-text-secondary); margin-top: 2px; }
+.director-body { display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
+.director-row { display: flex; justify-content: space-between; }
+.director-label { color: var(--color-text-secondary); }
+.director-value { color: var(--color-text); font-weight: 500; }
+.director-value.warning { color: #8a6d1f; font-weight: 600; }
+.term-progress { margin-top: 14px; }
+.term-progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--color-text-secondary); margin-bottom: 6px; }
+.term-progress-bar { height: 8px; background: var(--color-border); border-radius: 4px; overflow: hidden; }
+.term-progress-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark)); transition: width 0.5s ease; }
+.term-progress-fill.warning { background: linear-gradient(90deg, var(--color-accent), #f39c12); }
+.term-progress-fill.danger { background: linear-gradient(90deg, var(--color-danger), #e74c3c); }
+
+/* ==================== 档案管理 专属 ==================== */
+.archive-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.archive-tab { padding: 10px 20px; border: 1px solid var(--color-border); background: var(--color-surface); border-radius: 8px; font-size: 14px; color: var(--color-text-secondary); cursor: pointer; transition: all 0.2s; }
+.archive-tab:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.archive-tab.active { background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); color: #fff; border-color: var(--color-primary); box-shadow: 0 4px 12px rgba(142,34,148,0.25); }
+.archive-content { background: var(--color-surface); border-radius: 12px; padding: 20px; box-shadow: var(--shadow-md); }
+.doc-list { display: flex; flex-direction: column; gap: 10px; }
+.doc-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 10px; background: var(--color-bg); transition: all 0.2s; }
+.doc-item:hover { background: #f0ecf5; }
+.doc-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.doc-icon.pdf { background: #fdeaea; color: #c0392b; }
+.doc-icon.doc { background: #eaf5fb; color: #2980b9; }
+.doc-icon.xls { background: #e8f8ef; color: #27ae60; }
+.doc-icon.img { background: #fef4e8; color: #d35400; }
+.doc-info { flex: 1; min-width: 0; }
+.doc-name { font-size: 14px; font-weight: 500; color: var(--color-text); margin-bottom: 2px; }
+.doc-meta { font-size: 12px; color: var(--color-text-secondary); }
+.doc-actions { display: flex; gap: 8px; }
+.doc-btn { padding: 6px 12px; border: 1px solid var(--color-border); background: #fff; border-radius: 6px; font-size: 12px; color: var(--color-text-secondary); cursor: pointer; transition: all 0.2s; }
+.doc-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.doc-btn.primary:hover { background: var(--color-primary); color: #fff; }
+
+/* ==================== 九宫格盘点 专属 ==================== */
+.review-layout { display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
+.ninebox-panel { background: var(--color-surface); border-radius: 12px; padding: 20px; box-shadow: var(--shadow-md); }
+.ninebox-title { font-size: 16px; font-weight: 600; color: var(--color-text); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 3px solid var(--color-primary); }
+.ninebox-container { display: flex; justify-content: center; }
+.stats-panel { display: flex; flex-direction: column; gap: 16px; }
+.stats-card { background: var(--color-surface); border-radius: 12px; padding: 20px; box-shadow: var(--shadow-md); }
+.stats-card-title { font-size: 15px; font-weight: 600; color: var(--color-text); margin-bottom: 14px; }
+.stats-item { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--color-border); font-size: 13px; }
+.stats-item:last-child { border-bottom: none; }
+.stats-label { color: var(--color-text-secondary); }
+.stats-value { font-weight: 600; color: var(--color-text); }
+.stats-bar { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.stats-bar-track { flex: 1; height: 6px; background: var(--color-border); border-radius: 3px; overflow: hidden; }
+.stats-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark)); transition: width 0.5s ease; }
+.people-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.people-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--color-bg); border-radius: 8px; font-size: 13px; }
+.people-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0; }
+.people-info { flex: 1; }
+.people-name { font-weight: 500; color: var(--color-text); }
+.people-dept { font-size: 11px; color: var(--color-text-secondary); }
+.people-score { font-size: 12px; color: var(--color-primary); font-weight: 600; }
+
+/* ==================== 图表响应式（SVG 已带 viewBox，容器 100% 即等比缩放） ==================== */
+.chart-container svg, .ninebox-container svg { width: 100%; height: auto; max-width: 100%; }
+
+/* ==================== 响应式 ==================== */
+@media (max-width: 1200px) {
+  .charts-row { grid-template-columns: 1fr; }
+  .dashboard-grid, .bottom-section { grid-template-columns: 1fr; }
+  .cadre-grid { grid-template-columns: repeat(2, 1fr); }
+  .directors-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 1024px) {
+  .stat-cards { grid-template-columns: repeat(2, 1fr); }
+  .review-layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .app-sidebar { transform: translateX(-100%); max-width: 80vw; }
+  .app-sidebar.sidebar-open { transform: translateX(0); }
+  .app-main { margin-left: 0; }
+  .header-btn { display: block; }
+  .stat-cards { grid-template-columns: 1fr; }
+  .page-title { display: none; }
+  .user-name { display: none; }
+  .cadre-grid { grid-template-columns: 1fr; }
+  .directors-grid { grid-template-columns: 1fr; }
+  .detail-grid { grid-template-columns: 1fr; }
+  .detail-header { flex-direction: column; text-align: center; }
+  .lane-container { padding: 12px; }
+  .swimlane { min-width: 700px; }
+}
+@media (max-width: 480px) {
+  :root { --header-height: 56px; }
+  .app-header { padding: 0 12px; }
+  .brand-subtitle { display: none; }
+  .brand-text { font-size: 18px; }
+  .app-main { padding: 12px; }
+  .card, .chart-card, .detail-card, .director-card, .ninebox-panel, .stats-card, .appointment-list, .lane-container, .archive-content { padding: 14px; }
+  .stat-cards { gap: 10px; }
+  .stat-card { padding: 12px; }
+  .stat-value { font-size: 26px; }
+  .quick-entry { grid-template-columns: 1fr; }
+  .charts-row { gap: 12px; }
+  .detail-header { padding: 16px; }
+  .detail-avatar { width: 60px; height: 60px; font-size: 24px; }
+  .detail-info h1 { font-size: 20px; }
+}
+</style>
+</head>
+<body>
+<div id="loading" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;background:var(--color-bg);z-index:3000;">
+  <div style="width:70px;height:70px;border-radius:18px;background:linear-gradient(135deg,#8e2294,#6b1a70);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 40px rgba(142,34,148,0.35);animation:lp 1.5s ease-in-out infinite;">
+    <svg viewBox="0 0 48 48" width="40" height="40" fill="#fff"><path d="M24 4 L40 13 L40 35 L24 44 L8 35 L8 13 Z"/><circle cx="24" cy="24" r="4" fill="#F8C24C"/></svg>
+  </div>
+  <div style="margin-top:20px;color:#6b1a70;font-weight:700;letter-spacing:2px;">力合·人才智库</div>
+  <style>@keyframes lp{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}</style>
+</div>
+<script>
+/* ==================== 数据层 ==================== */
+const POSITION_LEVELS = ['集团领导','部门正职','部门副职','高级主管','主管','专员'];
+const DEPARTMENTS = ['集团总部','人力资源部','财务管理部','投资发展部','市场运营部','技术研发部','工程管理部','生产运营部','法务部','审计部'];
+const EDUCATIONS = ['博士研究生','硕士研究生','大学本科'];
+const cadres = [
+  { id:'C001', name:'张明远', gender:'男', birthDate:'1975-03-15', age:49, nativePlace:'广东深圳', politicalStatus:'中共党员', education:'硕士研究生', degree:'工商管理硕士', entryDate:'1998-07-01', tenure:26, currentPosition:'党委书记、董事长', positionLevel:'集团领导', positionDate:'2020-01-15', department:'集团总部', status:'在任', email:'zhangmy@leaguer.com', phone:'13800138001', warning:false },
+  { id:'C002', name:'李淑华', gender:'女', birthDate:'1980-08-22', age:44, nativePlace:'广东广州', politicalStatus:'中共党员', education:'博士研究生', degree:'经济学博士', entryDate:'2005-09-01', tenure:19, currentPosition:'党委副书记、总经理', positionLevel:'集团领导', positionDate:'2021-03-20', department:'集团总部', status:'在任', email:'lish@leaguer.com', phone:'13800138002', warning:false },
+  { id:'C003', name:'王建国', gender:'男', birthDate:'1968-11-05', age:56, nativePlace:'湖南长沙', politicalStatus:'中共党员', education:'大学本科', degree:'工学学士', entryDate:'1990-08-15', tenure:34, currentPosition:'副总经理', positionLevel:'集团领导', positionDate:'2015-06-10', department:'运营管理中心', status:'在任', email:'wangjg@leaguer.com', phone:'13800138003', warning:true },
+  { id:'C004', name:'陈晓东', gender:'男', birthDate:'1982-04-18', age:42, nativePlace:'广东佛山', politicalStatus:'中共党员', education:'硕士研究生', degree:'金融学硕士', entryDate:'2008-07-01', tenure:16, currentPosition:'财务总监', positionLevel:'部门正职', positionDate:'2019-09-01', department:'财务管理部', status:'在任', email:'chenxd@leaguer.com', phone:'13800138004', warning:false },
+  { id:'C005', name:'刘雅琴', gender:'女', birthDate:'1979-12-03', age:44, nativePlace:'广东东莞', politicalStatus:'中共党员', education:'硕士研究生', degree:'法学硕士', entryDate:'2003-07-01', tenure:21, currentPosition:'人力资源总监', positionLevel:'部门正职', positionDate:'2018-04-15', department:'人力资源部', status:'在任', email:'liuyq@leaguer.com', phone:'13800138005', warning:false },
+  { id:'C006', name:'赵伟强', gender:'男', birthDate:'1985-06-28', age:39, nativePlace:'广东中山', politicalStatus:'中共党员', education:'大学本科', degree:'管理学学士', entryDate:'2010-07-01', tenure:14, currentPosition:'投资发展部经理', positionLevel:'部门正职', positionDate:'2022-01-10', department:'投资发展部', status:'在任', email:'zhaowq@leaguer.com', phone:'13800138006', warning:false },
+  { id:'C007', name:'孙丽华', gender:'女', birthDate:'1983-09-14', age:40, nativePlace:'广东珠海', politicalStatus:'中共党员', education:'硕士研究生', degree:'会计学硕士', entryDate:'2009-07-01', tenure:15, currentPosition:'审计部经理', positionLevel:'部门正职', positionDate:'2020-07-01', department:'审计部', status:'在任', email:'sunlh@leaguer.com', phone:'13800138007', warning:false },
+  { id:'C008', name:'周志刚', gender:'男', birthDate:'1972-01-20', age:52, nativePlace:'湖北武汉', politicalStatus:'中共党员', education:'大学本科', degree:'土木工程学士', entryDate:'1995-07-01', tenure:29, currentPosition:'工程管理部经理', positionLevel:'部门正职', positionDate:'2016-03-01', department:'工程管理部', status:'在任', email:'zhouzg@leaguer.com', phone:'13800138008', warning:false },
+  { id:'C009', name:'吴美玲', gender:'女', birthDate:'1987-03-08', age:37, nativePlace:'广东惠州', politicalStatus:'中共党员', education:'硕士研究生', degree:'市场营销硕士', entryDate:'2012-07-01', tenure:12, currentPosition:'市场运营部经理', positionLevel:'部门正职', positionDate:'2023-02-15', department:'市场运营部', status:'在任', email:'wuml@leaguer.com', phone:'13800138009', warning:false },
+  { id:'C010', name:'郑海涛', gender:'男', birthDate:'1978-07-30', age:46, nativePlace:'广东汕头', politicalStatus:'中共党员', education:'大学本科', degree:'计算机科学学士', entryDate:'2001-07-01', tenure:23, currentPosition:'信息技术部经理', positionLevel:'部门正职', positionDate:'2017-08-01', department:'技术研发部', status:'在任', email:'zhenght@leaguer.com', phone:'13800138010', warning:false },
+  { id:'C011', name:'黄雪梅', gender:'女', birthDate:'1984-11-12', age:39, nativePlace:'广东江门', politicalStatus:'中共党员', education:'硕士研究生', degree:'人力资源管理硕士', entryDate:'2011-07-01', tenure:13, currentPosition:'人力资源部副经理', positionLevel:'部门副职', positionDate:'2022-07-01', department:'人力资源部', status:'在任', email:'huangxm@leaguer.com', phone:'13800138011', warning:false },
+  { id:'C012', name:'林浩然', gender:'男', birthDate:'1990-05-05', age:34, nativePlace:'广东肇庆', politicalStatus:'共青团员', education:'大学本科', degree:'金融学学士', entryDate:'2015-07-01', tenure:9, currentPosition:'投资专员', positionLevel:'专员', positionDate:'2023-08-01', department:'投资发展部', status:'在任', email:'linhr@leaguer.com', phone:'13800138012', warning:false },
+  { id:'C013', name:'何思颖', gender:'女', birthDate:'1986-02-17', age:38, nativePlace:'广东茂名', politicalStatus:'中共党员', education:'硕士研究生', degree:'公共管理硕士', entryDate:'2013-07-01', tenure:11, currentPosition:'行政管理部经理', positionLevel:'部门正职', positionDate:'2021-06-01', department:'集团总部', status:'在任', email:'hesy@leaguer.com', phone:'13800138013', warning:false },
+  { id:'C014', name:'谢伟明', gender:'男', birthDate:'1976-09-25', age:47, nativePlace:'广东湛江', politicalStatus:'中共党员', education:'大学本科', degree:'机械工程学士', entryDate:'1999-07-01', tenure:25, currentPosition:'生产运营部经理', positionLevel:'部门正职', positionDate:'2014-05-01', department:'生产运营部', status:'在任', email:'xiewm@leaguer.com', phone:'13800138014', warning:false },
+  { id:'C015', name:'梁晓峰', gender:'男', birthDate:'1988-10-10', age:35, nativePlace:'广东清远', politicalStatus:'中共党员', education:'硕士研究生', degree:'电气工程硕士', entryDate:'2016-07-01', tenure:8, currentPosition:'技术研发部经理', positionLevel:'部门正职', positionDate:'2023-01-01', department:'技术研发部', status:'在任', email:'liangxf@leaguer.com', phone:'13800138015', warning:false },
+  { id:'C016', name:'罗嘉欣', gender:'女', birthDate:'1992-06-22', age:32, nativePlace:'广东阳江', politicalStatus:'中共党员', education:'大学本科', degree:'法学学士', entryDate:'2017-07-01', tenure:7, currentPosition:'法务专员', positionLevel:'专员', positionDate:'2024-01-15', department:'法务部', status:'试用期', email:'luojx@leaguer.com', phone:'13800138016', warning:true },
+  { id:'C017', name:'郭志强', gender:'男', birthDate:'1974-04-03', age:50, nativePlace:'广东梅州', politicalStatus:'中共党员', education:'硕士研究生', degree:'工商管理硕士', entryDate:'1997-07-01', tenure:27, currentPosition:'战略规划部经理', positionLevel:'部门正职', positionDate:'2018-09-01', department:'集团总部', status:'在任', email:'guozq@leaguer.com', phone:'13800138017', warning:true },
+  { id:'C018', name:'马晓燕', gender:'女', birthDate:'1981-07-14', age:43, nativePlace:'广东韶关', politicalStatus:'民盟盟员', education:'博士研究生', degree:'材料科学博士', entryDate:'2009-07-01', tenure:15, currentPosition:'研发总监', positionLevel:'部门正职', positionDate:'2022-04-01', department:'技术研发部', status:'在任', email:'maxy@leaguer.com', phone:'13800138018', warning:false },
+  { id:'C019', name:'陈大伟', gender:'男', birthDate:'1969-12-28', age:54, nativePlace:'广东河源', politicalStatus:'中共党员', education:'大学本科', degree:'化工学士', entryDate:'1992-07-01', tenure:32, currentPosition:'安全环保部经理', positionLevel:'部门正职', positionDate:'2010-03-01', department:'生产运营部', status:'在任', email:'chendw@leaguer.com', phone:'13800138019', warning:true },
+  { id:'C020', name:'杨思琪', gender:'女', birthDate:'1993-01-08', age:31, nativePlace:'广东揭阳', politicalStatus:'中共党员', education:'硕士研究生', degree:'数据分析硕士', entryDate:'2019-07-01', tenure:5, currentPosition:'数据分析师', positionLevel:'主管', positionDate:'2024-03-01', department:'技术研发部', status:'在任', email:'yangsq@leaguer.com', phone:'13800138020', warning:false }
+];
+const appointments = [
+  { id:'A001', cadreId:'C006', cadreName:'赵伟强', type:'提拔', position:'投资发展部经理', department:'投资发展部', date:'2022-01-10', status:'已生效', approver:'党委会', documentNo:'力合党〔2022〕3号', levelChange:'平调转任正职', note:'经党委会研究决定，任命赵伟强为投资发展部经理。' },
+  { id:'A002', cadreId:'C009', cadreName:'吴美玲', type:'提拔', position:'市场运营部经理', department:'市场运营部', date:'2023-02-15', status:'已生效', approver:'党委会', documentNo:'力合党〔2023〕5号', levelChange:'副职提拔正职', note:'因工作需要，提拔吴美玲任市场运营部经理。' },
+  { id:'A003', cadreId:'C015', cadreName:'梁晓峰', type:'提拔', position:'技术研发部经理', department:'技术研发部', date:'2023-01-01', status:'已生效', approver:'党委会', documentNo:'力合党〔2023〕1号', levelChange:'主管提拔部门正职', note:'经公开竞聘，梁晓峰任技术研发部经理。' },
+  { id:'A004', cadreId:'C012', cadreName:'林浩然', type:'平调', position:'投资专员', department:'投资发展部', date:'2024-01-15', status:'已生效', approver:'人力资源部', documentNo:'力合人〔2024〕2号', levelChange:'岗位调整', note:'试用期满转正，继续担任投资专员。' },
+  { id:'A005', cadreId:'C016', cadreName:'罗嘉欣', type:'平调', position:'法务专员', department:'法务部', date:'2024-07-15', status:'待审批', approver:'人力资源部', documentNo:'力合人〔2024〕8号', levelChange:'试用期转正', note:'试用期将于2024年7月15日到期，需组织转正考核。' },
+  { id:'A006', cadreId:'C003', cadreName:'王建国', type:'免职', position:'副总经理', department:'运营管理中心', date:'2024-12-01', status:'待审批', approver:'党委会', documentNo:'力合党〔2024〕12号', levelChange:'到龄退居二线', note:'因年龄原因，免去副总经理职务，改任调研员。' },
+  { id:'A007', cadreId:'C019', cadreName:'陈大伟', type:'免职', position:'安全环保部经理', department:'生产运营部', date:'2025-03-01', status:'预警', approver:'人力资源部', documentNo:'力合人〔2025〕1号', levelChange:'到龄退休', note:'陈大伟将于2025年3月达到退休年龄，需提前启动交接。' },
+  { id:'A008', cadreId:'C008', cadreName:'周志刚', type:'降职', position:'工程管理部副经理', department:'工程管理部', date:'2024-06-01', status:'已生效', approver:'党委会', documentNo:'力合党〔2024〕6号', levelChange:'正职降为副职', note:'因年度考核不称职，免去经理职务，降为副经理。' },
+  { id:'A009', cadreId:'C020', cadreName:'杨思琪', type:'提拔', position:'数据分析师', department:'技术研发部', date:'2024-03-01', status:'已生效', approver:'人力资源部', documentNo:'力合人〔2024〕3号', levelChange:'专员提拔主管', note:'因工作表现突出，提拔为主管。' },
+  { id:'A010', cadreId:'C011', cadreName:'黄雪梅', type:'提拔', position:'人力资源部副经理', department:'人力资源部', date:'2022-07-01', status:'已生效', approver:'党委会', documentNo:'力合党〔2022〕8号', levelChange:'主管提拔副职', note:'经竞聘上岗，任人力资源部副经理。' }
+];
+const directors = [
+  { id:'D001', cadreId:'C001', name:'张明远', position:'董事长', type:'董事', termStart:'2020-01-15', termEnd:'2026-01-14', status:'在任', board:'董事会' },
+  { id:'D002', cadreId:'C002', name:'李淑华', position:'董事', type:'董事', termStart:'2021-03-20', termEnd:'2027-03-19', status:'在任', board:'董事会' },
+  { id:'D003', cadreId:'C004', name:'陈晓东', position:'监事会主席', type:'监事', termStart:'2019-09-01', termEnd:'2025-08-31', status:'在任', board:'监事会' },
+  { id:'D004', cadreId:'C007', name:'孙丽华', position:'监事', type:'监事', termStart:'2020-07-01', termEnd:'2026-06-30', status:'在任', board:'监事会' },
+  { id:'D005', cadreId:'C017', name:'郭志强', position:'职工董事', type:'董事', termStart:'2018-09-01', termEnd:'2024-08-31', status:'任期届满', board:'董事会' }
+];
+const reviews = [
+  { cadreId:'C001', performanceScore:95, abilityScore:92, potentialScore:88, nineBoxX:4.5, nineBoxY:4.2 },
+  { cadreId:'C002', performanceScore:93, abilityScore:90, potentialScore:85, nineBoxX:4.3, nineBoxY:4.0 },
+  { cadreId:'C003', performanceScore:78, abilityScore:75, potentialScore:60, nineBoxX:3.2, nineBoxY:2.8 },
+  { cadreId:'C004', performanceScore:88, abilityScore:85, potentialScore:80, nineBoxX:3.8, nineBoxY:3.5 },
+  { cadreId:'C005', performanceScore:90, abilityScore:88, potentialScore:82, nineBoxX:4.0, nineBoxY:3.7 },
+  { cadreId:'C006', performanceScore:82, abilityScore:80, potentialScore:88, nineBoxX:3.5, nineBoxY:4.0 },
+  { cadreId:'C007', performanceScore:85, abilityScore:82, potentialScore:75, nineBoxX:3.6, nineBoxY:3.2 },
+  { cadreId:'C008', performanceScore:75, abilityScore:70, potentialScore:55, nineBoxX:2.8, nineBoxY:2.5 },
+  { cadreId:'C009', performanceScore:92, abilityScore:90, potentialScore:95, nineBoxX:4.2, nineBoxY:4.5 },
+  { cadreId:'C010', performanceScore:80, abilityScore:78, potentialScore:72, nineBoxX:3.3, nineBoxY:3.0 },
+  { cadreId:'C011', performanceScore:85, abilityScore:88, potentialScore:90, nineBoxX:3.7, nineBoxY:4.2 },
+  { cadreId:'C012', performanceScore:70, abilityScore:72, potentialScore:85, nineBoxX:2.5, nineBoxY:3.8 },
+  { cadreId:'C013', performanceScore:88, abilityScore:85, potentialScore:78, nineBoxX:3.8, nineBoxY:3.3 },
+  { cadreId:'C014', performanceScore:72, abilityScore:70, potentialScore:65, nineBoxX:2.8, nineBoxY:2.7 },
+  { cadreId:'C015', performanceScore:90, abilityScore:92, potentialScore:94, nineBoxX:4.0, nineBoxY:4.4 }
+];
+const alerts = [
+  { id:'AL001', type:'到龄退休', cadreId:'C019', cadreName:'陈大伟', position:'安全环保部经理', date:'2025-03-01', daysRemaining:180, priority:'高', description:'陈大伟将于2025年3月达到退休年龄（60岁），需提前启动接班人选拔程序。' },
+  { id:'AL002', type:'任期届满', cadreId:'D005', cadreName:'郭志强', position:'职工董事', date:'2024-08-31', daysRemaining:15, priority:'高', description:'郭志强职工董事任期将于2024年8月31日届满，需启动换届选举程序。' },
+  { id:'AL003', type:'试用期到期', cadreId:'C016', cadreName:'罗嘉欣', position:'法务专员', date:'2024-07-15', daysRemaining:30, priority:'中', description:'罗嘉欣试用期将于2024年7月15日到期，需组织试用期考核评估。' },
+  { id:'AL004', type:'到龄退居二线', cadreId:'C003', cadreName:'王建国', position:'副总经理', date:'2024-12-01', daysRemaining:90, priority:'中', description:'王建国因年龄原因将于2024年12月退居二线，需做好工作交接。' },
+  { id:'AL005', type:'任期将满', cadreId:'D003', cadreName:'陈晓东', position:'监事会主席', date:'2025-08-31', daysRemaining:360, priority:'低', description:'陈晓东监事会主席任期将于2025年8月31日届满，建议提前6个月启动换届准备。' }
+];
+const MOCK_DATA = { cadres, appointments, directors, reviews, alerts };
+if (typeof window !== 'undefined') {
+  window.MOCK_DATA = MOCK_DATA; window.cadres = cadres; window.appointments = appointments;
+  window.directors = directors; window.reviews = reviews; window.alerts = alerts;
+}
+
+/* ==================== 公共模块 ==================== */
+const BRAND_COLORS = { primary:'#8e2294', primaryDark:'#6b1a70', primaryLight:'#a855a8', accent:'#F8C24C', accentLight:'#fdecc8', bg:'#f5f3f7', surface:'#ffffff', text:'#1a1a2e', textSecondary:'#4a4a6a', border:'#e8e0ec', success:'#27ae60', warning:'#e67e22', danger:'#c0392b' };
+
+async function fetchData(endpoint) {
+  return (window.MOCK_DATA && window.MOCK_DATA[endpoint]) || [];
+}
+function formatDate(date, format = 'YYYY-MM-DD') {
+  if (!date) return '-';
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return '-';
+  return format.replace('YYYY', d.getFullYear()).replace('MM', String(d.getMonth()+1).padStart(2,'0')).replace('DD', String(d.getDate()).padStart(2,'0'));
+}
+function formatNumber(num, decimals = 0) {
+  if (num === null || num === undefined || isNaN(num)) return '-';
+  return Number(num).toLocaleString('zh-CN', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+}
+function debounce(fn, delay = 300) {
+  let timer = null;
+  return function (...args) { clearTimeout(timer); timer = setTimeout(() => fn.apply(this, args), delay); };
+}
+function throttle(fn, interval = 200) {
+  let lastTime = 0;
+  return function (...args) {
+    const now = Date.now();
+    if (now - lastTime >= interval) { lastTime = now; fn.apply(this, args); }
+  };
+}
+function showModal(title, contentHTML) {
+  let overlay = document.getElementById('modalOverlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'modalOverlay';
+    overlay.className = 'modal-overlay';
+    document.body.appendChild(overlay);
+  }
+  overlay.innerHTML = `<div class="modal"><div class="modal-header"><div class="modal-title">${title}</div><button class="modal-close">&times;</button></div><div class="modal-body">${contentHTML}</div></div>`;
+  overlay.classList.add('active');
+  overlay.querySelector('.modal-close').addEventListener('click', () => overlay.classList.remove('active'));
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('active'); });
+}
+
+/* ==================== 图表库（纯 SVG） ==================== */
+const PURPLE_GRADIENTS = [['#8e2294','#6b1a70'],['#a855a8','#8e2294'],['#c77dc8','#a855a8'],['#6b1a70','#4a124d'],['#9b59b6','#7d3c98'],['#8e44ad','#6c3483']];
+function createSVGElement(tag, attrs = {}) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+  return el;
+}
+function getTooltip() {
+  let tooltip = document.getElementById('chart-tooltip');
+  if (!tooltip) {
+    tooltip = document.createElement('div');
+    tooltip.id = 'chart-tooltip';
+    tooltip.style.cssText = 'position:fixed;background:rgba(26,26,46,0.95);color:#fff;padding:10px 14px;border-radius:8px;font-size:13px;pointer-events:none;z-index:9999;opacity:0;transition:opacity 0.2s;box-shadow:0 4px 16px rgba(142,34,148,0.3);border:1px solid '+BRAND_COLORS.primary+';max-width:220px;line-height:1.6;';
+    document.body.appendChild(tooltip);
+  }
+  return tooltip;
+}
+function showTooltip(e, html) { const t = getTooltip(); t.innerHTML = html; t.style.opacity = '1'; t.style.left = (e.clientX + 12) + 'px'; t.style.top = (e.clientY - 12) + 'px'; }
+function hideTooltip() { const t = document.getElementById('chart-tooltip'); if (t) t.style.opacity = '0'; }
+function renderPieChart(containerId, data, options = {}) {
+  const container = document.getElementById(containerId); if (!container) return; container.innerHTML = '';
+  const width = options.width || 300, height = options.height || 300;
+  const radius = Math.min(width, height) / 2 - 40, centerX = width/2, centerY = height/2;
+  const total = data.reduce((s, d) => s + d.value, 0); let currentAngle = -Math.PI/2;
+  const svg = createSVGElement('svg', { width, height, viewBox:`0 0 ${width} ${height}` });
+  const defs = createSVGElement('defs'); svg.appendChild(defs);
+  data.forEach((_, i) => {
+    const grad = createSVGElement('linearGradient', { id:`pieGrad-${containerId}-${i}`, x1:'0%', y1:'0%', x2:'100%', y2:'100%' });
+    const [c1, c2] = PURPLE_GRADIENTS[i % PURPLE_GRADIENTS.length];
+    grad.appendChild(createSVGElement('stop', { offset:'0%', 'stop-color':c1 }));
+    grad.appendChild(createSVGElement('stop', { offset:'100%', 'stop-color':c2 }));
+    defs.appendChild(grad);
+  });
+  data.forEach((item, i) => {
+    const angle = (item.value / total) * 2 * Math.PI, endAngle = currentAngle + angle;
+    const x1 = centerX + radius*Math.cos(currentAngle), y1 = centerY + radius*Math.sin(currentAngle);
+    const x2 = centerX + radius*Math.cos(endAngle), y2 = centerY + radius*Math.sin(endAngle);
+    const largeArc = angle > Math.PI ? 1 : 0;
+    const path = createSVGElement('path', { d:`M ${centerX} ${centerY} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`, fill:`url(#pieGrad-${containerId}-${i})`, stroke:'#fff', 'stroke-width':'2', cursor:'pointer' });
+    path.addEventListener('mouseenter', (e) => { path.setAttribute('opacity','0.85'); showTooltip(e, `<strong>${item.label}</strong><br/>${item.value}人 · ${(item.value/total*100).toFixed(1)}%`); });
+    path.addEventListener('mousemove', (e) => showTooltip(e, `<strong>${item.label}</strong><br/>${item.value}人 · ${(item.value/total*100).toFixed(1)}%`));
+    path.addEventListener('mouseleave', () => { path.setAttribute('opacity','1'); hideTooltip(); });
+    svg.appendChild(path); currentAngle = endAngle;
+  });
+  svg.appendChild(createSVGElement('circle', { cx:centerX, cy:centerY, r:radius*0.45, fill:'#fff' }));
+  const ct = createSVGElement('text', { x:centerX, y:centerY-5, 'text-anchor':'middle', 'font-size':'24', 'font-weight':'700', fill:BRAND_COLORS.primary }); ct.textContent = total; svg.appendChild(ct);
+  const cl = createSVGElement('text', { x:centerX, y:centerY+18, 'text-anchor':'middle', 'font-size':'12', fill:BRAND_COLORS.primaryLight }); cl.textContent = '总人数'; svg.appendChild(cl);
+  if (options.showLegend !== false) {
+    const legendX = width - 80;
+    data.forEach((item, i) => {
+      const [c1] = PURPLE_GRADIENTS[i % PURPLE_GRADIENTS.length];
+      svg.appendChild(createSVGElement('rect', { x:legendX, y:20+i*22-8, width:12, height:12, rx:3, fill:c1 }));
+      const t = createSVGElement('text', { x:legendX+18, y:20+i*22+3, fill:'#4a4a6a', 'font-size':'12' }); t.textContent = `${item.label} ${item.value}`; svg.appendChild(t);
+    });
+  }
+  container.appendChild(svg);
+}
+function renderBarChart(containerId, data, options = {}) {
+  const container = document.getElementById(containerId); if (!container) return; container.innerHTML = '';
+  const width = options.width || 400, height = options.height || 250;
+  const margin = { top:20, right:20, bottom:40, left:45 };
+  const chartW = width - margin.left - margin.right, chartH = height - margin.top - margin.bottom;
+  const maxValue = Math.max(...data.map(d => d.value)) * 1.1;
+  const barWidth = (chartW / data.length) * 0.55, gap = (chartW / data.length) * 0.45;
+  const svg = createSVGElement('svg', { width, height, viewBox:`0 0 ${width} ${height}` });
+  const defs = createSVGElement('defs');
+  const grad = createSVGElement('linearGradient', { id:`barGrad-${containerId}`, x1:'0%', y1:'0%', x2:'0%', y2:'100%' });
+  grad.appendChild(createSVGElement('stop', { offset:'0%', 'stop-color':BRAND_COLORS.primary }));
+  grad.appendChild(createSVGElement('stop', { offset:'100%', 'stop-color':BRAND_COLORS.primaryDark }));
+  defs.appendChild(grad); svg.appendChild(defs);
+  for (let i = 0; i <= 5; i++) {
+    const y = margin.top + (chartH/5)*i, val = Math.round(maxValue*(1-i/5));
+    svg.appendChild(createSVGElement('line', { x1:margin.left, y1:y, x2:width-margin.right, y2:y, stroke:'#e8e0ec', 'stroke-width':'1', 'stroke-dasharray':'3,3' }));
+    const t = createSVGElement('text', { x:margin.left-8, y:y+4, fill:'#4a4a6a', 'font-size':'11', 'text-anchor':'end' }); t.textContent = val; svg.appendChild(t);
+  }
+  data.forEach((item, i) => {
+    const barH = (item.value / maxValue) * chartH, x = margin.left + gap/2 + i*(barWidth+gap), y = margin.top + chartH - barH;
+    const rect = createSVGElement('rect', { x, y, width:barWidth, height:barH, rx:5, fill:`url(#barGrad-${containerId})`, cursor:'pointer' });
+    rect.addEventListener('mouseenter', (e) => { rect.setAttribute('opacity','0.85'); showTooltip(e, `<strong>${item.label}</strong><br/>${item.value}人`); });
+    rect.addEventListener('mousemove', (e) => showTooltip(e, `<strong>${item.label}</strong><br/>${item.value}人`));
+    rect.addEventListener('mouseleave', () => { rect.setAttribute('opacity','1'); hideTooltip(); });
+    svg.appendChild(rect);
+    const vt = createSVGElement('text', { x:x+barWidth/2, y:y-6, 'text-anchor':'middle', 'font-size':'12', 'font-weight':'600', fill:BRAND_COLORS.primary }); vt.textContent = item.value; svg.appendChild(vt);
+    const label = createSVGElement('text', { x:x+barWidth/2, y:height-12, fill:'#4a4a6a', 'font-size':'11', 'text-anchor':'middle' }); label.textContent = item.label; svg.appendChild(label);
+  });
+  container.appendChild(svg);
+}
+function renderRadarChart(containerId, data, options = {}) {
+  const container = document.getElementById(containerId); if (!container) return; container.innerHTML = '';
+  const width = options.width || 300, height = options.height || 300;
+  const centerX = width/2, centerY = height/2, radius = Math.min(width,height)/2 - 45, angleStep = (2*Math.PI)/data.length;
+  const svg = createSVGElement('svg', { width, height, viewBox:`0 0 ${width} ${height}` });
+  const defs = createSVGElement('defs');
+  const grad = createSVGElement('radialGradient', { id:`radarGrad-${containerId}`, cx:'50%', cy:'50%', r:'50%' });
+  grad.appendChild(createSVGElement('stop', { offset:'0%', 'stop-color':BRAND_COLORS.primary, 'stop-opacity':'0.5' }));
+  grad.appendChild(createSVGElement('stop', { offset:'100%', 'stop-color':BRAND_COLORS.primaryDark, 'stop-opacity':'0.15' }));
+  defs.appendChild(grad); svg.appendChild(defs);
+  for (let level = 1; level <= 5; level++) {
+    const r = (radius/5)*level;
+    const points = data.map((_, i) => { const a = i*angleStep - Math.PI/2; return `${centerX+r*Math.cos(a)},${centerY+r*Math.sin(a)}`; }).join(' ');
+    svg.appendChild(createSVGElement('polygon', { points, fill:'none', stroke:'#e8e0ec', 'stroke-width':'1' }));
+  }
+  data.forEach((_, i) => { const a = i*angleStep - Math.PI/2; svg.appendChild(createSVGElement('line', { x1:centerX, y1:centerY, x2:centerX+radius*Math.cos(a), y2:centerY+radius*Math.sin(a), stroke:'#e8e0ec', 'stroke-width':'1' })); });
+  const points = data.map((item, i) => { const a = i*angleStep - Math.PI/2; const r = (item.value/item.max)*radius; return `${centerX+r*Math.cos(a)},${centerY+r*Math.sin(a)}`; }).join(' ');
+  const area = createSVGElement('polygon', { points, fill:`url(#radarGrad-${containerId})`, stroke:BRAND_COLORS.primary, 'stroke-width':'2' });
+  area.addEventListener('mouseenter', (e) => showTooltip(e, data.map(d => `${d.label}: ${d.value}`).join('<br/>')));
+  area.addEventListener('mousemove', (e) => showTooltip(e, data.map(d => `${d.label}: ${d.value}`).join('<br/>')));
+  area.addEventListener('mouseleave', hideTooltip); svg.appendChild(area);
+  data.forEach((item, i) => {
+    const a = i*angleStep - Math.PI/2, r = (item.value/item.max)*radius;
+    const x = centerX+r*Math.cos(a), y = centerY+r*Math.sin(a);
+    const circle = createSVGElement('circle', { cx:x, cy:y, r:5, fill:BRAND_COLORS.primary, stroke:'#fff', 'stroke-width':'2', cursor:'pointer' });
+    circle.addEventListener('mouseenter', (e) => { circle.setAttribute('r','7'); circle.setAttribute('fill',BRAND_COLORS.accent); showTooltip(e, `<strong>${item.label}</strong><br/>${item.value}人`); });
+    circle.addEventListener('mouseleave', () => { circle.setAttribute('r','5'); circle.setAttribute('fill',BRAND_COLORS.primary); hideTooltip(); });
+    svg.appendChild(circle);
+    const t = createSVGElement('text', { x:centerX+(radius+22)*Math.cos(a), y:centerY+(radius+22)*Math.sin(a)+4, 'text-anchor':'middle', 'font-size':'12', fill:'#4a4a6a' }); t.textContent = item.label; svg.appendChild(t);
+  });
+  container.appendChild(svg);
+}
+function renderNineBox(containerId, data, options = {}) {
+  const container = document.getElementById(containerId); if (!container) return; container.innerHTML = '';
+  const width = options.width || 420, height = options.height || 420, padding = 45;
+  const chartW = width - padding*2, chartH = height - padding*2, cellW = chartW/3, cellH = chartH/3;
+  const quadrants = [
+    { x:2, y:2, label:'核心人才', colorFrom:'#8e2294', colorTo:'#6b1a70' },
+    { x:1, y:2, label:'中坚力量', colorFrom:'#a855a8', colorTo:'#8e2294' },
+    { x:0, y:2, label:'潜力新星', colorFrom:'#c77dc8', colorTo:'#a855a8' },
+    { x:2, y:1, label:'熟练员工', colorFrom:'#c77dc8', colorTo:'#a855a8' },
+    { x:1, y:1, label:'稳定贡献', colorFrom:'#d4a5d4', colorTo:'#c77dc8' },
+    { x:0, y:1, label:'差距员工', colorFrom:'#e0c4e0', colorTo:'#d4a5d4' },
+    { x:2, y:0, label:'潜力待挖', colorFrom:'#d4a5d4', colorTo:'#c77dc8' },
+    { x:1, y:0, label:'待观察者', colorFrom:'#e0c4e0', colorTo:'#d4a5d4' },
+    { x:0, y:0, label:'问题员工', colorFrom:'#e8dce8', colorTo:'#d4c8dc' }
+  ];
+  const svg = createSVGElement('svg', { width, height, viewBox:`0 0 ${width} ${height}` });
+  const defs = createSVGElement('defs'); svg.appendChild(defs);
+  const counts = quadrants.map(() => 0), peopleInQuadrant = quadrants.map(() => []);
+  data.forEach(p => {
+    const qx = Math.min(2, Math.floor(p.x/1.67)), qy = Math.min(2, Math.floor(p.y/1.67));
+    const idx = quadrants.findIndex(q => q.x === qx && q.y === qy);
+    if (idx !== -1) { counts[idx]++; peopleInQuadrant[idx].push(p); }
+  });
+  quadrants.forEach((q, i) => {
+    const x = padding + q.x*cellW, y = padding + (2-q.y)*cellH, gradId = `nineGrad-${containerId}-${i}`;
+    const grad = createSVGElement('linearGradient', { id:gradId, x1:'0%', y1:'0%', x2:'100%', y2:'100%' });
+    grad.appendChild(createSVGElement('stop', { offset:'0%', 'stop-color':q.colorFrom }));
+    grad.appendChild(createSVGElement('stop', { offset:'100%', 'stop-color':q.colorTo }));
+    defs.appendChild(grad);
+    const rect = createSVGElement('rect', { x, y, width:cellW, height:cellH, fill:`url(#${gradId})`, stroke:'#fff', 'stroke-width':'2', rx:6, cursor:'pointer', opacity:'0.85' });
+    rect.addEventListener('mouseenter', () => rect.setAttribute('opacity','1'));
+    rect.addEventListener('mouseleave', () => rect.setAttribute('opacity','0.85'));
+    rect.addEventListener('click', () => { if (options.onCellClick) options.onCellClick(q.label, peopleInQuadrant[i]); });
+    svg.appendChild(rect);
+    const t = createSVGElement('text', { x:x+cellW/2, y:y+cellH/2-6, 'text-anchor':'middle', 'font-size':'14', 'font-weight':'600', fill:'#fff' }); t.textContent = q.label; svg.appendChild(t);
+    const ct = createSVGElement('text', { x:x+cellW/2, y:y+cellH/2+16, 'text-anchor':'middle', 'font-size':'20', 'font-weight':'700', fill:'#fff' }); ct.textContent = counts[i]+'人'; svg.appendChild(ct);
+  });
+  const axisStyle = { fill:'#4a4a6a', 'font-size':'12' };
+  ['低绩效','中绩效','高绩效'].forEach((label, i) => { const t = createSVGElement('text', { x:padding+cellW*i+cellW/2, y:height-16, ...axisStyle, 'text-anchor':'middle' }); t.textContent = label; svg.appendChild(t); });
+  ['低潜力','中潜力','高潜力'].forEach((label, i) => { const t = createSVGElement('text', { x:16, y:padding+cellH*(2-i)+cellH/2+4, ...axisStyle, 'text-anchor':'middle', transform:`rotate(-90, 16, ${padding+cellH*(2-i)+cellH/2+4})` }); t.textContent = label; svg.appendChild(t); });
+  container.appendChild(svg);
+}
+
+/* ==================== SPA 布局与路由 ==================== */
+let layoutReady = false;
+const MENU = [
+  { id:'dashboard', label:'驾驶舱', hash:'#/dashboard', icon:'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z' },
+  { id:'cadre', label:'干部信息', hash:'#/cadre', icon:'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z' },
+  { id:'appointment', label:'任免管理', hash:'#/appointment', icon:'M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 002 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z' },
+  { id:'directors', label:'董监高管理', hash:'#/directors', icon:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z' },
+  { id:'archive', label:'档案管理', hash:'#/archive', icon:'M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z' },
+  { id:'talent-review', label:'人才盘点', hash:'#/talent-review', icon:'M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z' }
+];
+function ensureLayout() {
+  if (layoutReady) return;
+  document.body.className = 'app-layout';
+  const nav = document.createElement('header'); nav.className = 'app-header';
+  nav.innerHTML = `<div class="header-brand"><div class="brand-icon"><svg viewBox="0 0 48 48" width="28" height="28"><path d="M24 4 L40 13 L40 35 L24 44 L8 35 L8 13 Z" fill="currentColor"/><circle cx="24" cy="24" r="5" fill="rgba(255,255,255,0.3)"/></svg></div><div class="brand-text-wrap"><span class="brand-text">力合·人才智库</span><span class="brand-subtitle">力合科创干部数智平台</span></div><span class="page-title"></span></div><div class="header-actions"><button class="header-btn" id="mobileMenuToggle" title="展开菜单"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" fill="none"/></svg></button><div class="user-info"><span class="user-name">管理员</span><div class="user-avatar">管</div></div></div>`;
+  document.body.appendChild(nav);
+  const sidebar = document.createElement('aside'); sidebar.className = 'app-sidebar'; sidebar.id = 'appSidebar';
+  sidebar.innerHTML = `<nav class="sidebar-nav">${MENU.map(m => `<a href="${m.hash}" class="sidebar-link" data-page="${m.id}"><svg viewBox="0 0 24 24" width="20" height="20"><path d="${m.icon}" fill="currentColor"/></svg><span class="link-text">${m.label}</span></a>`).join('')}</nav><div class="sidebar-footer"><span>力合科创干部数智平台 · 人力资源部</span></div>`;
+  document.body.appendChild(sidebar);
+  const main = document.createElement('main'); main.className = 'app-main'; main.id = 'appMain';
+  document.body.appendChild(main);
+  // 移动端菜单
+  const toggle = document.getElementById('mobileMenuToggle');
+  toggle.addEventListener('click', () => sidebar.classList.toggle('sidebar-open'));
+  document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !toggle.contains(e.target)) sidebar.classList.remove('sidebar-open');
+  });
+  layoutReady = true;
+}
+function renderRoute() {
+  ensureLayout();
+  const hash = location.hash.slice(1) || '/dashboard';
+  const [path, query] = hash.split('?');
+  const route = ROUTES[path] || ROUTES['/dashboard'];
+  const params = new URLSearchParams(query || '');
+  document.querySelector('.page-title').textContent = route.title;
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.toggle('active', l.dataset.page === route.page));
+  const main = document.getElementById('appMain');
+  main.innerHTML = route.template();
+  window.scrollTo(0, 0);
+  document.getElementById('appSidebar').classList.remove('sidebar-open');
+  route.init(main, params);
+  const loading = document.getElementById('loading'); if (loading) loading.style.display = 'none';
+}
+
+/* ==================== 页面模板与逻辑 ==================== */
+const ROUTES = {
+  '/dashboard': {
+    title: '驾驶舱', page: 'dashboard',
+    template: () => `
+      <div class="stat-cards">
+        <div class="stat-card"><div class="stat-label">干部总数</div><div class="stat-value" id="totalCadres">0</div></div>
+        <div class="stat-card"><div class="stat-label">在任人数</div><div class="stat-value" id="activeCadres">0</div></div>
+        <div class="stat-card accent"><div class="stat-label">待任免数</div><div class="stat-value accent" id="pendingAppointments">0</div></div>
+        <div class="stat-card accent"><div class="stat-label">预警数</div><div class="stat-value accent" id="alertCount">0</div></div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card"><div class="chart-card-title">部门分布</div><div class="chart-container" id="deptPieChart"></div></div>
+        <div class="chart-card"><div class="chart-card-title">年龄分布</div><div class="chart-container" id="ageBarChart"></div></div>
+        <div class="chart-card"><div class="chart-card-title">学历分布</div><div class="chart-container" id="eduRadarChart"></div></div>
+      </div>
+      <div class="dashboard-grid">
+        <div class="chart-card"><div class="chart-card-title">九宫格人才矩阵</div><div class="chart-container" id="nineBoxMini"></div></div>
+        <div class="chart-card"><div class="chart-card-title accent">任免预警</div><div class="alert-list" id="alertList"></div></div>
+      </div>
+      <div class="bottom-section">
+        <div class="chart-card"><div class="chart-card-title">快速入口</div>
+          <div class="quick-entry">
+            <a href="#/cadre" class="quick-card"><div class="quick-icon">👥</div><div class="quick-label">干部信息</div></a>
+            <a href="#/appointment" class="quick-card"><div class="quick-icon">📋</div><div class="quick-label">任免管理</div></a>
+            <a href="#/talent-review" class="quick-card"><div class="quick-icon">📊</div><div class="quick-label">人才盘点</div></a>
+          </div>
+        </div>
+      </div>`,
+    init: async () => {
+      const [cadres, appointments, alerts, reviews] = await Promise.all([fetchData('cadres'), fetchData('appointments'), fetchData('alerts'), fetchData('reviews')]);
+      document.getElementById('totalCadres').textContent = cadres.length;
+      document.getElementById('activeCadres').textContent = cadres.filter(c => c.status === '在任').length;
+      document.getElementById('pendingAppointments').textContent = appointments.filter(a => a.status === '待审批').length;
+      document.getElementById('alertCount').textContent = alerts.length;
+      const deptCount = {}; cadres.forEach(c => deptCount[c.department] = (deptCount[c.department]||0)+1);
+      renderPieChart('deptPieChart', Object.entries(deptCount).map(([label,value]) => ({label,value})), { width:300, height:280 });
+      const ageRanges = { '30岁以下':0,'31-40岁':0,'41-50岁':0,'50岁以上':0 };
+      cadres.forEach(c => { if (c.age<30) ageRanges['30岁以下']++; else if (c.age<=40) ageRanges['31-40岁']++; else if (c.age<=50) ageRanges['41-50岁']++; else ageRanges['50岁以上']++; });
+      renderBarChart('ageBarChart', Object.entries(ageRanges).map(([label,value]) => ({label,value})), { width:340, height:250 });
+      const eduCount = {}; cadres.forEach(c => eduCount[c.education] = (eduCount[c.education]||0)+1);
+      const eduData = Object.entries(eduCount).map(([label,value]) => ({label,value,max:Math.max(...Object.values(eduCount))+2}));
+      renderRadarChart('eduRadarChart', eduData, { width:280, height:280 });
+      const merged = reviews.map(r => { const c = cadres.find(ca => ca.id === r.cadreId); return { name:c?c.name:r.cadreId, x:r.nineBoxX, y:r.nineBoxY }; });
+      renderNineBox('nineBoxMini', merged, { width:360, height:360 });
+      const alertList = document.getElementById('alertList');
+      alerts.slice(0,5).forEach(a => {
+        const item = document.createElement('div'); item.className = 'alert-item';
+        item.innerHTML = `<div class="alert-icon">⚠️</div><div class="alert-content"><div class="alert-title">${a.type} · ${a.cadreName}</div><div class="alert-desc">${a.position} · ${a.description.substring(0,40)}...</div></div><div class="alert-days">剩${a.daysRemaining}天</div>`;
+        alertList.appendChild(item);
+      });
+    }
+  },
+  '/cadre': {
+    title: '干部信息', page: 'cadre',
+    template: () => `
+      <div class="filter-bar">
+        <input type="text" class="form-input" id="searchInput" placeholder="搜索姓名、部门、职位...">
+        <select class="form-select" id="deptFilter"><option value="">全部部门</option></select>
+        <select class="form-select" id="levelFilter"><option value="">全部职级</option></select>
+        <button class="btn btn-primary" id="searchBtn">查询</button>
+      </div>
+      <div class="cadre-grid" id="cadreGrid"></div>
+      <div class="pagination" id="pagination"></div>`,
+    init: () => {
+      let allCadres = [], filtered = [], currentPage = 1; const pageSize = 9;
+      fetchData('cadres').then(data => {
+        allCadres = data; filtered = [...allCadres];
+        const depts = [...new Set(allCadres.map(c => c.department))];
+        const deptSelect = document.getElementById('deptFilter');
+        depts.forEach(d => deptSelect.appendChild(new Option(d, d)));
+        const levels = [...new Set(allCadres.map(c => c.positionLevel))];
+        const levelSelect = document.getElementById('levelFilter');
+        levels.forEach(l => levelSelect.appendChild(new Option(l, l)));
+        renderGrid();
+      });
+      function renderGrid() {
+        const grid = document.getElementById('cadreGrid'); grid.innerHTML = '';
+        const start = (currentPage-1)*pageSize, pageData = filtered.slice(start, start+pageSize);
+        pageData.forEach(c => {
+          const card = document.createElement('div'); card.className = 'cadre-card';
+          card.onclick = () => location.hash = '/cadre-detail?id=' + c.id;
+          card.innerHTML = `<div class="cadre-avatar">${c.name.charAt(0)}</div><div class="cadre-info"><div class="cadre-name">${c.name}</div><div class="cadre-dept">${c.department} · ${c.currentPosition}</div><div class="cadre-tags"><span class="badge badge-primary">${c.positionLevel}</span><span class="badge ${c.status==='在任'?'badge-success':'badge-warning'}">${c.status}</span>${c.warning?'<span class="badge badge-accent">预警</span>':''}</span></div></div>`;
+          grid.appendChild(card);
+        });
+        renderPagination();
+      }
+      function renderPagination() {
+        const totalPages = Math.ceil(filtered.length/pageSize), pag = document.getElementById('pagination'); pag.innerHTML = '';
+        const prev = document.createElement('button'); prev.textContent = '上一页'; prev.disabled = currentPage===1; prev.onclick = () => { currentPage--; renderGrid(); }; pag.appendChild(prev);
+        for (let i=1;i<=totalPages;i++) { const btn = document.createElement('button'); btn.textContent = i; btn.className = i===currentPage?'active':''; btn.onclick = () => { currentPage=i; renderGrid(); }; pag.appendChild(btn); }
+        const next = document.createElement('button'); next.textContent = '下一页'; next.disabled = currentPage===totalPages; next.onclick = () => { currentPage++; renderGrid(); }; pag.appendChild(next);
+      }
+      function doFilter() {
+        const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+        const dept = document.getElementById('deptFilter').value, level = document.getElementById('levelFilter').value;
+        filtered = allCadres.filter(c => { const m = !keyword || c.name.includes(keyword) || c.department.includes(keyword) || c.currentPosition.includes(keyword); return m && (!dept || c.department===dept) && (!level || c.positionLevel===level); });
+        currentPage = 1; renderGrid();
+      }
+      document.getElementById('searchBtn').addEventListener('click', doFilter);
+      document.getElementById('searchInput').addEventListener('input', debounce(doFilter, 300));
+      document.getElementById('deptFilter').addEventListener('change', doFilter);
+      document.getElementById('levelFilter').addEventListener('change', doFilter);
+    }
+  },
+  '/cadre-detail': {
+    title: '干部详情', page: 'cadre',
+    template: () => `
+      <a href="#/cadre" class="back-link">← 返回列表</a>
+      <div class="detail-header"><div class="detail-avatar" id="avatar"></div><div class="detail-info"><h1 id="name">--</h1><div class="detail-meta"><span id="position">--</span><span id="department">--</span><span id="level">--</span><span id="status">--</span></div></div></div>
+      <div class="detail-grid">
+        <div class="detail-card"><div class="detail-card-title">基本信息</div><div id="basicInfo"></div></div>
+        <div class="detail-card"><div class="detail-card-title">任职经历</div><div id="positionInfo"></div></div>
+        <div class="detail-card"><div class="detail-card-title">教育背景</div><div id="eduInfo"></div></div>
+        <div class="detail-card"><div class="detail-card-title">考核结果</div><div id="reviewInfo"></div></div>
+        <div class="detail-card" id="warningCard" style="display:none;"><div class="detail-card-title warning">预警记录</div><div id="warningInfo"></div></div>
+      </div>`,
+    init: async (main, params) => {
+      const id = params.get('id');
+      const [cadres, reviews, alerts] = await Promise.all([fetchData('cadres'), fetchData('reviews'), fetchData('alerts')]);
+      const c = cadres.find(x => x.id === id);
+      if (!c) { main.innerHTML = '<div style="text-align:center;padding:60px;">未找到该干部信息</div>'; return; }
+      const r = reviews.find(x => x.cadreId === id), cadreAlerts = alerts.filter(a => a.cadreId === id);
+      document.getElementById('avatar').textContent = c.name.charAt(0);
+      document.getElementById('name').textContent = c.name;
+      document.getElementById('position').textContent = c.currentPosition;
+      document.getElementById('department').textContent = c.department;
+      document.getElementById('level').textContent = c.positionLevel;
+      document.getElementById('status').textContent = c.status;
+      const rows = (arr) => arr.map(([label,value,accent]) => `<div class="detail-row"><span class="detail-label">${label}</span><span class="detail-value ${accent?'accent':''}">${value}</span></div>`).join('');
+      document.getElementById('basicInfo').innerHTML = rows([['姓名',c.name],['性别',c.gender],['出生日期',formatDate(c.birthDate)],['年龄',c.age+'岁'],['籍贯',c.nativePlace],['政治面貌',c.politicalStatus]]);
+      document.getElementById('positionInfo').innerHTML = rows([['现任职务',c.currentPosition],['职级',c.positionLevel],['任职日期',formatDate(c.positionDate)],['入职日期',formatDate(c.entryDate)],['工龄',c.tenure+'年'],['所属部门',c.department]]);
+      document.getElementById('eduInfo').innerHTML = rows([['学历',c.education],['学位',c.degree],['毕业院校','-'],['专业','-']]);
+      document.getElementById('reviewInfo').innerHTML = rows([['绩效得分',r?r.performanceScore:'-'],['能力得分',r?r.abilityScore:'-'],['潜力得分',r?r.potentialScore:'-'],['九宫格位置',r?`绩效${r.nineBoxX.toFixed(1)} / 潜力${r.nineBoxY.toFixed(1)}`:'-']]);
+      if (cadreAlerts.length > 0) {
+        document.getElementById('warningCard').style.display = 'block';
+        document.getElementById('warningInfo').innerHTML = cadreAlerts.map(a => `<div class="warning-item"><div class="warning-title">${a.type} · 剩 ${a.daysRemaining} 天</div><div class="warning-desc">${a.description}</div></div>`).join('');
+      }
+    }
+  },
+  '/appointment': {
+    title: '任免管理', page: 'appointment',
+    template: () => `
+      <div class="filter-bar">
+        <select class="form-select" id="typeFilter"><option value="">全部类型</option><option value="提拔">提拔</option><option value="平调">平调</option><option value="降职">降职</option><option value="免职">免职</option></select>
+        <select class="form-select" id="yearFilter"><option value="">全部年份</option></select>
+        <input type="text" class="form-input" id="searchInput" placeholder="搜索姓名...">
+        <button class="btn btn-primary" id="searchBtn">查询</button>
+      </div>
+      <div class="lane-container"><div class="swimlane" id="swimlane"></div></div>
+      <div class="appointment-list"><div class="appointment-list-title">最近任免记录</div><div id="appList"></div></div>`,
+    init: () => {
+      let allAppointments = [], filtered = [];
+      const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+      const typeMap = { '提拔':'promote','平调':'transfer','降职':'demote','免职':'dismiss' };
+      fetchData('appointments').then(data => {
+        allAppointments = data; allAppointments.sort((a,b) => new Date(b.date)-new Date(a.date)); filtered = [...allAppointments];
+        const years = [...new Set(allAppointments.map(a => new Date(a.date).getFullYear()))].sort((a,b)=>b-a);
+        const yearFilter = document.getElementById('yearFilter');
+        years.forEach(y => yearFilter.appendChild(new Option(y+'年', y)));
+        renderSwimlane(); renderList();
+      });
+      function renderSwimlane() {
+        const container = document.getElementById('swimlane'); container.innerHTML = '';
+        container.appendChild(Object.assign(document.createElement('div'), { className:'lane-header', textContent:'类型' }));
+        months.forEach(m => container.appendChild(Object.assign(document.createElement('div'), { className:'month-header', textContent:m })));
+        Object.keys(typeMap).forEach(type => {
+          const label = document.createElement('div'); label.className = 'lane-label'; label.textContent = type; container.appendChild(label);
+          const typeItems = filtered.filter(a => a.type === type);
+          for (let m=0;m<12;m++) {
+            const cell = document.createElement('div'); cell.className = 'lane-row';
+            const monthItems = typeItems.filter(a => new Date(a.date).getMonth() === m);
+            monthItems.forEach((item, idx) => {
+              const node = document.createElement('div'); node.className = `lane-node ${typeMap[type]}`;
+              node.style.top = (8+idx*34)+'px'; node.style.left = '4px'; node.style.right = '4px';
+              node.textContent = item.cadreName; node.title = `${item.date} ${item.position}`;
+              node.addEventListener('click', () => showModal('任免详情', `<p><strong>姓名：</strong>${item.cadreName}</p><p><strong>类型：</strong>${item.type}</p><p><strong>职务：</strong>${item.position}</p><p><strong>部门：</strong>${item.department}</p><p><strong>日期：</strong>${formatDate(item.date)}</p><p><strong>审批机构：</strong>${item.approver}</p><p><strong>文号：</strong>${item.documentNo}</p><p><strong>变动说明：</strong>${item.levelChange}</p><p><strong>备注：</strong>${item.note}</p>`));
+              cell.appendChild(node);
+            });
+            container.appendChild(cell);
+          }
+        });
+      }
+      function renderList() {
+        const list = document.getElementById('appList'); list.innerHTML = '';
+        filtered.slice(0,8).forEach(item => {
+          const div = document.createElement('div'); div.className = 'app-item';
+          div.innerHTML = `<div class="app-info"><h4>${item.type} · ${item.cadreName} · ${item.position}</h4><p>${item.department} · ${formatDate(item.date)} · ${item.approver} · ${item.documentNo}</p></div><span class="badge ${item.status==='已生效'?'badge-success':item.status==='预警'?'badge-warning':'badge-primary'}">${item.status}</span>`;
+          list.appendChild(div);
+        });
+      }
+      function doFilter() {
+        const type = document.getElementById('typeFilter').value, year = document.getElementById('yearFilter').value, keyword = document.getElementById('searchInput').value.trim();
+        filtered = allAppointments.filter(a => (!type || a.type===type) && (!year || new Date(a.date).getFullYear()===parseInt(year)) && (!keyword || a.cadreName.includes(keyword)));
+        renderSwimlane(); renderList();
+      }
+      document.getElementById('searchBtn').addEventListener('click', doFilter);
+      document.getElementById('typeFilter').addEventListener('change', doFilter);
+      document.getElementById('yearFilter').addEventListener('change', doFilter);
+      document.getElementById('searchInput').addEventListener('input', debounce(doFilter, 300));
+    }
+  },
+  '/directors': {
+    title: '董监高管理', page: 'directors',
+    template: () => `<div class="directors-grid" id="directorsGrid"></div>`,
+    init: async () => {
+      const directors = await fetchData('directors');
+      const container = document.getElementById('directorsGrid'); const now = new Date();
+      directors.forEach(d => {
+        const start = new Date(d.termStart), end = new Date(d.termEnd);
+        const total = end-start, elapsed = now-start, pct = Math.min(100, Math.max(0, elapsed/total*100));
+        const daysLeft = Math.ceil((end-now)/(1000*60*60*24));
+        let cardClass='', progressClass='', valueClass='';
+        if (daysLeft <= 90) { cardClass = daysLeft<=0?'danger':'warning'; progressClass = daysLeft<=0?'danger':'warning'; valueClass='warning'; }
+        const card = document.createElement('div'); card.className = `director-card ${cardClass}`;
+        card.innerHTML = `<div class="director-header"><div class="director-avatar">${d.name.charAt(0)}</div><div><div class="director-name">${d.name}</div><div class="director-position">${d.position} · ${d.board}</div></div></div><div class="director-body"><div class="director-row"><span class="director-label">类型</span><span class="director-value">${d.type}</span></div><div class="director-row"><span class="director-label">任期开始</span><span class="director-value">${formatDate(d.termStart)}</span></div><div class="director-row"><span class="director-label">任期结束</span><span class="director-value ${valueClass}">${formatDate(d.termEnd)}</span></div><div class="director-row"><span class="director-label">状态</span><span class="director-value ${valueClass}">${d.status}</span></div><div class="term-progress"><div class="term-progress-label"><span>任期进度</span><span class="${valueClass}">${daysLeft>0?'剩余 '+daysLeft+' 天':'已届满'}</span></div><div class="term-progress-bar"><div class="term-progress-fill ${progressClass}" style="width:${pct}%"></div></div></div></div></div>`;
+        container.appendChild(card);
+      });
+    }
+  },
+  '/archive': {
+    title: '档案管理', page: 'archive',
+    template: () => `
+      <div class="archive-tabs" id="archiveTabs">
+        <div class="archive-tab active" data-type="personnel">人事档案</div>
+        <div class="archive-tab" data-type="appointment">任免文件</div>
+        <div class="archive-tab" data-type="assessment">考核材料</div>
+        <div class="archive-tab" data-type="training">培训记录</div>
+      </div>
+      <div class="archive-content"><div class="doc-list" id="docList"></div></div>`,
+    init: () => {
+      const archives = {
+        personnel: [ {name:'张明远_干部履历表.pdf',date:'2024-06-15',size:'2.3 MB',type:'pdf'}, {name:'李淑华_干部任免审批表.docx',date:'2024-06-12',size:'856 KB',type:'doc'}, {name:'王建国_个人有关事项报告.pdf',date:'2024-05-28',size:'1.8 MB',type:'pdf'}, {name:'陈晓东_学历学位证书.jpg',date:'2024-05-20',size:'3.1 MB',type:'img'}, {name:'刘雅琴_培训结业证书.pdf',date:'2024-05-10',size:'1.2 MB',type:'pdf'} ],
+        appointment: [ {name:'力合党〔2024〕12号_关于王建国同志免职的通知.pdf',date:'2024-11-20',size:'1.5 MB',type:'pdf'}, {name:'力合党〔2023〕5号_关于吴美玲同志任职的通知.pdf',date:'2023-02-15',size:'1.3 MB',type:'pdf'}, {name:'力合人〔2024〕8号_关于罗嘉欣同志转正的通知.pdf',date:'2024-07-10',size:'980 KB',type:'pdf'} ],
+        assessment: [ {name:'2023年度干部考核汇总表.xlsx',date:'2024-01-15',size:'1.2 MB',type:'xls'}, {name:'张明远_2023年度述职述廉报告.pdf',date:'2024-01-10',size:'2.1 MB',type:'pdf'}, {name:'李淑华_2023年度民主测评结果.pdf',date:'2024-01-08',size:'1.6 MB',type:'pdf'} ],
+        training: [ {name:'2024年干部能力提升培训班花名册.xlsx',date:'2024-06-01',size:'850 KB',type:'xls'}, {name:'刘雅琴_清华大学高级研修班结业证书.pdf',date:'2024-05-15',size:'2.0 MB',type:'pdf'} ]
+      };
+      const typeIcon = { pdf:'📕', doc:'📘', xls:'📗', img:'🖼️' };
+      function renderDocs(type) {
+        const list = document.getElementById('docList'); list.innerHTML = '';
+        archives[type].forEach(doc => {
+          const item = document.createElement('div'); item.className = 'doc-item';
+          item.innerHTML = `<div class="doc-icon ${doc.type}">${typeIcon[doc.type]}</div><div class="doc-info"><div class="doc-name">${doc.name}</div><div class="doc-meta">${doc.date} · ${doc.size}</div></div><div class="doc-actions"><button class="doc-btn">预览</button><button class="doc-btn primary">下载</button></div>`;
+          list.appendChild(item);
+        });
+      }
+      document.querySelectorAll('.archive-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.archive-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active'); renderDocs(tab.dataset.type);
+        });
+      });
+      renderDocs('personnel');
+    }
+  },
+  '/talent-review': {
+    title: '人才盘点', page: 'talent-review',
+    template: () => `
+      <div class="review-layout">
+        <div class="ninebox-panel"><div class="ninebox-title">九宫格人才盘点矩阵</div><div class="ninebox-container" id="nineBoxChart"></div></div>
+        <div class="stats-panel">
+          <div class="stats-card"><div class="stats-card-title">盘点概览</div><div id="overviewStats"></div></div>
+          <div class="stats-card"><div class="stats-card-title">象限分布</div><div id="quadrantStats"></div></div>
+          <div class="stats-card"><div class="stats-card-title">核心人才</div><div class="people-list" id="corePeople"></div></div>
+        </div>
+      </div>`,
+    init: async () => {
+      const [cadres, reviews] = await Promise.all([fetchData('cadres'), fetchData('reviews')]);
+      const merged = reviews.map(r => { const c = cadres.find(ca => ca.id === r.cadreId); return { ...r, name:c?c.name:r.cadreId, department:c?c.department:'-', position:c?c.currentPosition:'-' }; });
+      const quadrants = [ {x:2,y:2,label:'核心人才'},{x:1,y:2,label:'中坚力量'},{x:0,y:2,label:'潜力新星'},{x:2,y:1,label:'熟练员工'},{x:1,y:1,label:'稳定贡献'},{x:0,y:1,label:'差距员工'},{x:2,y:0,label:'潜力待挖'},{x:1,y:0,label:'待观察者'},{x:0,y:0,label:'问题员工'} ];
+      renderNineBox('nineBoxChart', merged.map(m => ({name:m.name, x:m.nineBoxX, y:m.nineBoxY})), {
+        width:480, height:480,
+        onCellClick: (label, people) => {
+          const html = people.length === 0 ? '<p style="color:#4a4a6a">该象限暂无人员。</p>' : `<div class="people-list">${people.map(p => `<div class="people-item"><div class="people-avatar">${p.name.charAt(0)}</div><div class="people-info"><div class="people-name">${p.name}</div><div class="people-dept">${p.department} · 绩效${p.x.toFixed(1)} / 潜力${p.y.toFixed(1)}</div></div></div>`).join('')}</div>`;
+          showModal(`${label}（${people.length}人）`, html);
+        }
+      });
+      const avgPerf = (merged.reduce((s,m)=>s+m.performanceScore,0)/merged.length).toFixed(1);
+      const avgAbility = (merged.reduce((s,m)=>s+m.abilityScore,0)/merged.length).toFixed(1);
+      const avgPotential = (merged.reduce((s,m)=>s+m.potentialScore,0)/merged.length).toFixed(1);
+      document.getElementById('overviewStats').innerHTML = `<div class="stats-item"><span class="stats-label">参与盘点人数</span><span class="stats-value">${merged.length} 人</span></div><div class="stats-item"><span class="stats-label">平均绩效分</span><span class="stats-value">${avgPerf}</span></div><div class="stats-item"><span class="stats-label">平均能力分</span><span class="stats-value">${avgAbility}</span></div><div class="stats-item"><span class="stats-label">平均潜力分</span><span class="stats-value">${avgPotential}</span></div>`;
+      const counts = quadrants.map(q => ({ label:q.label, count: merged.filter(m => { const qx=Math.min(2,Math.floor(m.nineBoxX/1.67)), qy=Math.min(2,Math.floor(m.nineBoxY/1.67)); return q.x===qx && q.y===qy; }).length }));
+      const maxCount = Math.max(...counts.map(c => c.count));
+      document.getElementById('quadrantStats').innerHTML = counts.map(c => `<div class="stats-item"><span class="stats-label">${c.label}</span><span class="stats-value">${c.count} 人</span></div><div class="stats-bar"><div class="stats-bar-track"><div class="stats-bar-fill" style="width:${(c.count/maxCount*100).toFixed(0)}%"></div></div><span style="font-size:12px;color:#4a4a6a">${c.count}</span></div>`).join('');
+      const core = merged.filter(m => { const qx=Math.min(2,Math.floor(m.nineBoxX/1.67)), qy=Math.min(2,Math.floor(m.nineBoxY/1.67)); return qx===2 && qy===2; });
+      document.getElementById('corePeople').innerHTML = core.map(c => `<div class="people-item"><div class="people-avatar">${c.name.charAt(0)}</div><div class="people-info"><div class="people-name">${c.name}</div><div class="people-dept">${c.department}</div></div><div class="people-score">${c.performanceScore}</div></div>`).join('');
+    }
+  }
+};
+
+/* 启动 */
+window.addEventListener('hashchange', renderRoute);
+window.addEventListener('DOMContentLoaded', renderRoute);
+if (document.readyState !== 'loading') renderRoute();
+</script>
+</body>
+</html>

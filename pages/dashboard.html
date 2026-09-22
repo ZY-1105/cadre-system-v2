@@ -5,7 +5,635 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>驾驶舱 - 力合·人才智库 - 力合科创干部信息智能管理平台</title>
   <link rel="stylesheet" href="../css/base-k3.css">
-  <link rel="stylesheet" href="../css/dashboard-k3-layout-v6.css?v=1">
+  <link rel="stylesheet" href="../css/tokens-v1.css?v=1">
+  <style>
+    /* ============================================================
+       驾驶舱样式内联化（原 dashboard-k3-layout-v6.css 提取 + tokens 对齐）
+       规则：
+       1. 全部走 tokens-v1.css / base-k3.css 变量
+       2. 不使用 !important
+       3. 视觉与原 v6 保持一致
+       ============================================================ */
+
+    /* ---------- 外层容器 ---------- */
+    .dashboard-container {
+      padding: 0 28px;
+      max-width: none;
+      min-height: calc(100vh - 120px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: stretch;
+    }
+
+    .dashboard-container,
+    .dash-main,
+    .dash-content {
+      background: var(--bg-page);
+    }
+
+    /* ---------- 板块分隔 ---------- */
+    .dash-section {
+      margin-bottom: 16px;
+      flex-shrink: 0;
+    }
+
+    .dash-section + .dash-section {
+      border-top: 1px solid rgb(var(--primary) / 0.12);
+      padding-top: 16px;
+      margin-top: 0;
+    }
+
+    .section-header {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .section-title {
+      font-size: var(--font-size-xl);
+      font-weight: 700;
+      color: var(--color-text);
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+
+    .section-header::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: var(--brand-primary);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ---------- 统计卡（已迁移到全局组件 .k3-stat-*，以下为页内覆盖） ---------- */
+    .k3-stat-grid { margin-bottom: 20px; }
+
+    /* 卡片顶部紫条 hover 提示（全局组件无此效果） */
+    .k3-stat-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .k3-stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--brand-primary);
+      opacity: 0;
+      transition: opacity 0.2s var(--ease-out);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .k3-stat-card:hover::before { opacity: 1; }
+
+    .k3-stat-label { margin-bottom: 6px; }
+
+    /* transition 供骨架屏数据到达后淡入 */
+    .k3-stat-value {
+      margin-bottom: 6px;
+      transition: opacity 0.3s var(--ease-out);
+    }
+
+    .k3-stat-meta {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+    }
+
+    /* ---------- 骨架屏：统计数字加载态 ---------- */
+    .skeleton-pulse {
+      width: 60px;
+      height: 1em;
+      border-radius: 4px;
+      background: var(--k3-surface-tertiary, var(--bg-pill-hover, #e0dce3));
+      color: transparent;
+      animation: skeletonPulse 1.5s ease-in-out infinite;
+    }
+    @keyframes skeletonPulse {
+      0%, 100% { opacity: 0.4; }
+      50%      { opacity: 1; }
+    }
+
+    .stat-meta {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+    }
+
+    /* ---------- 图表卡 ---------- */
+    .charts-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .chart-card {
+      background: var(--color-surface);
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      min-height: 170px;
+      padding: 12px;
+      transition: transform 0.2s var(--ease-out),
+                  box-shadow 0.2s var(--ease-out);
+    }
+
+    .chart-card:hover {
+      box-shadow: 0 3px 10px rgb(var(--primary) / 0.06),
+                  0 1px 3px rgba(0, 0, 0, 0.03);
+      transform: translateY(-2px);
+    }
+
+    .chart-card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .chart-badge {
+      background: var(--color-primary-soft);
+      color: var(--brand-primary-dark);
+      font-weight: 600;
+      padding: 2px 8px;
+      font-size: 13px;
+      border-radius: 100px;
+      line-height: 1.4;
+    }
+
+    .chart-with-legend {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex: 1;
+    }
+
+    .chart-with-legend .chart-container {
+      flex: none;
+      min-width: 130px;
+      height: 130px;
+      min-width: 130px;
+      min-height: 130px;
+      overflow: visible;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .chart-container canvas,
+    .chart-container svg {
+      min-width: 130px;
+      height: 130px;
+    }
+
+    .chart-center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 13px;
+      color: var(--color-text-muted);
+      line-height: 1.3;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .chart-center-text strong {
+      font-size: 20px;
+      color: var(--brand-primary);
+      font-weight: 700;
+      display: block;
+    }
+
+    .chart-legend {
+      flex: 1;
+      min-width: 110px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .chart-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      white-space: nowrap;
+      padding: 2px 0;
+    }
+
+    .chart-legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .chart-legend-name {
+      color: var(--color-text);
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chart-legend-count {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .chart-legend-percent {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      min-width: 40px;
+      text-align: right;
+    }
+
+    .age-chart {
+      width: 100%;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      justify-content: center;
+      flex: 1;
+    }
+
+    .age-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .age-label {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      width: 64px;
+      text-align: right;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .age-bar-track {
+      flex: 1;
+      height: 12px;
+      background: rgba(0, 0, 0, 0.03);
+      border-radius: 6px;
+      overflow: hidden;
+      min-width: 40px;
+    }
+
+    .age-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, rgb(var(--primary) / 0.55) 0%, rgb(var(--primary)) 100%);
+      border-radius: 6px;
+      transition: width 0.8s var(--ease-out);
+    }
+
+    .age-count {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--brand-primary);
+      width: 36px;
+      text-align: left;
+      flex-shrink: 0;
+    }
+
+    .age-total {
+      font-size: 12px;
+      color: var(--color-text-tertiary);
+      text-align: center;
+      margin-top: 4px;
+      padding-top: 4px;
+      border-top: 1px solid var(--color-border-light);
+    }
+
+    /* ---------- 洞察标签 ---------- */
+    .insight-tabs-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .insight-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 34px;
+      padding: 0 12px;
+      background: transparent;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      position: relative;
+    }
+
+    .insight-tab:hover {
+      background: rgb(var(--primary) / 0.04);
+      transform: translateY(-1px);
+    }
+
+    .insight-tab:active { transform: scale(0.98); }
+
+    .insight-tab-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .insight-tab-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text-tertiary);
+      white-space: nowrap;
+    }
+
+    .insight-tab-value {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--brand-primary);
+      line-height: 1;
+      display: inline-flex;
+      align-items: baseline;
+      gap: 2px;
+    }
+
+    .insight-tab-unit {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-text-tertiary);
+      margin-left: 1px;
+    }
+
+    /* ---------- 洞察卡 ---------- */
+    .insight-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 0;
+    }
+
+    .insight-card {
+      background: var(--bg-card);
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08),
+                  0 2px 8px rgba(0, 0, 0, 0.04);
+      padding: 12px 18px 10px 22px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s var(--ease-out),
+                  box-shadow 0.2s var(--ease-out);
+    }
+
+    .insight-card:hover {
+      box-shadow: 0 4px 12px rgb(var(--primary) / 0.08),
+                  0 2px 4px rgba(0, 0, 0, 0.04);
+      transform: translateY(-2px);
+    }
+
+    .insight-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 12px;
+      bottom: 10px;
+      width: 4px;
+      border-radius: 0 2px 2px 0;
+      display: block;
+    }
+
+    .insight-card:nth-child(1)::before { background: var(--color-danger); }
+    .insight-card:nth-child(2)::before { background: var(--brand-primary); }
+    .insight-card:nth-child(3)::before { background: var(--color-warning); }
+
+    .insight-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .insight-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .insight-icon::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: currentColor;
+      opacity: 0.1;
+      border-radius: inherit;
+    }
+
+    .insight-icon svg {
+      width: 18px;
+      height: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .insight-icon.warning  { color: var(--color-danger); }
+    .insight-icon.positive { color: var(--color-success); }
+    .insight-icon.suggest  { color: var(--color-warning); }
+
+    .insight-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .insight-data { margin-bottom: 4px; }
+    .insight-data .value {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-1);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      font-variant-numeric: var(--num-variant);
+    }
+
+    .insight-value-top {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .insight-value-top::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .insight-card:nth-child(1) .insight-value-top { color: var(--color-danger); }
+    .insight-card:nth-child(2) .insight-value-top { color: var(--brand-primary); }
+    .insight-card:nth-child(3) .insight-value-top { color: var(--color-warning); }
+
+    .insight-sub {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-bottom: 8px;
+    }
+
+    .mini-progress {
+      height: 6px;
+      background: rgba(0, 0, 0, 0.04);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .mini-progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.6s var(--ease-out);
+      min-width: 6px;
+      position: relative;
+    }
+
+    .mini-progress-fill::after {
+      content: '';
+      position: absolute;
+      right: -3px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 5px;
+      height: 5px;
+      background: inherit;
+      border-radius: 50%;
+      opacity: 0.5;
+    }
+
+    .insight-card:nth-child(1) .mini-progress-fill { background: var(--color-danger); }
+    .insight-card:nth-child(2) .mini-progress-fill { background: var(--brand-primary); }
+    .insight-card:nth-child(3) .mini-progress-fill { background: var(--color-warning); }
+
+    .insight-action {
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid var(--color-border-light);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--brand-primary);
+      cursor: pointer;
+      transition: gap 0.2s var(--ease-out);
+    }
+
+    .insight-action::after {
+      content: '→';
+      transition: transform 0.2s var(--ease-out);
+    }
+
+    .insight-card:hover .insight-action { gap: 8px; }
+    .insight-card:hover .insight-action::after { transform: translateX(4px); }
+
+    /* ---------- 动画 ---------- */
+    .k3-anim {
+      opacity: 0;
+      transform: translateY(8px);
+      animation: k3FadeInUp 0.35s var(--ease-out) forwards;
+    }
+
+    .k3-anim:nth-child(1) { animation-delay: 0ms; }
+    .k3-anim:nth-child(2) { animation-delay: 50ms; }
+    .k3-anim:nth-child(3) { animation-delay: 100ms; }
+    .k3-anim:nth-child(4) { animation-delay: 150ms; }
+    .k3-anim:nth-child(5) { animation-delay: 200ms; }
+
+    @keyframes k3FadeInUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes countUp {
+      from { opacity: 0; transform: translateY(3px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .insight-data .value:not(.loading),
+    .insight-tab-value:not(.loading) {
+      animation: countUp 0.35s var(--ease-out);
+    }
+
+    /* ---------- 焦点环 ---------- */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2px solid rgb(var(--primary) / 0.55);
+      outline-offset: 2px;
+    }
+
+    /* ---------- 响应式 ---------- */
+    @media (max-width: 992px) {
+      .charts-row { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 992px) {
+      .dashboard-container { padding: 0 24px; min-height: calc(100vh - 112px); }
+      .k3-stat-grid      { margin-bottom: 16px; }
+      .insight-cards    { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .insight-tabs-row { flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+      .insight-tab      { min-width: calc(50% - 5px); height: 34px; }
+      .charts-row       { grid-template-columns: 1fr; gap: 12px; }
+      .chart-card       { min-height: 160px; }
+      .chart-with-legend { flex-direction: column; }
+      .dash-section     { margin-bottom: 12px; }
+      .dash-section + .dash-section { padding-top: 12px; }
+    }
+
+    @media (max-width: 640px) {
+      .dashboard-container { padding: 0 16px; min-height: calc(100vh - 104px); }
+      .k3-stat-grid      { margin-bottom: 12px; }
+      .insight-cards    { grid-template-columns: 1fr; gap: 10px; }
+      .insight-tabs-row { flex-direction: column; gap: 6px; margin-bottom: 10px; }
+      .insight-tab      { width: 100%; min-width: auto; height: 34px; }
+      .dash-section     { margin-bottom: 10px; }
+      .dash-section + .dash-section { padding-top: 10px; }
+      .charts-row       { gap: 10px; }
+      .chart-card       { min-height: 150px; padding: 10px; }
+      .insight-card     { padding: 10px 14px 8px 18px; }
+    }
+  </style>
 </head>
 <body>
   <script src="../js/app-k3.js"></script>
@@ -22,26 +650,26 @@
           <h2 class="section-title">人才图谱</h2>
         </div>
 
-        <div class="stat-grid-4">
-          <div class="stat-card k3-anim">
-            <div class="stat-label">干部总数</div>
-            <div class="stat-value loading" id="totalCadres">—</div>
-            <div class="stat-meta">全单位在编</div>
+        <div class="k3-stat-grid">
+          <div class="k3-stat-card k3-anim" tabindex="0" role="button" aria-label="干部总数 60 人">
+            <div class="k3-stat-label">干部总数</div>
+            <div class="k3-stat-value loading skeleton-pulse" id="totalCadres">—</div>
+            <div class="k3-stat-meta">全单位在编</div>
           </div>
-          <div class="stat-card k3-anim">
-            <div class="stat-label">在岗数</div>
-            <div class="stat-value loading" id="activeCadres">—</div>
-            <div class="stat-meta">不含试用/待岗</div>
+          <div class="k3-stat-card k3-anim" tabindex="0" role="button" aria-label="在岗数 55 人">
+            <div class="k3-stat-label">在岗数</div>
+            <div class="k3-stat-value loading skeleton-pulse" id="activeCadres">—</div>
+            <div class="k3-stat-meta">不含试用/待岗</div>
           </div>
-          <div class="stat-card k3-anim">
-            <div class="stat-label">党员数</div>
-            <div class="stat-value loading" id="partyCount">—</div>
-            <div class="stat-meta">中共党员</div>
+          <div class="k3-stat-card k3-anim" tabindex="0" role="button" aria-label="党员数 48 人">
+            <div class="k3-stat-label">党员数</div>
+            <div class="k3-stat-value loading skeleton-pulse" id="partyCount">—</div>
+            <div class="k3-stat-meta">中共党员</div>
           </div>
-          <div class="stat-card k3-anim">
-            <div class="stat-label">平均年龄</div>
-            <div class="stat-value loading" id="avgAge">—</div>
-            <div class="stat-meta">截止本季度</div>
+          <div class="k3-stat-card k3-anim" tabindex="0" role="button" aria-label="平均年龄 42 岁">
+            <div class="k3-stat-label">平均年龄</div>
+            <div class="k3-stat-value loading skeleton-pulse" id="avgAge">—</div>
+            <div class="k3-stat-meta">截止本季度</div>
           </div>
         </div>
 
@@ -49,7 +677,7 @@
           <div class="chart-card k3-anim">
             <div class="chart-card-title">职级分布 <span class="chart-badge">在编统计</span></div>
             <div class="chart-with-legend">
-              <div class="chart-container" id="rank-chart-dom">
+              <div class="chart-container" id="rank-chart-dom" role="img" aria-label="职级分布环形图，共 60 名在编干部">
                 <div class="chart-center-text" id="rank-center">
                   <strong>60</strong>在编干部
                 </div>
@@ -60,7 +688,7 @@
           <div class="chart-card k3-anim">
             <div class="chart-card-title">学历分布 <span class="chart-badge">在编统计</span></div>
             <div class="chart-with-legend">
-              <div class="chart-container" id="edu-chart-dom">
+              <div class="chart-container" id="edu-chart-dom" role="img" aria-label="学历分布环形图，本科及以上占 88%">
                 <div class="chart-center-text" id="edu-center">
                   <strong>88%</strong>本科及以上
                 </div>
@@ -70,7 +698,7 @@
           </div>
           <div class="chart-card k3-anim">
             <div class="chart-card-title">年龄分布 <span class="chart-badge">在编统计</span></div>
-            <div class="chart-container age-chart" id="age-chart"></div>
+            <div class="chart-container age-chart" id="age-chart" role="img" aria-label="年龄分布条形图，共 60 人"></div>
           </div>
         </div>
       </section>
@@ -87,7 +715,7 @@
         </div>
 
         <div class="insight-cards">
-          <div class="insight-card k3-anim">
+          <div class="insight-card k3-anim" tabindex="0" aria-label="预警干部卡片：5 人待处理，需关注">
             <div class="insight-header">
               <span class="insight-icon warning">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -107,7 +735,7 @@
             <div class="insight-action">查看预警干部</div>
           </div>
 
-          <div class="insight-card k3-anim">
+          <div class="insight-card k3-anim" tabindex="0" aria-label="盘点完成率卡片：78%，本季度进行中">
             <div class="insight-header">
               <span class="insight-icon positive">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -127,7 +755,7 @@
             <div class="insight-action">查看盘点进度</div>
           </div>
 
-          <div class="insight-card k3-anim">
+          <div class="insight-card k3-anim" tabindex="0" aria-label="任期届满卡片：3 人待处理，6 个月内">
             <div class="insight-header">
               <span class="insight-icon suggest">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

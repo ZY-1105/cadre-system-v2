@@ -30,7 +30,7 @@ function renderNav(pageTitle) {
         <div class="brand-text">力合·人才智库</div>
         <div class="brand-subtitle">力合科创干部管理数智平台</div>
       </div>
-      <span class="page-title">${pageTitle}</span>
+      ${pageTitle ? `<span class="page-title">${pageTitle}</span>` : ''}
     </div>
     <div class="header-actions">
       <button class="k3-sidebar-toggle" id="mobileMenuToggle" title="展开菜单" onclick="toggleSidebar()">
@@ -92,9 +92,10 @@ function renderSidebar(currentPage) {
       </a>
 
       <div class="k3-nav-divider">— 智能报表 —</div>
-      <a href="report.html" class="k3-nav-item" data-page="report">
+      <a href="#" class="k3-nav-item" data-page="report" aria-disabled="true" title="即将上线" style="opacity:0.55;cursor:not-allowed;" onclick="event.preventDefault()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         <span>智能报表</span>
+        <span aria-label="智能报表功能即将上线" style="margin-left:auto;font-size:10px;line-height:1;padding:3px 6px;border-radius:100px;background:rgba(0,0,0,0.06);color:rgba(0,0,0,0.45);flex-shrink:0;">待上线</span>
       </a>
 
     </nav>
@@ -118,11 +119,22 @@ function renderLayout(pageTitle, currentPage) {
 }
 
 // ==================== 侧边栏当前项高亮 ====================
+// 子页面 → 父级导航映射：详情/评价等子页面点亮所属模块
+const PARENT_PAGE_MAP = {
+  'cadre-detail.html': 'cadre-list.html',
+  'cadre-info.html': 'cadre-list.html',
+  'cadre-inspection-detail.html': 'cadre-inspection.html',
+  'cadre-inspection-evaluate.html': 'cadre-inspection.html',
+  'cadre-inspection-archive.html': 'cadre-inspection.html',
+  'talent-profile.html': 'talent-review.html'
+};
+
 function highlightNav() {
   const currentPage = location.pathname.split('/').pop() || 'dashboard.html';
+  const navTarget = PARENT_PAGE_MAP[currentPage] || currentPage;
   document.querySelectorAll('.k3-nav-item').forEach(item => {
     const href = item.getAttribute('href');
-    if (href === currentPage || href === './' + currentPage) {
+    if (href === navTarget || href === './' + navTarget) {
       item.classList.add('active');
     } else {
       item.classList.remove('active');

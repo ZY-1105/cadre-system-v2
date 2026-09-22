@@ -5,7 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>人才画像 - 力合·人才智库</title>
   <link rel="stylesheet" href="../css/base-k3.css">
+  <link rel="stylesheet" href="../css/tokens-v1.css">
   <link rel="stylesheet" href="../css/pages-k4.2-extra.css">
+  <style>
+    body { background: var(--bg-page, #f5f3f7); }
+    /* 覆盖 pages-k4.2-extra.css 中 .tp-container 的 max-width: 1400px，本页容器全宽自适应 */
+    .tp-container { max-width: 100%; }
+    :focus-visible {
+      outline: 2px solid var(--brand-primary, #8e2294);
+      outline-offset: 2px;
+    }
+    .tp-score-piece strong { color: var(--text-1); }
+  </style>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 </head>
 <body>
@@ -26,14 +37,14 @@
 
       <!-- ② 九宫格定位区 -->
       <div class="tp-section">
-        <div class="tp-section-title">人才九宫格定位</div>
+        <div class="tp-section-title" role="heading" aria-level="2">人才九宫格定位</div>
         <div class="tp-nine-grid" id="tp-nine-grid"></div>
         <div class="tp-score-bar" id="tp-score-bar"></div>
       </div>
 
       <!-- ③ 能力分析区 -->
       <div class="tp-section">
-        <div class="tp-section-title">能力分析</div>
+        <div class="tp-section-title" role="heading" aria-level="2">能力分析</div>
         <div class="tp-charts" id="tp-charts"></div>
       </div>
 
@@ -166,7 +177,7 @@
       return;
     }
     if (gridState.state === 'ANOMALY') {
-      el.innerHTML = '<div class="tp-grid-empty tp-grid-empty--error">⚠ 评分数据异常（四维度全满或全低）</div>';
+      el.innerHTML = '<div class="tp-grid-empty tp-grid-empty--error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" style="vertical-align:-3px;margin-right:4px;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> 评分数据异常（四维度全满或全低）</div>';
       return;
     }
     const activeIdx = gridState.index;
@@ -177,7 +188,7 @@
       const yLabel = row === 0 ? '高潜' : row === 1 ? '中潜' : '低潜';
       const xLabel = col === 0 ? '低绩' : col === 1 ? '中绩' : '高绩';
       return `
-        <div class="tp-grid-cell ${isActive ? 'tp-grid-cell--active' : ''}">
+        <div class="tp-grid-cell ${isActive ? 'tp-grid-cell--active' : ''}" aria-label="${label}，${yLabel} · ${xLabel}${isActive ? '，当前位置' : ''}">
           ${isActive ? '<div class="tp-grid-pin">当前位置</div>' : ''}
           <div class="tp-grid-label">${label}</div>
           <div class="tp-grid-axis">${yLabel} · ${xLabel}</div>
@@ -195,9 +206,9 @@
     el.style.display = 'block';
     el.innerHTML = `
       <div class="tp-score-row">
-        <div class="tp-score-piece"><span>综合绩效分</span><strong>${gridState.performance}</strong></div>
-        <div class="tp-score-piece"><span>发展潜力分</span><strong>${gridState.potential}</strong></div>
-        <div class="tp-score-piece"><span>综合印象分</span><strong class="tp-score-impression">${gridState.impression}</strong></div>
+        <div class="tp-score-piece" tabindex="0" role="button" aria-label="综合绩效分 ${gridState.performance} 分"><span>综合绩效分</span><strong>${gridState.performance}</strong></div>
+        <div class="tp-score-piece" tabindex="0" role="button" aria-label="发展潜力分 ${gridState.potential} 分"><span>发展潜力分</span><strong>${gridState.potential}</strong></div>
+        <div class="tp-score-piece" tabindex="0" role="button" aria-label="综合印象分 ${gridState.impression} 分"><span>综合印象分</span><strong class="tp-score-impression">${gridState.impression}</strong></div>
       </div>
       <div class="tp-score-formula">综合绩效分 = (专业能力×40% + 管理能力×30%) ÷ 0.7 · 发展潜力分直接取值 · 印象分用于同分排序</div>
     `;
@@ -211,19 +222,21 @@
     const container = document.getElementById('tp-charts');
     container.innerHTML = `
       <div class="tp-chart-card">
-        <div class="tp-chart-title">近三年绩效趋势</div>
-        <div class="tp-chart-body" id="chart-performance" style="height:200px;"></div>
+        <div class="tp-chart-title" role="heading" aria-level="3">近三年绩效趋势</div>
+        <div class="tp-chart-body" id="chart-performance" role="img" aria-label="绩效评分趋势折线图" style="height:200px;width:100%;"></div>
       </div>
       <div class="tp-chart-card">
-        <div class="tp-chart-title">能力维度雷达图</div>
-        <div class="tp-chart-body" id="chart-radar" style="height:200px;"></div>
+        <div class="tp-chart-title" role="heading" aria-level="3">能力维度雷达图</div>
+        <div class="tp-chart-body" id="chart-radar" role="img" aria-label="能力素质雷达图" style="height:200px;width:100%;"></div>
       </div>
     `;
 
     // 1. 折线图：近三年绩效趋势
     const perfData = cadre.performanceTrend || [];
+    let perfChart = null;
+    let radarChart = null;
     if (perfData.length > 0) {
-      const perfChart = echarts.init(document.getElementById('chart-performance'));
+      perfChart = echarts.init(document.getElementById('chart-performance'));
       const years = perfData.map(d => d.year);
       const scores = perfData.map(d => d.score);
       perfChart.setOption({
@@ -259,7 +272,7 @@
           label: {
             show: true,
             position: 'top',
-            color: '#8e2294',
+            color: '#1a1a2e',
             fontSize: 12,
             fontWeight: 600,
             formatter: '{c}'
@@ -270,14 +283,14 @@
           backgroundColor: 'rgba(255,255,255,0.95)',
           borderColor: 'rgba(142,34,148,0.15)',
           textStyle: { color: '#1a1a2e', fontSize: 12 },
-          formatter: p => `${p[0].name}年<br/>绩效分: <strong style="color:#8e2294">${p[0].value}</strong>`
+          formatter: p => `${p[0].name}年<br/>绩效分: <strong style="color:var(--text-1)">${p[0].value}</strong>`
         }
       });
     }
 
     // 2. 雷达图：能力维度分析
     if (cadre.scores) {
-      const radarChart = echarts.init(document.getElementById('chart-radar'));
+      radarChart = echarts.init(document.getElementById('chart-radar'));
       const s = cadre.scores;
       // 计算同层级平均分
       const sameLevel = allCadres.filter(c => c.level === cadre.level && c.scores);
@@ -341,8 +354,8 @@
 
     // 响应式重绘
     window.addEventListener('resize', () => {
-      perfData.length > 0 && perfChart.resize();
-      cadre.scores && radarChart.resize();
+      perfChart && perfChart.resize();
+      radarChart && radarChart.resize();
     });
   }
 
@@ -358,7 +371,7 @@
     if (!cadre) {
       document.querySelector('.tp-container').innerHTML = `
         <div style="text-align:center;padding:80px 20px;">
-          <div style="font-size:48px;margin-bottom:16px;">🔍</div>
+          <div style="font-size:48px;margin-bottom:16px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="48" height="48"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
           <div style="font-size:18px;font-weight:600;color:var(--color-text);margin-bottom:8px;">未找到该干部信息</div>
           <div style="font-size:14px;color:var(--color-text-tertiary);">ID: ${cadreId}</div>
           <a href="talent-review.html" class="tp-back" style="margin-top:24px;display:inline-flex;">
